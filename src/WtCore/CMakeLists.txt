@@ -21,3 +21,6 @@ INCLUDE_DIRECTORIES(${INCS})
 LINK_DIRECTORIES(${LNKS})
 
 ADD_LIBRARY(WtCore STATIC ${SRCS} ${HDRS})
+if(MINGW)
+target_link_libraries(WtCore ws2_32)
+endif()
