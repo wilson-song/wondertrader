@@ -59,7 +59,7 @@ bool ExecMocker::init(WTSVariant* cfg)
 	if (hInst == NULL)
 		return false;
 
-	FuncCreateExeFact creator = (FuncCreateExeFact)DLLHelper::get_symbol(hInst, "createExecFact");
+	FuncCreateExeFactory creator = (FuncCreateExeFactory)DLLHelper::get_symbol(hInst, "createExecFact");
 	if (creator == NULL)
 	{
 		DLLHelper::free_library(hInst);
@@ -69,7 +69,7 @@ bool ExecMocker::init(WTSVariant* cfg)
 	_factory._module_inst = hInst;
 	_factory._module_path = module;
 	_factory._creator = creator;
-	_factory._remover = (FuncDeleteExeFact)DLLHelper::get_symbol(hInst, "deleteExecFact");
+	_factory._remover = (FuncDeleteExeFactory)DLLHelper::get_symbol(hInst, "deleteExecFact");
 	_factory._fact = _factory._creator();
 
 	WTSVariant* cfgExec = cfg->get("executer");

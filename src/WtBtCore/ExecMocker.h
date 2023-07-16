@@ -82,9 +82,9 @@ private:
 	{
 		std::string		_module_path;
 		DllHandle		_module_inst;
-		IExecuterFact*	_fact;
-		FuncCreateExeFact	_creator;
-		FuncDeleteExeFact	_remover;
+		IExecuterFactory*	_fact;
+		FuncCreateExeFactory	_creator;
+		FuncDeleteExeFactory	_remover;
 
 		_ExecFactInfo()
 		{

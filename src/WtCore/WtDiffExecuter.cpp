@@ -15,7 +15,6 @@
 #include "../Share/CodeHelper.hpp"
 #include "../Includes/IDataManager.h"
 #include "../Includes/WTSVariant.hpp"
-#include "../Includes/IHotMgr.h"
 #include "../Includes/IBaseDataMgr.h"
 #include "../Share/decimal.h"
 
@@ -34,7 +33,7 @@ WtDiffExecuter::WtDiffExecuter(WtExecuterFactory* factory, const char* name, IDa
 	, _data_mgr(dataMgr)
 	, _channel_ready(false)
 	, _scale(1.0)
-	, _trader(NULL)
+	, _trader(nullptr)
 	, _bd_mgr(bdMgr)
 {
 }
@@ -56,7 +55,7 @@ void WtDiffExecuter::setTrader(TraderAdapter* adapter)
 
 bool WtDiffExecuter::init(WTSVariant* params)
 {
-	if (params == NULL)
+	if (params == nullptr)
 		return false;
 
 	_config = params;
@@ -105,9 +104,9 @@ void WtDiffExecuter::load_data()
 		for (const rj::Value& jItem : jTargets.GetArray())
 		{
 			const char* stdCode = jItem["code"].GetString();
-			CodeHelper::CodeInfo cInfo = CodeHelper::extractStdCode(stdCode, NULL);
+			CodeHelper::CodeInfo cInfo = CodeHelper::extractStdCode(stdCode, nullptr);
 			WTSContractInfo* ct = _bd_mgr->getContract(cInfo._code, cInfo._exchg);
-			if (ct == NULL)
+			if (ct == nullptr)
 			{
 				WTSLogger::log_dyn("executor", _name.c_str(), LL_INFO, "[{}] Ticker {} is not valid", _name, stdCode);
 				continue;
@@ -124,9 +123,9 @@ void WtDiffExecuter::load_data()
 		for (const rj::Value& jItem : jDiffs.GetArray())
 		{
 			const char* stdCode = jItem["code"].GetString();
-			CodeHelper::CodeInfo cInfo = CodeHelper::extractStdCode(stdCode, NULL);
+			CodeHelper::CodeInfo cInfo = CodeHelper::extractStdCode(stdCode, nullptr);
 			WTSContractInfo* ct = _bd_mgr->getContract(cInfo._code, cInfo._exchg);
-			if (ct == NULL)
+			if (ct == nullptr)
 			{
 				WTSLogger::log_dyn("executor", _name.c_str(), LL_INFO, "[{}] Ticker {} is not valid", _name, stdCode);
 				continue;
@@ -194,7 +193,7 @@ void WtDiffExecuter::save_data()
 
 ExecuteUnitPtr WtDiffExecuter::getUnit(const char* stdCode, bool bAutoCreate /* = true */)
 {
-	CodeHelper::CodeInfo codeInfo = CodeHelper::extractStdCode(stdCode, NULL);
+	CodeHelper::CodeInfo codeInfo = CodeHelper::extractStdCode(stdCode, nullptr);
 	std::string commID = codeInfo.stdCommID();
 
 	WTSVariant* policy = _config->get("policy");
@@ -216,7 +215,7 @@ ExecuteUnitPtr WtDiffExecuter::getUnit(const char* stdCode, bool bAutoCreate /* 
 
 		const char* name = cfg->getCString("name");
 		ExecuteUnitPtr unit = _factory->createDiffExeUnit(name);
-		if (unit != NULL)
+		if (unit != nullptr)
 		{
 			_unit_map[stdCode] = unit;
 			unit->self()->init(this, stdCode, cfg);
@@ -233,7 +232,7 @@ ExecuteUnitPtr WtDiffExecuter::getUnit(const char* stdCode, bool bAutoCreate /* 
 	}
 	else
 	{
-		return ExecuteUnitPtr();
+		return {};
 	}
 }
 
@@ -243,23 +242,23 @@ ExecuteUnitPtr WtDiffExecuter::getUnit(const char* stdCode, bool bAutoCreate /* 
 #pragma region Context回调接口
 WTSTickSlice* WtDiffExecuter::getTicks(const char* stdCode, uint32_t count, uint64_t etime /* = 0 */)
 {
-	if (_data_mgr == NULL)
-		return NULL;
+	if (_data_mgr == nullptr)
+		return nullptr;
 
 	return _data_mgr->get_tick_slice(stdCode, count, 0);
 }
 
 WTSTickData* WtDiffExecuter::grabLastTick(const char* stdCode)
 {
-	if (_data_mgr == NULL)
-		return NULL;
+	if (_data_mgr == nullptr)
+		return nullptr;
 
 	return _data_mgr->grab_last_tick(stdCode);
 }
 
 double WtDiffExecuter::getPosition(const char* stdCode, bool validOnly /* = true */, int32_t flag /* = 3 */)
 {
-	if (NULL == _trader)
+	if (nullptr == _trader)
 		return 0.0;
 
 	return _trader->getPosition(stdCode, validOnly, flag);
@@ -267,7 +266,7 @@ double WtDiffExecuter::getPosition(const char* stdCode, bool validOnly /* = true
 
 double WtDiffExecuter::getUndoneQty(const char* stdCode)
 {
-	if (NULL == _trader)
+	if (nullptr == _trader)
 		return 0.0;
 
 	return _trader->getUndoneQty(stdCode);
@@ -275,8 +274,8 @@ double WtDiffExecuter::getUndoneQty(const char* stdCode)
 
 OrderMap* WtDiffExecuter::getOrders(const char* stdCode)
 {
-	if (NULL == _trader)
-		return NULL;
+	if (nullptr == _trader)
+		return nullptr;
 
 	return _trader->getOrders(stdCode);
 }
@@ -284,7 +283,7 @@ OrderMap* WtDiffExecuter::getOrders(const char* stdCode)
 OrderIDs WtDiffExecuter::buy(const char* stdCode, double price, double qty, bool bForceClose/* = false*/)
 {
 	if (!_channel_ready)
-		return OrderIDs();
+		return {};
 
 	return _trader->buy(stdCode, price, qty, 0, bForceClose);
 }
@@ -292,7 +291,7 @@ OrderIDs WtDiffExecuter::buy(const char* stdCode, double price, double qty, bool
 OrderIDs WtDiffExecuter::sell(const char* stdCode, double price, double qty, bool bForceClose/* = false*/)
 {
 	if (!_channel_ready)
-		return OrderIDs();
+		return {};
 
 	return _trader->sell(stdCode, price, qty, 0, bForceClose);
 }
@@ -308,7 +307,7 @@ bool WtDiffExecuter::cancel(uint32_t localid)
 OrderIDs WtDiffExecuter::cancel(const char* stdCode, bool isBuy, double qty)
 {
 	if (!_channel_ready)
-		return OrderIDs();
+		return {};
 
 	return _trader->cancel(stdCode, isBuy, qty);
 }
@@ -345,7 +344,7 @@ uint64_t WtDiffExecuter::getCurTime()
 void WtDiffExecuter::on_position_changed(const char* stdCode, double diffPos)
 {
 	ExecuteUnitPtr unit = getUnit(stdCode, true);
-	if (unit == NULL)
+	if (unit == nullptr)
 		return;
 
 	//如果差量为0，则直接返回
@@ -390,12 +389,12 @@ void WtDiffExecuter::on_position_changed(const char* stdCode, double diffPos)
 
 void WtDiffExecuter::set_position(const faster_hashmap<LongKey, double>& targets)
 {
-	for (auto it = targets.begin(); it != targets.end(); it++)
+	for (const auto & target : targets)
 	{
-		const char* stdCode = it->first.c_str();
-		double newVol = it->second;
+		const char* stdCode = target.first.c_str();
+		double newVol = target.second;
 		ExecuteUnitPtr unit = getUnit(stdCode);
-		if (unit == NULL)
+		if (unit == nullptr)
 			continue;
 
 		newVol = round(newVol*_scale);
@@ -532,7 +531,7 @@ void WtDiffExecuter::on_trade(uint32_t localid, const char* stdCode, bool isBuy,
 void WtDiffExecuter::on_order(uint32_t localid, const char* stdCode, bool isBuy, double totalQty, double leftQty, double price, bool isCanceled /* = false */)
 {
 	ExecuteUnitPtr unit = getUnit(stdCode, false);
-	if (unit == NULL)
+	if (unit == nullptr)
 		return;
 
 	if (_pool)
@@ -551,7 +550,7 @@ void WtDiffExecuter::on_order(uint32_t localid, const char* stdCode, bool isBuy,
 void WtDiffExecuter::on_entrust(uint32_t localid, const char* stdCode, bool bSuccess, const char* message)
 {
 	ExecuteUnitPtr unit = getUnit(stdCode, false);
-	if (unit == NULL)
+	if (unit == nullptr)
 		return;
 
 	if (_pool)
@@ -572,9 +571,9 @@ void WtDiffExecuter::on_channel_ready()
 {
 	_channel_ready = true;
 	//SpinLock lock(_mtx_units);
-	for (auto it = _unit_map.begin(); it != _unit_map.end(); it++)
+	for (const auto & it : _unit_map)
 	{
-		ExecuteUnitPtr& unitPtr = (ExecuteUnitPtr&)it->second;
+		auto& unitPtr = (ExecuteUnitPtr&)it.second;
 		if (unitPtr)
 		{
 			if (_pool)
@@ -594,7 +593,7 @@ void WtDiffExecuter::on_channel_ready()
 	{
 		const char* stdCode = v.first.c_str();
 		ExecuteUnitPtr unit = getUnit(stdCode);
-		if (unit == NULL)
+		if (unit == nullptr)
 			continue;
 		double thisDiff = _diff_pos[stdCode];
 
@@ -618,9 +617,9 @@ void WtDiffExecuter::on_channel_lost()
 {
 	_channel_ready = false;
 	//SpinLock lock(_mtx_units);
-	for (auto it = _unit_map.begin(); it != _unit_map.end(); it++)
+	for (const auto & it : _unit_map)
 	{
-		ExecuteUnitPtr& unitPtr = (ExecuteUnitPtr&)it->second;
+		auto& unitPtr = (ExecuteUnitPtr&)it.second;
 		if (unitPtr)
 		{
 			if (_pool)
@@ -641,9 +640,9 @@ void WtDiffExecuter::on_account(const char* currency, double prebalance, double 
 	double avaliable, double closeprofit, double dynprofit, double margin, double fee, double deposit, double withdraw)
 {
 	//SpinLock lock(_mtx_units);
-	for (auto it = _unit_map.begin(); it != _unit_map.end(); it++)
+	for (const auto & it : _unit_map)
 	{
-		ExecuteUnitPtr& unitPtr = (ExecuteUnitPtr&)it->second;
+		auto& unitPtr = (ExecuteUnitPtr&)it.second;
 		if (unitPtr)
 		{
 			if (_pool)

@@ -26,8 +26,8 @@ typedef WTSMap<uint32_t> OrderMap;
 class ExecuteContext
 {
 public:
-	ExecuteContext(){}
-	virtual ~ExecuteContext(){}
+	ExecuteContext()= default;
+	virtual ~ExecuteContext()= default;
 
 public:
 	/*
@@ -38,7 +38,7 @@ public:
 	 *	
 	 *	返回值	历史数据封装类指针
 	 */
-	virtual WTSTickSlice*	getTicks(const char* stdCode, uint32_t count, uint64_t etime = 0) = 0;
+	virtual WTSTickSlice*	getTicks(const char* stdCode, uint32_t count, uint64_t etime /*= 0*/) = 0;
 
 	/*
 	 *	读取最近一笔Tick数据
@@ -56,7 +56,7 @@ public:
 	 *	
 	 *	返回值	轧平后的仓位: 多仓>0, 空仓<0
 	 */
-	virtual double getPosition(const char* stdCode, bool validOnly = true, int32_t flag = 3) = 0;
+	virtual double getPosition(const char* stdCode, bool validOnly /*= true*/, int32_t flag /*= 3*/) = 0;
 
 	/*
 	 *	获取未完成订单
@@ -82,7 +82,7 @@ public:
 	 *
 	 *	返回值	本地订单号数组: 一个买入操作可能会拆成最多3个订单发出
 	 */
-	virtual OrderIDs buy(const char* stdCode, double price, double qty, bool bForceClose = false) = 0;
+	virtual OrderIDs buy(const char* stdCode, double price, double qty, bool bForceClose /*= false*/) = 0;
 
 	/*
 	*	卖出接口
@@ -92,7 +92,7 @@ public:
 	*
 	*	返回值	本地订单号数组: 一个买入操作可能会拆成最多3个订单发出
 	*/
-	virtual OrderIDs sell(const char* stdCode, double price, double qty, bool bForceClose = false) = 0;
+	virtual OrderIDs sell(const char* stdCode, double price, double qty, bool bForceClose /*= false*/) = 0;
 
 	/*
 	 *	根据本地订单号撤单
@@ -111,7 +111,7 @@ public:
 	 *	
 	 *	返回值 返回实际发送了撤单指令的数量
 	 */
-	virtual OrderIDs cancel(const char* stdCode, bool isBuy, double qty = 0) = 0;
+	virtual OrderIDs cancel(const char* stdCode, bool isBuy, double qty /*= 0*/) = 0;
 
 	/*
 	 *	写日志
@@ -148,8 +148,8 @@ public:
 class ExecuteUnit
 {
 public:
-	ExecuteUnit(bool bDiffMode = false) :_ctx(NULL), _code("") {}
-	virtual ~ExecuteUnit(){}
+	ExecuteUnit(bool bDiffMode = false) :_ctx(nullptr), _code("") {}
+	virtual ~ExecuteUnit()= default;
 
 public:
 	/*
@@ -238,11 +238,11 @@ protected:
 //执行单元工厂接口
 typedef void(*FuncEnumUnitCallback)(const char* factName, const char* unitName, bool isLast);
 
-class IExecuterFact
+class IExecuterFactory
 {
 public:
-	IExecuterFact(){}
-	virtual ~IExecuterFact(){}
+	IExecuterFactory()= default;
+	virtual ~IExecuterFactory()= default;
 
 public:
 	/*
@@ -272,8 +272,8 @@ public:
 };
 
 //创建执行工厂
-typedef IExecuterFact* (*FuncCreateExeFact)();
+typedef IExecuterFactory* (*FuncCreateExeFactory)();
 //删除执行工厂
-typedef void(*FuncDeleteExeFact)(IExecuterFact* &fact);
+typedef void(*FuncDeleteExeFactory)(IExecuterFactory* &fact);
 
 NS_WTP_END

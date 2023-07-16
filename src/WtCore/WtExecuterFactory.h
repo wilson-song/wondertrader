@@ -14,7 +14,7 @@ NS_WTP_BEGIN
 class ExeUnitWrapper
 {
 public:
-	ExeUnitWrapper(ExecuteUnit* unitPtr, IExecuterFact* fact) :_unit(unitPtr), _fact(fact) {}
+	ExeUnitWrapper(ExecuteUnit* unitPtr, IExecuterFactory* fact) : _unit(unitPtr), _fact(fact) {}
 	~ExeUnitWrapper()
 	{
 		if (_unit)
@@ -28,7 +28,7 @@ public:
 
 private:
 	ExecuteUnit*	_unit;
-	IExecuterFact*	_fact;
+	IExecuterFactory*	_fact;
 };
 
 typedef std::shared_ptr<ExeUnitWrapper>	ExecuteUnitPtr;
@@ -55,9 +55,9 @@ private:
 	{
 		std::string		_module_path;
 		DllHandle		_module_inst;
-		IExecuterFact*	_fact;
-		FuncCreateExeFact	_creator;
-		FuncDeleteExeFact	_remover;
+		IExecuterFactory*	_fact;
+		FuncCreateExeFactory	_creator;
+		FuncDeleteExeFactory	_remover;
 	} ExeFactInfo;
 	typedef faster_hashmap<LongKey, ExeFactInfo> ExeFactMap;
 

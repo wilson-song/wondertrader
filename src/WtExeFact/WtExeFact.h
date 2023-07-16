@@ -11,7 +11,7 @@
 
 USING_NS_WTP;
 
-class WtExeFact : public IExecuterFact
+class WtExeFact : public IExecuterFactory
 {
 public:
 	WtExeFact();

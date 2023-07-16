@@ -29,7 +29,7 @@ class WtDiffExecuter : public ExecuteContext,
 {
 public:
 	WtDiffExecuter(WtExecuterFactory* factory, const char* name, IDataManager* dataMgr, IBaseDataMgr* bdMgr);
-	virtual ~WtDiffExecuter();
+	~WtDiffExecuter() override;
 
 public:
 	/*
@@ -49,76 +49,76 @@ private:
 public:
 	//////////////////////////////////////////////////////////////////////////
 	//ExecuteContext
-	virtual WTSTickSlice* getTicks(const char* code, uint32_t count, uint64_t etime = 0) override;
+	WTSTickSlice* getTicks(const char* code, uint32_t count, uint64_t etime /*= 0*/) override;
 
-	virtual WTSTickData*	grabLastTick(const char* code) override;
+	WTSTickData*	grabLastTick(const char* code) override;
 
-	virtual double		getPosition(const char* stdCode, bool validOnly = true, int32_t flag = 3) override;
-	virtual OrderMap*	getOrders(const char* code) override;
-	virtual double		getUndoneQty(const char* code) override;
+	double		getPosition(const char* stdCode, bool validOnly /*= true*/, int32_t flag /*= 3*/) override;
+	OrderMap*	getOrders(const char* code) override;
+	double		getUndoneQty(const char* code) override;
 
-	virtual OrderIDs	buy(const char* code, double price, double qty, bool bForceClose = false) override;
-	virtual OrderIDs	sell(const char* code, double price, double qty, bool bForceClose = false) override;
-	virtual bool		cancel(uint32_t localid) override;
-	virtual OrderIDs	cancel(const char* code, bool isBuy, double qty) override;
-	virtual void		writeLog(const char* message) override;
+	OrderIDs	buy(const char* code, double price, double qty, bool bForceClose /*= false*/) override;
+	OrderIDs	sell(const char* code, double price, double qty, bool bForceClose /*= false*/) override;
+	bool		cancel(uint32_t localid) override;
+	OrderIDs	cancel(const char* code, bool isBuy, double qty) override;
+	void		writeLog(const char* message) override;
 
-	virtual WTSCommodityInfo*	getCommodityInfo(const char* stdCode) override;
-	virtual WTSSessionInfo*		getSessionInfo(const char* stdCode) override;
+	WTSCommodityInfo*	getCommodityInfo(const char* stdCode) override;
+	WTSSessionInfo*		getSessionInfo(const char* stdCode) override;
 
-	virtual uint64_t	getCurTime() override;
+	uint64_t	getCurTime() override;
 
 public:
 	/*
 	 *	设置目标仓位
 	 */
-	virtual void set_position(const faster_hashmap<LongKey, double>& targets) override;
+	void set_position(const faster_hashmap<LongKey, double>& targets) override;
 
 
 	/*
 	 *	合约仓位变动
 	 */
-	virtual void on_position_changed(const char* stdCode, double diffPos) override;
+	void on_position_changed(const char* stdCode, double diffPos) override;
 
 	/*
 	 *	实时行情回调
 	 */
-	virtual void on_tick(const char* stdCode, WTSTickData* newTick) override;
+	void on_tick(const char* stdCode, WTSTickData* newTick) override;
 
 	/*
 	 *	成交回报
 	 */
-	virtual void on_trade(uint32_t localid, const char* stdCode, bool isBuy, double vol, double price) override;
+	void on_trade(uint32_t localid, const char* stdCode, bool isBuy, double vol, double price) override;
 
 	/*
 	 *	订单回报
 	 */
-	virtual void on_order(uint32_t localid, const char* stdCode, bool isBuy, double totalQty, double leftQty, double price, bool isCanceled = false) override;
+	void on_order(uint32_t localid, const char* stdCode, bool isBuy, double totalQty, double leftQty, double price, bool isCanceled /*= false*/) override;
 
 	/*
 	 *	
 	 */
-	virtual void on_position(const char* stdCode, bool isLong, double prevol, double preavail, double newvol, double newavail, uint32_t tradingday) override;
+	void on_position(const char* stdCode, bool isLong, double prevol, double preavail, double newvol, double newavail, uint32_t tradingday) override;
 
 	/*
 	 *	
 	 */
-	virtual void on_entrust(uint32_t localid, const char* stdCode, bool bSuccess, const char* message) override;
+	void on_entrust(uint32_t localid, const char* stdCode, bool bSuccess, const char* message) override;
 
 	/*
 	 *	交易通道就绪
 	 */
-	virtual void on_channel_ready() override;
+	void on_channel_ready() override;
 
 	/*
 	 *	交易通道丢失
 	 */
-	virtual void on_channel_lost() override;
+	void on_channel_lost() override;
 
 	/*
 	 *	资金回报
 	 */
-	virtual void on_account(const char* currency, double prebalance, double balance, double dynbalance,
+	void on_account(const char* currency, double prebalance, double balance, double dynbalance,
 		double avaliable, double closeprofit, double dynprofit, double margin, double fee, double deposit, double withdraw) override;
 
 
@@ -128,7 +128,7 @@ private:
 	WtExecuterFactory*	_factory;
 	IDataManager*		_data_mgr;
 	IBaseDataMgr*		_bd_mgr;
-	WTSVariant*			_config;
+	WTSVariant*			_config{};
 
 	double				_scale;				//放大倍数
 	bool				_channel_ready;

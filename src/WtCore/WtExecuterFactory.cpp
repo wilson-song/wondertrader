@@ -42,7 +42,7 @@ bool WtExecuterFactory::loadFactories(const char* path)
 			continue;
 		}
 
-		FuncCreateExeFact creator = (FuncCreateExeFact)DLLHelper::get_symbol(hInst, "createExecFact");
+		FuncCreateExeFactory creator = (FuncCreateExeFactory)DLLHelper::get_symbol(hInst, "createExecFact");
 		if (creator == NULL)
 		{
 			DLLHelper::free_library(hInst);
@@ -53,7 +53,7 @@ bool WtExecuterFactory::loadFactories(const char* path)
 		fInfo._module_inst = hInst;
 		fInfo._module_path = iter->path().string();
 		fInfo._creator = creator;
-		fInfo._remover = (FuncDeleteExeFact)DLLHelper::get_symbol(hInst, "deleteExecFact");
+		fInfo._remover = (FuncDeleteExeFactory)DLLHelper::get_symbol(hInst, "deleteExecFact");
 		fInfo._fact = fInfo._creator();
 
 		_factories[fInfo._fact->getName()] = fInfo;

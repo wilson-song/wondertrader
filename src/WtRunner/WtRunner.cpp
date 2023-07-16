@@ -17,7 +17,6 @@
 #include "../Includes/WTSVariant.hpp"
 #include "../WTSTools/WTSLogger.h"
 #include "../WTSUtils/WTSCfgLoader.h"
-#include "../WTSUtils/SignalHook.hpp"
 #include "../Share/StrUtil.hpp"
 
 

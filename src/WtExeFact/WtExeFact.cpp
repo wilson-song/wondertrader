@@ -17,13 +17,13 @@ const char* FACT_NAME = "WtExeFact";
 
 extern "C"
 {
-	EXPORT_FLAG IExecuterFact* createExecFact()
+	EXPORT_FLAG IExecuterFactory* createExecFact()
 	{
-		IExecuterFact* fact = new WtExeFact();
+		IExecuterFactory* fact = new WtExeFact();
 		return fact;
 	}
 
-	EXPORT_FLAG void deleteExecFact(IExecuterFact* fact)
+	EXPORT_FLAG void deleteExecFact(IExecuterFactory* fact)
 	{
 		if (fact != NULL)
 			delete fact;
