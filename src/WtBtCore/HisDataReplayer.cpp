@@ -3750,12 +3750,12 @@ bool HisDataReplayer::cacheIntegratedFutBarsFromBin(void* codeInfo, const std::s
 	HotSections secs;
 	//if (cInfo.isHot())
 	//{
-	//	if (!_hot_mgr.splitHotSecions(cInfo._exchg, cInfo._product, 19900102, endTDate, secs))
+	//	if (!_hot_mgr.splitHotSections(cInfo._exchg, cInfo._product, 19900102, endTDate, secs))
 	//		return false;
 	//}
 	//else if (cInfo.isSecond())
 	//{
-	//	if (!_hot_mgr.splitSecondSecions(cInfo._exchg, cInfo._product, 19900102, endTDate, secs))
+	//	if (!_hot_mgr.splitSecondSections(cInfo._exchg, cInfo._product, 19900102, endTDate, secs))
 	//		return false;
 	//}
 	if(strlen(ruleTag) > 0)

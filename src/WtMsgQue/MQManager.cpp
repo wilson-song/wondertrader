@@ -39,7 +39,7 @@ void MQManager::publish_message(WtUInt32 id, const char* topic, const void* data
 		return;
 	}
 
-	MQServerPtr& server = (MQServerPtr&)it->second;
+	auto& server = (MQServerPtr&)it->second;
 	server->publish(topic, data, dataLen);
 }
 
@@ -88,7 +88,7 @@ void MQManager::sub_topic(WtUInt32 id, const char* topic)
 		return;
 	}
 
-	MQClientPtr& client = (MQClientPtr&)it->second;
+	auto& client = (MQClientPtr&)it->second;
 	client->sub_topic(topic);
 }
 
@@ -101,6 +101,6 @@ void MQManager::start_client(WtUInt32 id)
 		return;
 	}
 
-	MQClientPtr& client = (MQClientPtr&)it->second;
+	auto& client = (MQClientPtr&)it->second;
 	client->start();
 }

@@ -179,9 +179,9 @@ void HftMocker::postTask(Task task)
 		return;
 	}
 
-	//if(_thrd == NULL)
+	//if(_thread == NULL)
 	//{
-	//	_thrd.reset(new std::thread([this](){
+	//	_thread.reset(new std::thread([this](){
 	//		while (!_stopped)
 	//		{
 	//			if(_tasks.empty())

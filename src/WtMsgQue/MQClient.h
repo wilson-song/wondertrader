@@ -21,7 +21,7 @@ class MQManager;
 class MQClient
 {
 public:
-	MQClient(MQManager* mgr);
+	explicit MQClient(MQManager* mgr);
 	~MQClient();
 
 private:
@@ -58,7 +58,7 @@ private:
 	MQManager*		_mgr;
 	uint32_t		_id;
 
-	StdThreadPtr	m_thrdRecv;
+	StdThreadPtr	m_threadRecv;
 	bool			m_bTerminated;
 	int64_t			m_iCheckTime;
 	bool			m_bNeedCheck;
@@ -67,7 +67,7 @@ private:
 	FuncMQCallback	_cb_message;
 
 	faster_hashset<std::string> _topics;
-	char			_recv_buf[1024 * 1024];
+	char			_recv_buf[1024 * 1024]{};
 };
 
 NS_WTP_END

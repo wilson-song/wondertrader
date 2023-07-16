@@ -83,7 +83,7 @@ public:
 	///@param pszFlowPath 存贮订阅信息文件的目录，默认为当前目录
 	///@return 创建出的UserApi
 	///modify for udp marketdata
-	static CThostFtdcMdApi *CreateFtdcMdApi(const char *pszFlowPath = "", const bool bIsUsingUdp=false, const bool bIsMulticast=false);
+	static CThostFtdcMdApi *CreateFtdcMdApi(const char *pszFlowPath = "", bool bIsUsingUdp=false, bool bIsMulticast=false);
 	
 	///获取API的版本信息
 	///@retrun 获取到的版本号
@@ -158,7 +158,7 @@ public:
 	///登出请求
 	virtual int ReqUserLogout(CThostFtdcUserLogoutField *pUserLogout, int nRequestID) = 0;
 protected:
-	~CThostFtdcMdApi(){};
+	~CThostFtdcMdApi()= default;
 };
 }
 #endif

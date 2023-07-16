@@ -25,7 +25,7 @@
 template<typename... Args>
 inline void write_log(IParserSpi* sink, WTSLogLevel ll, const char* format, const Args&... args)
 {
-	if (sink == NULL)
+	if (sink == nullptr)
 		return;
 
 	static thread_local char buffer[512] = { 0 };
@@ -38,16 +38,16 @@ extern "C"
 {
 	EXPORT_FLAG IParserApi* createParser()
 	{
-		ParserFemas* parser = new ParserFemas();
+		auto* parser = new ParserFemas();
 		return parser;
 	}
 
 	EXPORT_FLAG void deleteParser(IParserApi* &parser)
 	{
-		if (NULL != parser)
+		if (nullptr != parser)
 		{
 			delete parser;
-			parser = NULL;
+			parser = nullptr;
 		}
 	}
 };
@@ -66,7 +66,7 @@ uint32_t strToTime(const char* strTime)
 		pos++;
 	}
 
-	return strtoul(str.c_str(), NULL, 10);
+	return strtoul(str.c_str(), nullptr, 10);
 }
 
 inline double checkValid(double val)
@@ -78,7 +78,7 @@ inline double checkValid(double val)
 }
 
 ParserFemas::ParserFemas()
-	:m_pUserAPI(NULL)
+	:m_pUserAPI(nullptr)
 	,m_iRequestID(0)
 	,m_uTradingDate(0)
 {
@@ -87,7 +87,7 @@ ParserFemas::ParserFemas()
 
 ParserFemas::~ParserFemas()
 {
-	m_pUserAPI = NULL;
+	m_pUserAPI = nullptr;
 }
 
 bool ParserFemas::init(WTSVariant* config)
@@ -149,9 +149,9 @@ bool ParserFemas::disconnect()
 {
 	if(m_pUserAPI)
 	{
-		m_pUserAPI->RegisterSpi(NULL);
+		m_pUserAPI->RegisterSpi(nullptr);
 		m_pUserAPI->Release();
-		m_pUserAPI = NULL;
+		m_pUserAPI = nullptr;
 	}
 
 	return true;
@@ -249,8 +249,8 @@ void ParserFemas::OnRtnDepthMarketData( CUstpFtdcDepthMarketDataField *pDepthMar
 		}
 	}
 
-	WTSContractInfo* contract = m_pBaseDataMgr->getContract(pDepthMarketData->InstrumentID);
-	if (contract == NULL)
+	WTSContractInfo* contract = m_pBaseDataMgr->getContract(pDepthMarketData->InstrumentID, "");
+	if (contract == nullptr)
 		return;
 
 	WTSCommodityInfo* pCommInfo = contract->getCommInfo();
@@ -348,12 +348,12 @@ void ParserFemas::OnHeartBeatWarning( int nTimeLapse )
 
 void ParserFemas::ReqUserLogin()
 {
-	if(m_pUserAPI == NULL)
+	if(m_pUserAPI == nullptr)
 	{
 		return;
 	}
 
-	CUstpFtdcReqUserLoginField req;
+	CUstpFtdcReqUserLoginField req{};
 	memset(&req, 0, sizeof(req));
 	strcpy(req.BrokerID, m_strBroker.c_str());
 	strcpy(req.UserID, m_strUserID.c_str());

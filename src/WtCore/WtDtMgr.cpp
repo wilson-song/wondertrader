@@ -356,8 +356,8 @@ WTSTickSlice* WtDtMgr::get_tick_slice(const char* stdCode, uint32_t count, uint6
 
 WTSOrdQueSlice* WtDtMgr::get_order_queue_slice(const char* stdCode, uint32_t count, uint64_t etime /* = 0 */)
 {
-	if (_reader == NULL)
-		return NULL;
+	if (_reader == nullptr)
+		return nullptr;
 
 	return _reader->readOrdQueSlice(stdCode, count, etime);
 }

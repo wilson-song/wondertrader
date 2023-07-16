@@ -36,34 +36,34 @@ private:
 public:
 	bool	init(WTSVariant* cfg, WtEngine* engine);
 
-	void	regsiter_loader(IHisDataLoader* loader) { _loader = loader; }
+	void	register_loader(IHisDataLoader* loader) { _loader = loader; }
 
 	void	handle_push_quote(const char* stdCode, WTSTickData* newTick);
 
 	//////////////////////////////////////////////////////////////////////////
 	//IDataManager ½Ó¿Ú
-	virtual WTSTickSlice* get_tick_slice(const char* stdCode, uint32_t count, uint64_t etime = 0) override;
-	virtual WTSOrdQueSlice* get_order_queue_slice(const char* stdCode, uint32_t count, uint64_t etime = 0) override;
-	virtual WTSOrdDtlSlice* get_order_detail_slice(const char* stdCode, uint32_t count, uint64_t etime = 0) override;
-	virtual WTSTransSlice* get_transaction_slice(const char* stdCode, uint32_t count, uint64_t etime = 0) override;
-	virtual WTSKlineSlice* get_kline_slice(const char* stdCode, WTSKlinePeriod period, uint32_t times, uint32_t count, uint64_t etime = 0) override;
-	virtual WTSTickData* grab_last_tick(const char* stdCode) override;
-	virtual double get_adjusting_factor(const char* stdCode, uint32_t uDate) override;
+	WTSTickSlice* get_tick_slice(const char* stdCode, uint32_t count, uint64_t etime) override;
+	WTSOrdQueSlice* get_order_queue_slice(const char* stdCode, uint32_t count, uint64_t etime) override;
+	WTSOrdDtlSlice* get_order_detail_slice(const char* stdCode, uint32_t count, uint64_t etime) override;
+	WTSTransSlice* get_transaction_slice(const char* stdCode, uint32_t count, uint64_t etime) override;
+	WTSKlineSlice* get_kline_slice(const char* stdCode, WTSKlinePeriod period, uint32_t times, uint32_t count, uint64_t etime) override;
+	WTSTickData* grab_last_tick(const char* stdCode) override;
+	double get_adjusting_factor(const char* stdCode, uint32_t uDate) override;
 
-	virtual uint32_t get_adjusting_flag() override;
+	uint32_t get_adjusting_flag() override;
 
 	//////////////////////////////////////////////////////////////////////////
 	//IDataReaderSink
-	virtual void	on_bar(const char* code, WTSKlinePeriod period, WTSBarStruct* newBar) override;
-	virtual void	on_all_bar_updated(uint32_t updateTime) override;
+	void	on_bar(const char* code, WTSKlinePeriod period, WTSBarStruct* newBar) override;
+	void	on_all_bar_updated(uint32_t updateTime) override;
 
-	virtual IBaseDataMgr*	get_basedata_mgr() override;
-	virtual IHotMgr*		get_hot_mgr() override;
-	virtual uint32_t	get_date() override;
-	virtual uint32_t	get_min_time()override;
-	virtual uint32_t	get_secs() override;
+	IBaseDataMgr*	get_basedata_mgr() override;
+	IHotMgr*		get_hot_mgr() override;
+	uint32_t	get_date() override;
+	uint32_t	get_min_time()override;
+	uint32_t	get_secs() override;
 
-	virtual void		reader_log(WTSLogLevel ll, const char* message) override;
+	void		reader_log(WTSLogLevel ll, const char* message) override;
 
 	inline IDataReader*	reader() { return _reader; }
 	inline IHisDataLoader*	loader() { return _loader; }

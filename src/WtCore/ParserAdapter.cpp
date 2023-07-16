@@ -28,23 +28,22 @@ USING_NS_WTP;
 //////////////////////////////////////////////////////////////////////////
 //ParserAdapter
 ParserAdapter::ParserAdapter()
-	: _parser_api(NULL)
-	, _remover(NULL)
+	: _parser_api(nullptr)
+	, _remover(nullptr)
 	, _stopped(false)
-	, _bd_mgr(NULL)
-	, _stub(NULL)
-	, _cfg(NULL)
+	, _bd_mgr(nullptr)
+	, _stub(nullptr)
+	, _cfg(nullptr)
 {
 }
 
 
 ParserAdapter::~ParserAdapter()
-{
-}
+= default;
 
 bool ParserAdapter::initExt(const char* id, IParserApi* api, IParserStub* stub, IBaseDataMgr* bgMgr, IHotMgr* hotMgr/* = NULL*/)
 {
-	if (api == NULL)
+	if (api == nullptr)
 		return false;
 
 	_parser_api = api;
@@ -57,14 +56,14 @@ bool ParserAdapter::initExt(const char* id, IParserApi* api, IParserStub* stub, 
 	{
 		_parser_api->registerSpi(this);
 
-		if (_parser_api->init(NULL))
+		if (_parser_api->init(nullptr))
 		{
 			ContractSet contractSet;
-			WTSArray* ayContract = _bd_mgr->getContracts();
-			WTSArray::Iterator it = ayContract->begin();
+			WTSArray* ayContract = _bd_mgr->getContracts(nullptr);
+			auto it = ayContract->begin();
 			for (; it != ayContract->end(); it++)
 			{
-				WTSContractInfo* contract = STATIC_CONVERT(*it, WTSContractInfo*);
+				auto* contract = STATIC_CONVERT(*it, WTSContractInfo*);
 				contractSet.insert(contract->getFullCode());
 			}
 
@@ -84,7 +83,7 @@ bool ParserAdapter::initExt(const char* id, IParserApi* api, IParserStub* stub, 
 
 bool ParserAdapter::init(const char* id, WTSVariant* cfg, IParserStub* stub, IBaseDataMgr* bgMgr, IHotMgr* hotMgr/* = NULL*/)
 {
-	if (cfg == NULL)
+	if (cfg == nullptr)
 		return false;
 
 	_stub = stub;
@@ -92,7 +91,7 @@ bool ParserAdapter::init(const char* id, WTSVariant* cfg, IParserStub* stub, IBa
 	_hot_mgr = hotMgr;
 	_id = id;
 
-	if (_cfg != NULL)
+	if (_cfg != nullptr)
 		return false;
 
 	_cfg = cfg;
@@ -114,7 +113,7 @@ bool ParserAdapter::init(const char* id, WTSVariant* cfg, IParserStub* stub, IBa
 			dllpath = WtHelper::getModulePath(module.c_str(), "parsers", false);
 
 		DllHandle hInst = DLLHelper::load_library(dllpath.c_str());
-		if (hInst == NULL)
+		if (hInst == nullptr)
 		{
 			WTSLogger::log_dyn("parser", _id.c_str(), LL_ERROR, "[{}] Parser module {} loading failed", _id.c_str(), dllpath.c_str());
 			return false;
@@ -124,15 +123,15 @@ bool ParserAdapter::init(const char* id, WTSVariant* cfg, IParserStub* stub, IBa
 			WTSLogger::log_dyn("parser", _id.c_str(), LL_INFO, "[{}] Parser module {} loaded", _id.c_str(), dllpath.c_str());
 		}
 
-		FuncCreateParser pFuncCreateParser = (FuncCreateParser)DLLHelper::get_symbol(hInst, "createParser");
-		if (NULL == pFuncCreateParser)
+		auto pFuncCreateParser = (FuncCreateParser)DLLHelper::get_symbol(hInst, "createParser");
+		if (nullptr == pFuncCreateParser)
 		{
 			WTSLogger::log_dyn("parser", _id.c_str(), LL_FATAL, "[{}] Entrance function createParser not found", _id.c_str());
 			return false;
 		}
 
 		_parser_api = pFuncCreateParser();
-		if (NULL == _parser_api)
+		if (nullptr == _parser_api)
 		{
 			WTSLogger::log_dyn("parser", _id.c_str(), LL_FATAL, "[{}] Creating parser api failed", _id.c_str());
 			return false;
@@ -215,10 +214,10 @@ bool ParserAdapter::init(const char* id, WTSVariant* cfg, IParserStub* stub, IBa
 				for (; it != _exchg_filter.end(); it++)
 				{
 					WTSArray* ayContract =_bd_mgr->getContracts((*it).c_str());
-					WTSArray::Iterator it = ayContract->begin();
+					auto it = ayContract->begin();
 					for (; it != ayContract->end(); it++)
 					{
-						WTSContractInfo* contract = STATIC_CONVERT(*it, WTSContractInfo*);
+						auto* contract = STATIC_CONVERT(*it, WTSContractInfo*);
 						contractSet.insert(contract->getFullCode());
 					}
 
@@ -227,11 +226,11 @@ bool ParserAdapter::init(const char* id, WTSVariant* cfg, IParserStub* stub, IBa
 			}
 			else
 			{
-				WTSArray* ayContract =_bd_mgr->getContracts();
-				WTSArray::Iterator it = ayContract->begin();
+				WTSArray* ayContract =_bd_mgr->getContracts(nullptr);
+				auto it = ayContract->begin();
 				for (; it != ayContract->end(); it++)
 				{
-					WTSContractInfo* contract = STATIC_CONVERT(*it, WTSContractInfo*);
+					auto* contract = STATIC_CONVERT(*it, WTSContractInfo*);
 					contractSet.insert(contract->getFullCode());
 				}
 
@@ -251,7 +250,7 @@ bool ParserAdapter::init(const char* id, WTSVariant* cfg, IParserStub* stub, IBa
 		WTSLogger::log_dyn("parser", _id.c_str(), LL_ERROR, "[{}] Parser initializing failed: creating api failed...", _id.c_str());
 	}
 
-	WTSLogger::log_dyn("parser", _id.c_str(), LL_INFO, "[{}] Parser initialzied, check_time: {}", _id.c_str(), _check_time);
+	WTSLogger::log_dyn("parser", _id.c_str(), LL_INFO, "[{}] Parser initialized, check_time: {}", _id.c_str(), _check_time);
 
 	return true;
 }
@@ -272,7 +271,7 @@ void ParserAdapter::release()
 
 bool ParserAdapter::run()
 {
-	if (_parser_api == NULL)
+	if (_parser_api == nullptr)
 		return false;
 
 	_parser_api->connect();
@@ -280,23 +279,23 @@ bool ParserAdapter::run()
 }
 
 //合理毫秒数时间差
-const int RESONABLE_MILLISECS = 60 * 60 * 1000;
+const int REASONABLE_MILLISECONDS = 60 * 60 * 1000;
 void ParserAdapter::handleQuote(WTSTickData *quote, uint32_t procFlag)
 {
-	if (quote == NULL || _stopped || quote->actiondate() == 0 || quote->tradingdate() == 0)
+	if (quote == nullptr || _stopped || quote->actiondate() == 0 || quote->tradingdate() == 0)
 		return;
 
 	if (!_exchg_filter.empty() && (_exchg_filter.find(quote->exchg()) == _exchg_filter.end()))
 		return;
 
 	WTSContractInfo* cInfo = quote->getContractInfo();
-	if (cInfo == NULL)
+	if (cInfo == nullptr)
 	{
 		cInfo = _bd_mgr->getContract(quote->code(), quote->exchg());
 		quote->setContractInfo(cInfo);
 	}
 
-	if (cInfo == NULL)
+	if (cInfo == nullptr)
 		return;
 
 	WTSCommodityInfo* commInfo = cInfo->getCommInfo();
@@ -313,7 +312,7 @@ void ParserAdapter::handleQuote(WTSTickData *quote, uint32_t procFlag)
 		 *	则认为tick的时间戳是错误的
 		 *	这里要求本地时间是要时常进行校准的
 		 */
-		if (tick_time - local_time > RESONABLE_MILLISECS)
+		if (tick_time - local_time > REASONABLE_MILLISECONDS)
 		{
 			WTSLogger::warn("Tick of {} with wrong timestamp {}.{} received, skipped", cInfo->getFullCode(), quote->actiondate(), quote->actiontime());
 			return;
@@ -356,7 +355,7 @@ void ParserAdapter::handleOrderQueue(WTSOrdQueData* ordQueData)
 		return;
 
 	WTSContractInfo* cInfo = _bd_mgr->getContract(ordQueData->code(), ordQueData->exchg());
-	if (cInfo == NULL)
+	if (cInfo == nullptr)
 		return;
 
 	WTSCommodityInfo* commInfo = cInfo->getCommInfo();
@@ -379,7 +378,7 @@ void ParserAdapter::handleOrderDetail(WTSOrdDtlData* ordDtlData)
 		return;
 
 	WTSContractInfo* cInfo = _bd_mgr->getContract(ordDtlData->code(), ordDtlData->exchg());
-	if (cInfo == NULL)
+	if (cInfo == nullptr)
 		return;
 
 	WTSCommodityInfo* commInfo = cInfo->getCommInfo();
@@ -402,7 +401,7 @@ void ParserAdapter::handleTransaction(WTSTransData* transData)
 		return;
 
 	WTSContractInfo* cInfo = _bd_mgr->getContract(transData->code(), transData->exchg());
-	if (cInfo == NULL)
+	if (cInfo == nullptr)
 		return;
 
 	WTSCommodityInfo* commInfo = cInfo->getCommInfo();
@@ -427,9 +426,9 @@ void ParserAdapter::handleParserLog(WTSLogLevel ll, const char* message)
 //ParserAdapterMgr
 void ParserAdapterMgr::release()
 {
-	for (auto it = _adapters.begin(); it != _adapters.end(); it++)
+	for (const auto & _adapter : _adapters)
 	{
-		it->second->release();
+		_adapter.second->release();
 	}
 
 	_adapters.clear();
@@ -437,7 +436,7 @@ void ParserAdapterMgr::release()
 
 bool ParserAdapterMgr::addAdapter(const char* id, ParserAdapterPtr& adapter)
 {
-	if (adapter == NULL || strlen(id) == 0)
+	if (adapter == nullptr || strlen(id) == 0)
 		return false;
 
 	auto it = _adapters.find(id);
@@ -461,14 +460,14 @@ ParserAdapterPtr ParserAdapterMgr::getAdapter(const char* id)
 		return it->second;
 	}
 
-	return ParserAdapterPtr();
+	return {};
 }
 
 void ParserAdapterMgr::run()
 {
-	for (auto it = _adapters.begin(); it != _adapters.end(); it++)
+	for (const auto & _adapter : _adapters)
 	{
-		it->second->run();
+		_adapter.second->run();
 	}
 
 	WTSLogger::info("{} parsers started", _adapters.size());

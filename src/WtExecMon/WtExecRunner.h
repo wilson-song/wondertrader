@@ -16,7 +16,7 @@ NS_WTP_END
 
 USING_NS_WTP;
 
-class WtExecRunner : public IParserStub, public IExecuterStub
+class WtExecRunner : public IParserStub, public IExecutorStub
 {
 public:
 	WtExecRunner();
@@ -53,7 +53,7 @@ public:
 	virtual void handle_push_quote(WTSTickData* curTick, uint32_t hotFlag = 0) override;
 
 	///////////////////////////////////////////////////////////////////////////
-	//IExecuterStub 接口
+	//IExecutorStub 接口
 	virtual uint64_t get_real_time() override;
 	virtual WTSCommodityInfo* get_comm_info(const char* stdCode) override;
 	virtual WTSSessionInfo* get_sess_info(const char* stdCode) override;

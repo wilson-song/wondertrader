@@ -22,13 +22,13 @@ class ParserSpi : public IParserSpi
 public:
 	ParserSpi(){}
 
-	bool init(WTSVariant* params, const char* ttype)
+	bool init(WTSVariant* params, const char* type)
 	{
 		m_pParams = params;
 		if (m_pParams)
 			m_pParams->retain();
 
-		m_strModule = ttype;
+		m_strModule = type;
 		return true;
 	}
 
@@ -55,11 +55,11 @@ public:
 		}
 
 		ContractSet contractSet;
-		WTSArray* ayContract = g_bdMgr.getContracts();
-		WTSArray::Iterator it = ayContract->begin();
+		WTSArray* ayContract = g_bdMgr.getContracts("");
+		auto it = ayContract->begin();
 		for (; it != ayContract->end(); it++)
 		{
-			WTSContractInfo* contract = STATIC_CONVERT(*it, WTSContractInfo*);
+			auto* contract = STATIC_CONVERT(*it, WTSContractInfo*);
 			contractSet.insert(contract->getFullCode());
 		}
 
@@ -71,21 +71,21 @@ public:
 	bool createParser(const char* moduleName)
 	{
         DllHandle hInst = DLLHelper::load_library(moduleName);
-		if (hInst == NULL)
+		if (hInst == nullptr)
 		{
 			WTSLogger::error("Loading module {} failed", moduleName);
 			return false;
 		}
 
-		FuncCreateParser pCreator = (FuncCreateParser)DLLHelper::get_symbol(hInst, "createParser");
-		if (NULL == pCreator)
+		auto pCreator = (FuncCreateParser)DLLHelper::get_symbol(hInst, "createParser");
+		if (nullptr == pCreator)
 		{
 			WTSLogger::error("Entry function createParser not found");
 			return false;
 		}
 
 		_api = pCreator();
-		if (NULL == _api)
+		if (nullptr == _api)
 		{
 			WTSLogger::error("Creating parser api failed");
 			return false;
@@ -96,17 +96,17 @@ public:
 	}
 
 public:
-	virtual void handleParserLog(WTSLogLevel ll, const char* message) override
+	void handleParserLog(WTSLogLevel ll, const char* message) override
 	{
 		WTSLogger::log_raw(ll, message);
 	}
 
-	virtual void handleQuote(WTSTickData *quote, uint32_t procFlag) override
+	void handleQuote(WTSTickData *quote, uint32_t procFlag) override
 	{
 		//WTSLogger::info("{}@{}.{}, price:{}, voume:{}", quote->code(), quote->actiondate(), quote->actiontime(), quote->price(), quote->totalvolume());
 	}
 
-	virtual void handleSymbolList(const WTSArray* aySymbols) override
+	void handleSymbolList(const WTSArray* aySymbols) override
 	{
 
 	}
@@ -119,10 +119,10 @@ public:
 	
 
 private:
-	IParserApi*			_api;
-	FuncDeleteParser	m_funcRemover;
+	IParserApi*			_api{};
+	FuncDeleteParser	m_funcRemover{};
 	std::string			m_strModule;
-	WTSVariant*			m_pParams;
+	WTSVariant*			m_pParams{};
 };
 
 std::string getBaseFolder()
@@ -135,7 +135,7 @@ std::string getBaseFolder()
 		basePath = StrUtil::standardisePath(basePath);
 	}
 
-	return basePath.c_str();
+	return basePath;
 }
 
 int main()
@@ -143,7 +143,7 @@ int main()
 	WTSLogger::init("logcfg.yaml");
 
 	WTSVariant* root = WTSCfgLoader::load_from_file("config.yaml");
-	if (root == NULL)
+	if (root == nullptr)
 	{
 		WTSLogger::log_raw(LL_ERROR, "Loading config.yaml failed");
 		return 0;
@@ -162,13 +162,13 @@ int main()
 	std::string module = cfg->getCString("parser");
 	std::string profile = cfg->getCString("profile");
 	WTSVariant* params = root->get(profile.c_str());
-	if (params == NULL)
+	if (params == nullptr)
 	{
 		WTSLogger::error("Configure {} not exist", profile);
 		return 0;
 	}
 
-	ParserSpi* parser = new ParserSpi;
+	auto* parser = new ParserSpi;
 	parser->init(params, module.c_str());
 	parser->run();
 

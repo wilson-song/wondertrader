@@ -112,7 +112,7 @@ WTSSessionInfo* WtUftEngine::get_session_info(const char* sid, bool isCode /* = 
 WTSTickSlice* WtUftEngine::get_tick_slice(uint32_t sid, const char* code, uint32_t count)
 {
 	return NULL;
-	return _data_mgr->get_tick_slice(code, count);
+	return _data_mgr->get_tick_slice(code, count, 0);
 }
 
 WTSTickData* WtUftEngine::get_last_tick(uint32_t sid, const char* stdCode)
@@ -388,7 +388,7 @@ UftContextPtr WtUftEngine::getContext(uint32_t id)
 
 WTSOrdQueSlice* WtUftEngine::get_order_queue_slice(uint32_t sid, const char* code, uint32_t count)
 {
-	return _data_mgr->get_order_queue_slice(code, count);
+	return _data_mgr->get_order_queue_slice(code, count, 0);
 }
 
 WTSOrdDtlSlice* WtUftEngine::get_order_detail_slice(uint32_t sid, const char* code, uint32_t count)

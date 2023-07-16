@@ -40,7 +40,7 @@ typedef std::shared_ptr<ISelStraCtx> SelContextPtr;
 class WtSelRtTicker;
 
 
-class WtSelEngine : public WtEngine, public IExecuterStub
+class WtSelEngine : public WtEngine, public IExecutorStub
 {
 public:
 	WtSelEngine();
@@ -66,7 +66,7 @@ public:
 	virtual void on_session_end() override;
 
 	///////////////////////////////////////////////////////////////////////////
-	//IExecuterStub 接口
+	//IExecutorStub 接口
 	virtual uint64_t get_real_time() override;
 	virtual WTSCommodityInfo* get_comm_info(const char* stdCode) override;
 	virtual WTSSessionInfo* get_sess_info(const char* stdCode) override;

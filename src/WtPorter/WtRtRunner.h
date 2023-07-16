@@ -185,7 +185,7 @@ public:
 private:
 	bool initTraders(WTSVariant* cfgTrader);
 	bool initParsers(WTSVariant* cfgParser);
-	bool initExecuters(WTSVariant* cfgExecuter);
+	bool initExecutors(WTSVariant* cfgExecutor);
 	bool initDataMgr();
 	bool initEvtNotifier();
 	bool initCtaStrategies();

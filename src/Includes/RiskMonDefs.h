@@ -10,9 +10,9 @@
 #pragma once
 #include "../Includes/WTSMarcos.h"
 
-#include <stdio.h>
-#include <stdint.h>
-#include <string.h>
+#include <cstdio>
+#include <cstdint>
+#include <cstring>
 
 /*
  *	这是风控模块基本定义文件
@@ -30,7 +30,7 @@ class WTSPortFundInfo;
 /*
  *	组合上下文
  */
-class WtPortContext
+class WtPortfolioContext
 {
 public:
 	/*
@@ -83,8 +83,8 @@ public:
 class WtRiskMonitor
 {
 public:
-	WtRiskMonitor():_ctx(NULL){}
-	virtual ~WtRiskMonitor(){}
+	WtRiskMonitor():_ctx(nullptr){}
+	virtual ~WtRiskMonitor()= default;
 
 public:
 	/*
@@ -102,7 +102,7 @@ public:
 	*	ctx		执行单元运行环境
 	*	code	管理的合约代码
 	*/
-	virtual void init(WtPortContext* ctx, WTSVariant* cfg){ _ctx = ctx; }
+	virtual void init(WtPortfolioContext* ctx, WTSVariant* cfg){ _ctx = ctx; }
 
 	/*
 	 *	启动风控模块
@@ -115,7 +115,7 @@ public:
 	virtual void stop(){}
 
 protected:
-	WtPortContext*	_ctx;
+	WtPortfolioContext*	_ctx;
 };
 
 
@@ -123,11 +123,11 @@ protected:
 //风控模块工厂接口
 typedef void(*FuncEnumRiskMonCallback)(const char* factName, const char* unitName, bool isLast);
 
-class IRiskMonitorFact
+class IRiskMonitorFactory
 {
 public:
-	IRiskMonitorFact(){}
-	virtual ~IRiskMonitorFact(){}
+	IRiskMonitorFactory()= default;
+	virtual ~IRiskMonitorFactory()= default;
 
 public:
 	/*
@@ -143,17 +143,17 @@ public:
 	/*
 	*	根据名称创建交易通道风控模块
 	*/
-	virtual WtRiskMonitor* createRiskMonotor(const char* name) = 0;
+	virtual WtRiskMonitor* createRiskMonitor(const char* name) = 0;
 
 	/*
 	*	删除交易通道风控模块
 	*/
-	virtual bool deleteRiskMonotor(WtRiskMonitor* unit) = 0;
+	virtual bool deleteRiskMonitor(WtRiskMonitor* unit) = 0;
 };
 
 //创建执行工厂
-typedef IRiskMonitorFact* (*FuncCreateRiskMonFact)();
+typedef IRiskMonitorFactory* (*FuncCreateRiskMonFact)();
 //删除执行工厂
-typedef void(*FuncDeleteRiskMonFact)(IRiskMonitorFact* &fact);
+typedef void(*FuncDeleteRiskMonFact)(IRiskMonitorFactory* &fact);
 
 NS_WTP_END

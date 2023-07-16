@@ -1,6 +1,6 @@
 #pragma once
 #include "../Includes/FasterDefs.h"
-#include <stdint.h>
+#include <cstdint>
 
 NS_WTP_BEGIN
 class WTSCommodityInfo;
@@ -8,7 +8,7 @@ class WTSSessionInfo;
 class IHotMgr;
 class WTSTickData;
 
-class IExecuterStub
+class IExecutorStub
 {
 public:
 	virtual uint64_t get_real_time() = 0;
@@ -21,7 +21,7 @@ public:
 class IExecCommand
 {
 public:
-	IExecCommand(const char* name) :_stub(NULL), _name(name){}
+	explicit IExecCommand(const char* name) :_stub(nullptr), _name(name){}
 	/*
 	 *	设置目标仓位
 	 */
@@ -38,14 +38,14 @@ public:
 	virtual void on_tick(const char* stdCode, WTSTickData* newTick) {}
 
 
-	inline void setStub(IExecuterStub* stub) { _stub = stub; }
+	inline void setStub(IExecutorStub* stub) { _stub = stub; }
 
 	inline const char* name() const { return _name.c_str(); }
 
 	inline void setName(const char* name) { _name = name; }
 
 protected:
-	IExecuterStub*	_stub;
+	IExecutorStub*	_stub;
 	std::string		_name;
 };
 NS_WTP_END

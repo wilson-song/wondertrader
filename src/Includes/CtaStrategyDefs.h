@@ -93,13 +93,13 @@ protected:
 
 //////////////////////////////////////////////////////////////////////////
 //策略工厂接口
-typedef void(*FuncEnumStrategyCallback)(const char* factName, const char* straName, bool isLast);
+typedef void(*FuncEnumStrategyCallback)(const char* factName, const char* strategyName, bool isLast);
 
-class ICtaStrategyFact
+class ICtaStrategyFactory
 {
 public:
-	ICtaStrategyFact(){}
-	virtual ~ICtaStrategyFact(){}
+	ICtaStrategyFactory()= default;
+	virtual ~ICtaStrategyFactory()= default;
 
 public:
 	/*
@@ -121,10 +121,10 @@ public:
 	/*
 	 *	删除策略
 	 */
-	virtual bool deleteStrategy(CtaStrategy* stra) = 0;
+	virtual bool deleteStrategy(CtaStrategy* strategy) = 0;
 };
 
 //创建执行工厂
-typedef ICtaStrategyFact* (*FuncCreateStraFact)();
+typedef ICtaStrategyFactory* (*FuncCreateStrategyFact)();
 //删除执行工厂
-typedef void(*FuncDeleteStraFact)(ICtaStrategyFact* &fact);
+typedef void(*FuncDeleteStrategyFact)(ICtaStrategyFactory* &fact);

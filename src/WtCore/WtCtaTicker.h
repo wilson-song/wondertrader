@@ -8,7 +8,7 @@
  * \brief 
  */
 #pragma once
-#include <stdint.h>
+#include <cstdint>
 #include <atomic>
 
 #include "../Includes/WTSMarcos.h"
@@ -25,7 +25,7 @@ class WtCtaEngine;
 class WtCtaRtTicker
 {
 public:
-	WtCtaRtTicker(WtCtaEngine* engine) 
+	explicit WtCtaRtTicker(WtCtaEngine* engine)
 		: _engine(engine)
 		, _stopped(false)
 		, _date(0)
@@ -33,7 +33,7 @@ public:
 		, _next_check_time(0)
 		, _last_emit_pos(0)
 		, _cur_pos(0){}
-	~WtCtaRtTicker(){}
+	~WtCtaRtTicker()= default;
 
 public:
 	void	init(IDataReader* store, const char* sessionID);
@@ -44,15 +44,15 @@ public:
 	void	stop();
 
 	bool		is_in_trading() const;
-	uint32_t	time_to_mins(uint32_t uTime) const;
+	uint32_t	time_to_minutes(uint32_t uTime) const;
 
 private:
 	void	trigger_price(WTSTickData* curTick, uint32_t hotFlag = 0);
 
 private:
-	WTSSessionInfo*	_s_info;
+	WTSSessionInfo*	_s_info{};
 	WtCtaEngine*	_engine;
-	IDataReader*	_store;
+	IDataReader*	_store{};
 
 	uint32_t	_date;
 	uint32_t	_time;
@@ -64,7 +64,7 @@ private:
 	std::atomic<uint32_t>	_last_emit_pos;
 
 	bool			_stopped;
-	StdThreadPtr	_thrd;
+	StdThreadPtr	_thread;
 
 };
 NS_WTP_END

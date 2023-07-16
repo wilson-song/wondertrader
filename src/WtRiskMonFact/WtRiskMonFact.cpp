@@ -7,34 +7,29 @@
  * 
  */
 #include "WtRiskMonFact.h"
-#include "WtSimpRiskMon.h"
+#include "WtSimpleRiskMon.h"
 
 const char* FACT_NAME = "WtRiskMonFact";
 
 extern "C"
 {
-	EXPORT_FLAG IRiskMonitorFact* createRiskMonFact()
+	EXPORT_FLAG IRiskMonitorFactory* createRiskMonFact()
 	{
-		IRiskMonitorFact* fact = new WtRiskMonFact();
+		IRiskMonitorFactory* fact = new WtRiskMonFact();
 		return fact;
 	}
 
-	EXPORT_FLAG void deleteRiskMonFact(IRiskMonitorFact* fact)
+	EXPORT_FLAG void deleteRiskMonFact(IRiskMonitorFactory* fact)
 	{
-		if (fact != NULL)
-			delete fact;
+        delete fact;
 	}
 }
 
 
-WtRiskMonFact::WtRiskMonFact()
-{
-}
+WtRiskMonFact::WtRiskMonFact() = default;
 
 
-WtRiskMonFact::~WtRiskMonFact()
-{
-}
+WtRiskMonFact::~WtRiskMonFact() = default;
 
 const char* WtRiskMonFact::getName()
 {
@@ -47,16 +42,16 @@ void WtRiskMonFact::enumRiskMonitors(FuncEnumRiskMonCallback cb)
 	cb(FACT_NAME, "SimpleRiskMon", true);
 }
 
-WtRiskMonitor* WtRiskMonFact::createRiskMonotor(const char* name)
+WtRiskMonitor* WtRiskMonFact::createRiskMonitor(const char* name)
 {
 	if (strcmp(name, "SimpleRiskMon") == 0)
 		return new WtSimpleRiskMon();
-	return NULL;
+	return nullptr;
 }
 
-bool WtRiskMonFact::deleteRiskMonotor(WtRiskMonitor* unit)
+bool WtRiskMonFact::deleteRiskMonitor(WtRiskMonitor* unit)
 {
-	if (unit == NULL)
+	if (unit == nullptr)
 		return true;
 
 	if (strcmp(unit->getFactName(), FACT_NAME) != 0)

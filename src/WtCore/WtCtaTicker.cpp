@@ -27,7 +27,7 @@ void WtCtaRtTicker::init(IDataReader* store, const char* sessionID)
 {
 	_store = store;
 	_s_info = _engine->get_session_info(sessionID);
-	if(_s_info == NULL)
+	if(_s_info == nullptr)
 		WTSLogger::fatal("Session {} is invalid, CtaTicker cannot run correctly", sessionID);
 	else
 		WTSLogger::info("CtaTicker will drive engine with session {}", sessionID);
@@ -55,7 +55,7 @@ void WtCtaRtTicker::trigger_price(WTSTickData* curTick, uint32_t hotFlag /* = 0 
 
 void WtCtaRtTicker::on_tick(WTSTickData* curTick, uint32_t hotFlag /* = 0 */)
 {
-	if (_thrd == NULL)
+	if (_thread == nullptr)
 	{
 		trigger_price(curTick, hotFlag);
 		return;
@@ -149,7 +149,7 @@ void WtCtaRtTicker::on_tick(WTSTickData* curTick, uint32_t hotFlag /* = 0 */)
 
 void WtCtaRtTicker::run()
 {
-	if (_thrd)
+	if (_thread)
 		return;
 
 	/*
@@ -165,7 +165,7 @@ void WtCtaRtTicker::run()
 
 	//先检查当前时间, 如果大于
 
-	_thrd.reset(new StdThread([this](){
+	_thread.reset(new StdThread([this](){
 		while(!_stopped)
 		{
 			uint32_t offTime = _s_info->offsetTime(_engine->get_min_time(), true);
@@ -257,21 +257,21 @@ void WtCtaRtTicker::run()
 void WtCtaRtTicker::stop()
 {
 	_stopped = true;
-	if (_thrd)
-		_thrd->join();
+	if (_thread)
+		_thread->join();
 }
 
 bool WtCtaRtTicker::is_in_trading() const 
 {
-	if (_s_info == NULL)
+	if (_s_info == nullptr)
 		return false;
 
 	return _s_info->isInTradingTime(_time/100000, true);
 }
 
-uint32_t WtCtaRtTicker::time_to_mins(uint32_t uTime) const
+uint32_t WtCtaRtTicker::time_to_minutes(uint32_t uTime) const
 {
-	if (_s_info == NULL)
+	if (_s_info == nullptr)
 		return uTime;
 
 	return _s_info->timeToMinutes(uTime, true);

@@ -372,9 +372,9 @@ protected:
 	{
 		std::string		_module_path;
 		DllHandle		_module_inst;
-		ICtaStrategyFact*	_fact;
-		FuncCreateStraFact	_creator;
-		FuncDeleteStraFact	_remover;
+		ICtaStrategyFactory*	_fact;
+		FuncCreateStrategyFact	_creator;
+		FuncDeleteStrategyFact	_remover;
 
 		_StraFactInfo()
 		{

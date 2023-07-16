@@ -37,7 +37,7 @@ const char* getBinDir()
 
 
 WtRunner::WtRunner()
-	: _data_store(NULL)
+	: _data_store(nullptr)
 	, _is_hft(false)
 	, _is_sel(false)
 {
@@ -52,9 +52,7 @@ WtRunner::WtRunner()
 }
 
 
-WtRunner::~WtRunner()
-{
-}
+WtRunner::~WtRunner() = default;
 
 bool WtRunner::init()
 {
@@ -75,7 +73,7 @@ bool WtRunner::config()
 		cfgFile = "config.yaml";
 
 	_config = WTSCfgLoader::load_from_file(cfgFile);
-	if(_config == NULL)
+	if(_config == nullptr)
 	{
 		WTSLogger::error("Loading config file {} failed", cfgFile);
 		return false;
@@ -219,29 +217,29 @@ bool WtRunner::config()
 	if (!_is_hft)
 	{
 		WTSVariant* cfgExec = _config->get("executers");
-		if (cfgExec != NULL)
+		if (cfgExec != nullptr)
 		{
 			if (cfgExec->type() == WTSVariant::VT_String)
 			{
 				const char* filename = cfgExec->asCString();
 				if (StdFile::exists(filename))
 				{
-					WTSLogger::info("Reading executer config from {}...", filename);
+					WTSLogger::info("Reading executor config from {}...", filename);
 					WTSVariant* var = WTSCfgLoader::load_from_file(filename);
 					if (var)
 					{
-						if (!initExecuters(var->get("executers")))
-							WTSLogger::error("Loading executers failed");
+						if (!initExecutors(var->get("executers")))
+							WTSLogger::error("Loading executors failed");
 
 						WTSVariant* c = var->get("routers");
-						if (c != NULL)
+						if (c != nullptr)
 							_cta_engine.loadRouterRules(c);
 
 						var->release();
 					}
 					else
 					{
-						WTSLogger::error("Loading executer config {} failed", filename);
+						WTSLogger::error("Loading executor config {} failed", filename);
 					}
 				}
 				else
@@ -251,12 +249,12 @@ bool WtRunner::config()
 			}
 			else if (cfgExec->type() == WTSVariant::VT_Array)
 			{
-				initExecuters(cfgExec);
+                initExecutors(cfgExec);
 			}
 		}
 
 		WTSVariant* cfgRouter = _config->get("routers");
-		if (cfgRouter != NULL)
+		if (cfgRouter != nullptr)
 			_cta_engine.loadRouterRules(cfgRouter);
 	}
 
@@ -271,15 +269,15 @@ bool WtRunner::config()
 bool WtRunner::initCtaStrategies()
 {
 	WTSVariant* cfg = _config->get("strategies");
-	if (cfg == NULL || cfg->type() != WTSVariant::VT_Object)
+	if (cfg == nullptr || cfg->type() != WTSVariant::VT_Object)
 		return false;
 
 	cfg = cfg->get("cta");
-	if (cfg == NULL || cfg->type() != WTSVariant::VT_Array)
+	if (cfg == nullptr || cfg->type() != WTSVariant::VT_Array)
 		return false;
 
 	std::string path = WtHelper::getCWD() + "cta/";
-	_cta_stra_mgr.loadFactories(path.c_str());
+	_cta_strategy_mgr.loadFactories(path.c_str());
 
 	for (uint32_t idx = 0; idx < cfg->size(); idx++)
 	{
@@ -290,9 +288,9 @@ bool WtRunner::initCtaStrategies()
 		const char* id = cfgItem->getCString("id");
 		const char* name = cfgItem->getCString("name");
 		int32_t slippage = cfgItem->getInt32("slippage");
-		CtaStrategyPtr stra = _cta_stra_mgr.createStrategy(name, id);
+		CtaStrategyPtr stra = _cta_strategy_mgr.createStrategy(name, id);
 		stra->self()->init(cfgItem->get("params"));
-		CtaStraContext* ctx = new CtaStraContext(&_cta_engine, id, slippage);
+		auto* ctx = new CtaStraContext(&_cta_engine, id, slippage);
 		ctx->set_strategy(stra->self());
 		_cta_engine.addContext(CtaContextPtr(ctx));
 	}
@@ -303,15 +301,15 @@ bool WtRunner::initCtaStrategies()
 bool WtRunner::initHftStrategies()
 {
 	WTSVariant* cfg = _config->get("strategies");
-	if (cfg == NULL || cfg->type() != WTSVariant::VT_Object)
+	if (cfg == nullptr || cfg->type() != WTSVariant::VT_Object)
 		return false;
 
 	cfg = cfg->get("hft");
-	if (cfg == NULL || cfg->type() != WTSVariant::VT_Array)
+	if (cfg == nullptr || cfg->type() != WTSVariant::VT_Array)
 		return false;
 
 	std::string path = WtHelper::getCWD() + "hft/";
-	_hft_stra_mgr.loadFactories(path.c_str());
+	_hft_strategy_mgr.loadFactories(path.c_str());
 
 	for (uint32_t idx = 0; idx < cfg->size(); idx++)
 	{
@@ -323,16 +321,16 @@ bool WtRunner::initHftStrategies()
 		const char* name = cfgItem->getCString("name");
 		bool agent = cfgItem->getBoolean("agent");
 		int32_t slippage = cfgItem->getInt32("slippage");
-		HftStrategyPtr stra = _hft_stra_mgr.createStrategy(name, id);
-		if (stra == NULL)
+		HftStrategyPtr strategy = _hft_strategy_mgr.createStrategy(name, id);
+		if (strategy == nullptr)
 			continue;
 
-		stra->self()->init(cfgItem->get("params"));
-		HftStraContext* ctx = new HftStraContext(&_hft_engine, id, agent,slippage);
-		ctx->set_strategy(stra->self());
+		strategy->self()->init(cfgItem->get("params"));
+		auto* ctx = new HftStraContext(&_hft_engine, id, agent,slippage);
+		ctx->set_strategy(strategy->self());
 
-		const char* traderid = cfgItem->getCString("trader");
-		TraderAdapterPtr trader = _traders.getAdapter(traderid);
+		const char* traderID = cfgItem->getCString("trader");
+		TraderAdapterPtr trader = _traders.getAdapter(traderID);
 		if(trader)
 		{
 			ctx->setTrader(trader.get());
@@ -340,7 +338,7 @@ bool WtRunner::initHftStrategies()
 		}
 		else
 		{
-			WTSLogger::error("Trader {} not exists, binding trader to HFT strategy failed", traderid);
+			WTSLogger::error("Trader {} not exists, binding trader to HFT strategy failed", traderID);
 		}
 
 		_hft_engine.addContext(HftContextPtr(ctx));
@@ -353,7 +351,7 @@ bool WtRunner::initHftStrategies()
 bool WtRunner::initEngine()
 {
 	WTSVariant* cfg = _config->get("env");
-	if (cfg == NULL)
+	if (cfg == nullptr)
 		return false;
 
 	const char* name = cfg->getCString("name");
@@ -374,19 +372,19 @@ bool WtRunner::initEngine()
 
 	if (_is_hft)
 	{
-		WTSLogger::info("Trading enviroment initialzied with engine: HFT");
+		WTSLogger::info("Trading environment initialized with engine: HFT");
 		_hft_engine.init(cfg, &_bd_mgr, &_data_mgr, &_hot_mgr, &_notifier);
 		_engine = &_hft_engine;
 	}
 	else if (_is_sel)
 	{
-		WTSLogger::info("Trading enviroment initialzied with engine: SEL");
+		WTSLogger::info("Trading environment initialized with engine: SEL");
 		_sel_engine.init(cfg, &_bd_mgr, &_data_mgr, &_hot_mgr, &_notifier);
 		_engine = &_sel_engine;
 	}
 	else
 	{
-		WTSLogger::info("Trading enviroment initialzied with engine: CTA");
+		WTSLogger::info("Trading environment initialized with engine: CTA");
 		_cta_engine.init(cfg, &_bd_mgr, &_data_mgr, &_hot_mgr, &_notifier);
 		_engine = &_cta_engine;
 	}
@@ -404,7 +402,7 @@ bool WtRunner::initActionPolicy()
 bool WtRunner::initDataMgr()
 {
 	WTSVariant*cfg = _config->get("data");
-	if (cfg == NULL)
+	if (cfg == nullptr)
 		return false;
 
 	_data_mgr.init(cfg, _engine);
@@ -415,7 +413,7 @@ bool WtRunner::initDataMgr()
 
 bool WtRunner::initParsers(WTSVariant* cfgParser)
 {
-	if (cfgParser == NULL)
+	if (cfgParser == nullptr)
 		return false;
 
 	uint32_t count = 0;
@@ -428,16 +426,16 @@ bool WtRunner::initParsers(WTSVariant* cfgParser)
 		const char* id = cfgItem->getCString("id");
 		// By Wesley @ 2021.12.14
 		// 如果id为空，则生成自动id
-		std::string realid = id;
-		if (realid.empty())
+		std::string realID = id;
+		if (realID.empty())
 		{
-			static uint32_t auto_parserid = 1000;
-			realid = StrUtil::printf("auto_parser_%u", auto_parserid++);
+			static uint32_t auto_parser_id = 1000;
+            realID = StrUtil::printf("auto_parser_%u", auto_parser_id++);
 		}
 
 		ParserAdapterPtr adapter(new ParserAdapter);
-		adapter->init(realid.c_str(), cfgItem, _engine, &_bd_mgr, &_hot_mgr);
-		_parsers.addAdapter(realid.c_str(), adapter);
+		adapter->init(realID.c_str(), cfgItem, _engine, &_bd_mgr, &_hot_mgr);
+		_parsers.addAdapter(realID.c_str(), adapter);
 
 		count++;
 	}
@@ -446,18 +444,18 @@ bool WtRunner::initParsers(WTSVariant* cfgParser)
 	return true;
 }
 
-bool WtRunner::initExecuters(WTSVariant* cfgExecuter)
+bool WtRunner::initExecutors(WTSVariant* cfgExecutor)
 {
-	if (cfgExecuter == NULL || cfgExecuter->type() != WTSVariant::VT_Array)
+	if (cfgExecutor == nullptr || cfgExecutor->type() != WTSVariant::VT_Array)
 		return false;
 
 	std::string path = WtHelper::getCWD() + "executer/";
 	_exe_factory.loadFactories(path.c_str());
 
 	uint32_t count = 0;
-	for (uint32_t idx = 0; idx < cfgExecuter->size(); idx++)
+	for (uint32_t idx = 0; idx < cfgExecutor->size(); idx++)
 	{
-		WTSVariant* cfgItem = cfgExecuter->get(idx);
+		WTSVariant* cfgItem = cfgExecutor->get(idx);
 		if (!cfgItem->getBoolean("active"))
 			continue;
 
@@ -468,77 +466,77 @@ bool WtRunner::initExecuters(WTSVariant* cfgExecuter)
 
 		if (name == "local")
 		{
-			WtLocalExecuter* executer = new WtLocalExecuter(&_exe_factory, id, &_data_mgr);
-			if (!executer->init(cfgItem))
+			auto* executor = new WtLocalExecuter(&_exe_factory, id, &_data_mgr);
+			if (!executor->init(cfgItem))
 				return false;
 
 			const char* tid = cfgItem->getCString("trader");
 			if (strlen(tid) == 0)
 			{
-				WTSLogger::error("No Trader configured for Executer {}", id);
+				WTSLogger::error("No Trader configured for Executor {}", id);
 			}
 			else
 			{
 				TraderAdapterPtr trader = _traders.getAdapter(tid);
 				if (trader)
 				{
-					executer->setTrader(trader.get());
-					trader->addSink(executer);
+					executor->setTrader(trader.get());
+					trader->addSink(executor);
 				}
 				else
 				{
-					WTSLogger::error("Trader {} not exists, cannot configured for executer %s", tid, id);
+					WTSLogger::error("Trader {} not exists, cannot configured for executor %s", tid, id);
 				}
 			}
 
-			_cta_engine.addExecuter(ExecCmdPtr(executer));
+            _cta_engine.addExecutor(ExecCmdPtr(executor));
 		}
 		else if (name == "diff")
 		{
-			WtDiffExecuter* executer = new WtDiffExecuter(&_exe_factory, id, &_data_mgr, &_bd_mgr);
-			if (!executer->init(cfgItem))
+			auto* executor = new WtDiffExecuter(&_exe_factory, id, &_data_mgr, &_bd_mgr);
+			if (!executor->init(cfgItem))
 				return false;
 
 			const char* tid = cfgItem->getCString("trader");
 			if (strlen(tid) == 0)
 			{
-				WTSLogger::error("No Trader configured for Executer {}", id);
+				WTSLogger::error("No Trader configured for Executor {}", id);
 			}
 			else
 			{
 				TraderAdapterPtr trader = _traders.getAdapter(tid);
 				if (trader)
 				{
-					executer->setTrader(trader.get());
-					trader->addSink(executer);
+					executor->setTrader(trader.get());
+					trader->addSink(executor);
 				}
 				else
 				{
-					WTSLogger::error("Trader {} not exists, cannot configured for executer %s", tid, id);
+					WTSLogger::error("Trader {} not exists, cannot configured for executor %s", tid, id);
 				}
 			}
 
-			_cta_engine.addExecuter(ExecCmdPtr(executer));
+            _cta_engine.addExecutor(ExecCmdPtr(executor));
 		}
 		else
 		{
-			WtDistExecuter* executer = new WtDistExecuter(id);
-			if (!executer->init(cfgItem))
+			auto* executor = new WtDistExecuter(id);
+			if (!executor->init(cfgItem))
 				return false;
 
-			_cta_engine.addExecuter(ExecCmdPtr(executer));
+            _cta_engine.addExecutor(ExecCmdPtr(executor));
 		}
 		count++;
 	}
 
-	WTSLogger::info("{} executers loaded", count);
+	WTSLogger::info("{} executors loaded", count);
 
 	return true;
 }
 
 bool WtRunner::initTraders(WTSVariant* cfgTrader)
 {
-	if (cfgTrader == NULL || cfgTrader->type() != WTSVariant::VT_Array)
+	if (cfgTrader == nullptr || cfgTrader->type() != WTSVariant::VT_Array)
 		return false;
 	
 	uint32_t count = 0;
@@ -598,7 +596,7 @@ void WtRunner::handleLogAppend(WTSLogLevel ll, const char* msg)
 bool WtRunner::initEvtNotifier()
 {
 	WTSVariant* cfg = _config->get("notifier");
-	if (cfg == NULL || cfg->type() != WTSVariant::VT_Object)
+	if (cfg == nullptr || cfg->type() != WTSVariant::VT_Object)
 		return false;
 
 	_notifier.init(cfg);

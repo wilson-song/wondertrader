@@ -61,7 +61,7 @@ public:
 	/*
 	 *	分割主力段,将主力合约在某个时段的分月合约全部提出取来
 	 */
-	virtual bool		splitHotSecions(const char* exchg, const char* hotCode, uint32_t sDt, uint32_t eDt, HotSections& sections) = 0;
+	virtual bool		splitHotSections(const char* exchg, const char* hotCode, uint32_t sDt, uint32_t eDt, HotSections& sections) = 0;
 
 	/*
 	 *	获取次主力分月代码
@@ -87,7 +87,7 @@ public:
 	/*
 	 *	分割次主力段,将次主力合约在某个时段的分月合约全部提出取来
 	 */
-	virtual bool		splitSecondSecions(const char* exchg, const char* hotCode, uint32_t sDt, uint32_t eDt, HotSections& sections) = 0;
+	virtual bool		splitSecondSections(const char* exchg, const char* hotCode, uint32_t sDt, uint32_t eDt, HotSections& sections) = 0;
 
 	/*
 	 *	获取自定义主力合约的分月代码

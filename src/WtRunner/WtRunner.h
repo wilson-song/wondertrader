@@ -57,7 +57,7 @@ public:
 private:
 	bool initTraders(WTSVariant* cfgTrader);
 	bool initParsers(WTSVariant* cfgParser);
-	bool initExecuters(WTSVariant* cfgExecuter);
+	bool initExecutors(WTSVariant* cfgExecutor);
 	bool initDataMgr();
 	bool initEvtNotifier();
 	bool initCtaStrategies();
@@ -69,10 +69,10 @@ private:
 //////////////////////////////////////////////////////////////////////////
 //ILogHandler
 public:
-	virtual void handleLogAppend(WTSLogLevel ll, const char* msg) override;
+	void handleLogAppend(WTSLogLevel ll, const char* msg) override;
 
 private:
-	WTSVariant*			_config;
+	WTSVariant*			_config{};
 	TraderAdapterMgr	_traders;
 	ParserAdapterMgr	_parsers;
 	WtExecuterFactory	_exe_factory;
@@ -80,9 +80,9 @@ private:
 	WtCtaEngine			_cta_engine;
 	WtHftEngine			_hft_engine;
 	WtSelEngine			_sel_engine;
-	WtEngine*			_engine;
+	WtEngine*			_engine{};
 
-	WtDataStorage*		_data_store;
+    __attribute__((unused)) WtDataStorage*		_data_store;
 
 	WtDtMgr				_data_mgr;
 
@@ -90,9 +90,9 @@ private:
 	WTSHotMgr			_hot_mgr;
 	EventNotifier		_notifier;
 
-	CtaStrategyMgr		_cta_stra_mgr;
-	HftStrategyMgr		_hft_stra_mgr;
-	SelStrategyMgr		_sel_stra_mgr;
+	CtaStrategyMgr		_cta_strategy_mgr;
+	HftStrategyMgr		_hft_strategy_mgr;
+	SelStrategyMgr		_sel_strategy_mgr;
 	ActionPolicyMgr		_act_policy;
 
 	bool				_is_hft;

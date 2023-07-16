@@ -20,7 +20,7 @@ class MQManager;
 class MQServer
 {
 public:
-	MQServer(MQManager* mgr);
+	explicit MQServer(MQManager* mgr);
 	~MQServer();
 
 public:
@@ -38,7 +38,7 @@ private:
 	uint32_t		_id;
 	bool			_confirm;
 
-	StdThreadPtr	m_thrdCast;
+	StdThreadPtr	m_threadCast;
 	StdCondVariable	m_condCast;
 	StdUniqueMutex	m_mtxCast;
 	bool			m_bTerminated;
@@ -52,7 +52,7 @@ private:
 		_PubData(const char* topic, const void* data, uint32_t dataLen)
 			: _topic(topic)
 		{
-			if(data !=  NULL && dataLen != 0)
+			if(data !=  nullptr && dataLen != 0)
 			{
 				_data.append((const char*)data, dataLen);
 			}

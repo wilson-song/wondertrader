@@ -130,16 +130,16 @@ void WtHftEngine::handle_push_order_detail(WTSOrdDtlData* curOrdDtl)
 	if (sit != _orddtl_sub_map.end())
 	{
 		const SubList& sids = sit->second;
-		for (auto it = sids.begin(); it != sids.end(); it++)
+		for (const auto & it : sids)
 		{
 			//By Wesley @ 2022.02.07
 			//Level2数据一般用于HFT场景，所以不做复权处理
 			//所以不读取订阅标记
-			uint32_t sid = it->first;
+			uint32_t sid = it.first;
 			auto cit = _ctx_map.find(sid);
 			if (cit != _ctx_map.end())
 			{
-				HftContextPtr& ctx = (HftContextPtr&)cit->second;
+				auto& ctx = (HftContextPtr&)cit->second;
 				ctx->on_order_detail(stdCode, curOrdDtl);
 			}
 		}
@@ -153,16 +153,16 @@ void WtHftEngine::handle_push_order_queue(WTSOrdQueData* curOrdQue)
 	if (sit != _ordque_sub_map.end())
 	{
 		const SubList& sids = sit->second;
-		for (auto it = sids.begin(); it != sids.end(); it++)
+		for (const auto & it : sids)
 		{
 			//By Wesley @ 2022.02.07
 			//Level2数据一般用于HFT场景，所以不做复权处理
 			//所以不读取订阅标记
-			uint32_t sid = it->first;
+			uint32_t sid = it.first;
 			auto cit = _ctx_map.find(sid);
 			if (cit != _ctx_map.end())
 			{
-				HftContextPtr& ctx = (HftContextPtr&)cit->second;
+				auto& ctx = (HftContextPtr&)cit->second;
 				ctx->on_order_queue(stdCode, curOrdQue);
 			}
 		}
@@ -176,16 +176,16 @@ void WtHftEngine::handle_push_transaction(WTSTransData* curTrans)
 	if (sit != _trans_sub_map.end())
 	{
 		const SubList& sids = sit->second;
-		for (auto it = sids.begin(); it != sids.end(); it++)
+		for (const auto & it : sids)
 		{
 			//By Wesley @ 2022.02.07
 			//Level2数据一般用于HFT场景，所以不做复权处理
 			//所以不读取订阅标记
-			uint32_t sid = it->first;
+			uint32_t sid = it.first;
 			auto cit = _ctx_map.find(sid);
 			if (cit != _ctx_map.end())
 			{
-				HftContextPtr& ctx = (HftContextPtr&)cit->second;
+				auto& ctx = (HftContextPtr&)cit->second;
 				ctx->on_transaction(stdCode, curTrans);
 			}
 		}
@@ -257,16 +257,16 @@ void WtHftEngine::on_tick(const char* stdCode, WTSTickData* curTick)
 		if (sit != _tick_sub_map.end())
 		{
 			const SubList& sids = sit->second;
-			for (auto it = sids.begin(); it != sids.end(); it++)
+			for (const auto & it : sids)
 			{
-				uint32_t sid = it->first;
+				uint32_t sid = it.first;
 
 
 				auto cit = _ctx_map.find(sid);
 				if (cit != _ctx_map.end())
 				{
-					HftContextPtr& ctx = (HftContextPtr&)cit->second;
-					uint32_t opt = it->second.second;
+					auto& ctx = (HftContextPtr&)cit->second;
+					uint32_t opt = it.second.second;
 
 					if (opt == 0)
 					{
@@ -315,13 +315,13 @@ void WtHftEngine::on_bar(const char* stdCode, const char* period, uint32_t times
 	fmtutil::format_to(key, "{}-{}-{}", stdCode, period, times);
 
 	const SubList& sids = _bar_sub_map[key];
-	for (auto it = sids.begin(); it != sids.end(); it++)
+	for (const auto & it : sids)
 	{
-		uint32_t sid = it->first;
+		uint32_t sid = it.first;
 		auto cit = _ctx_map.find(sid);
 		if (cit != _ctx_map.end())
 		{
-			HftContextPtr& ctx = (HftContextPtr&)cit->second;
+			auto& ctx = (HftContextPtr&)cit->second;
 			ctx->on_bar(stdCode, period, times, newBar);
 		}
 	}
@@ -332,9 +332,9 @@ void WtHftEngine::on_session_begin()
 	WTSLogger::info("Trading day {} begun", _cur_tdate);
 	WtEngine::on_session_begin();
 
-	for (auto it = _ctx_map.begin(); it != _ctx_map.end(); it++)
+	for (const auto & it : _ctx_map)
 	{
-		HftContextPtr& ctx = (HftContextPtr&)it->second;
+		auto& ctx = (HftContextPtr&)it.second;
 		ctx->on_session_begin(_cur_tdate);
 	}
 
@@ -348,9 +348,9 @@ void WtHftEngine::on_session_end()
 {
 	WtEngine::on_session_end();
 
-	for (auto it = _ctx_map.begin(); it != _ctx_map.end(); it++)
+	for (const auto & it : _ctx_map)
 	{
-		HftContextPtr& ctx = (HftContextPtr&)it->second;
+		auto& ctx = (HftContextPtr&)it.second;
 		ctx->on_session_end(_cur_tdate);
 	}
 
@@ -369,7 +369,7 @@ void WtHftEngine::on_minute_end(uint32_t curDate, uint32_t curTime)
 	//}
 }
 
-void WtHftEngine::addContext(HftContextPtr ctx)
+void WtHftEngine::addContext(const HftContextPtr& ctx)
 {
 	uint32_t sid = ctx->id();
 	_ctx_map[sid] = ctx;
@@ -379,22 +379,22 @@ HftContextPtr WtHftEngine::getContext(uint32_t id)
 {
 	auto it = _ctx_map.find(id);
 	if (it == _ctx_map.end())
-		return HftContextPtr();
+		return {};
 
 	return it->second;
 }
 
 WTSOrdQueSlice* WtHftEngine::get_order_queue_slice(uint32_t sid, const char* code, uint32_t count)
 {
-	return _data_mgr->get_order_queue_slice(code, count);
+	return _data_mgr->get_order_queue_slice(code, count, 0);
 }
 
 WTSOrdDtlSlice* WtHftEngine::get_order_detail_slice(uint32_t sid, const char* code, uint32_t count)
 {
-	return _data_mgr->get_order_detail_slice(code, count);
+	return _data_mgr->get_order_detail_slice(code, count, 0);
 }
 
 WTSTransSlice* WtHftEngine::get_transaction_slice(uint32_t sid, const char* code, uint32_t count)
 {
-	return _data_mgr->get_transaction_slice(code, count);
+	return _data_mgr->get_transaction_slice(code, count, 0);
 }

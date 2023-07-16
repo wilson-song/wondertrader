@@ -23,7 +23,7 @@ class ParserFemas : public IParserApi, public CUstpFtdcMduserSpi
 {
 public:
 	ParserFemas();
-	virtual ~ParserFemas();
+	~ParserFemas() override;
 
 public:
 	enum LoginStatus
@@ -35,9 +35,9 @@ public:
 
 //IQuoteParser ½Ó¿Ú
 public:
-	virtual bool init(WTSVariant* config) override;
+	bool init(WTSVariant* config) override;
 
-	virtual void release() override;
+	void release() override;
 
 	virtual bool connect() override;
 
@@ -102,11 +102,11 @@ private:
 
 	int					m_iRequestID;
 
-	IParserSpi*	m_sink;
-	IBaseDataMgr*		m_pBaseDataMgr;
+	IParserSpi*	m_sink{};
+	IBaseDataMgr*		m_pBaseDataMgr{};
 
-	DllHandle		m_hInst;
+	DllHandle		m_hInst{};
 	typedef CUstpFtdcMduserApi* (*FemasCreator)(const char *);
-	FemasCreator		m_funcCreator;
+	FemasCreator		m_funcCreator{};
 };
 

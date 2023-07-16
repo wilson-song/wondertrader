@@ -51,8 +51,8 @@ MQServer::~MQServer()
 
 	m_bTerminated = true;
 	m_condCast.notify_all();
-	if (m_thrdCast)
-		m_thrdCast->join();
+	if (m_threadCast)
+		m_threadCast->join();
 
 	//if (_sock >= 0)
 	//	nn_close(_sock);
@@ -83,7 +83,7 @@ bool MQServer::init(const char* url, bool confirm /* = false */)
 	}
 	else
 	{
-		_mgr->log_server(_id, fmt::format("MQServer {} has binded to {} ", _id, url).c_str());
+		_mgr->log_server(_id, fmt::format("MQServer {} has bound to {} ", _id, url).c_str());
 	}
 
 	_ready = true;
@@ -100,18 +100,18 @@ void MQServer::publish(const char* topic, const void* data, uint32_t dataLen)
 		return;
 	}
 
-	if(data == NULL || dataLen == 0 || m_bTerminated)
+	if(data == nullptr || dataLen == 0 || m_bTerminated)
 		return;
 
 	{
 		StdUniqueLock lock(m_mtxCast);
-		m_dataQue.push(PubData(topic, data, dataLen));
+		m_dataQue.emplace(topic, data, dataLen);
 		m_bTimeout = false;
 	}
 
-	if(m_thrdCast == NULL)
+	if(m_threadCast == nullptr)
 	{
-		m_thrdCast.reset(new StdThread([this](){
+		m_threadCast.reset(new StdThread([this](){
 
 			if (m_sendBuf.empty())
 				m_sendBuf.resize(1024 * 1024, 0);
@@ -128,7 +128,7 @@ void MQServer::publish(const char* topic, const void* data, uint32_t dataLen)
 					if (m_bTimeout)
 					{
 						//等待超时以后，广播心跳包
-						m_dataQue.push(PubData("HEARTBEAT", "", 0));
+						m_dataQue.emplace("HEARTBEAT", "", 0);
 					}
 					else
 					{
@@ -151,7 +151,7 @@ void MQServer::publish(const char* topic, const void* data, uint32_t dataLen)
 						std::size_t len = sizeof(MQPacket) + pubData._data.size();
 						if (m_sendBuf.size() < len)
 							m_sendBuf.resize(m_sendBuf.size() * 2);
-						MQPacket* pack = (MQPacket*)m_sendBuf.data();
+						auto* pack = (MQPacket*)m_sendBuf.data();
 						strncpy(pack->_topic, pubData._topic.c_str(), 32);
 						pack->_length = (uint32_t)pubData._data.size();
 						memcpy(&pack->_data, pubData._data.data(), pubData._data.size());

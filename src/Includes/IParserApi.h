@@ -9,7 +9,7 @@
  */
 #pragma once
 #include <string>
-#include <stdint.h>
+#include <cstdint>
 #include "WTSTypes.h"
 #include "FasterDefs.h"
 
@@ -83,7 +83,7 @@ public:
 class IParserApi
 {
 public:
-	virtual ~IParserApi(){}
+	virtual ~IParserApi()= default;
 
 public:
 	/*

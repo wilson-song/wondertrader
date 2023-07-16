@@ -36,14 +36,14 @@ public:
 
 
 private:
-	void	tradeToJson(const char* trader, uint32_t localid, const char* stdCode, WTSTradeInfo* trdInfo, std::string& output);
-	void	orderToJson(const char* trader, uint32_t localid, const char* stdCode, WTSOrderInfo* ordInfo, std::string& output);
+	void	tradeToJson(const char* trader, uint32_t localID, const char* stdCode, WTSTradeInfo* trdInfo, std::string& output);
+	void	orderToJson(const char* trader, uint32_t localID, const char* stdCode, WTSOrderInfo* ordInfo, std::string& output);
 
 public:
 	bool	init(WTSVariant* cfg);
 
-	void	notify(const char* trader, uint32_t localid, const char* stdCode, WTSTradeInfo* trdInfo);
-	void	notify(const char* trader, uint32_t localid, const char* stdCode, WTSOrderInfo* ordInfo);
+	void	notify(const char* trader, uint32_t localID, const char* stdCode, WTSTradeInfo* trdInfo);
+	void	notify(const char* trader, uint32_t localID, const char* stdCode, WTSOrderInfo* ordInfo);
 	void	notify(const char* trader, const char* message);
 
 	void	notify_log(const char* tag, const char* message);

@@ -39,7 +39,7 @@ template<typename T>
 class StdLocker
 {
 public:
-	StdLocker(T& mtx)
+	explicit StdLocker(T& mtx)
 	{
 		mtx.lock();
 		_mtx = &mtx;

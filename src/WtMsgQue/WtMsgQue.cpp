@@ -24,9 +24,9 @@ MQManager& getMgr()
 	return runner;
 }
 
-void regiter_callbacks(FuncLogCallback cbLog)
+void register_callbacks(FuncLogCallback cbLog)
 {
-	getMgr().regiter_callbacks(cbLog);
+	getMgr().register_callbacks(cbLog);
 }
 
 WtUInt32 create_server(const char* url, bool confirm)

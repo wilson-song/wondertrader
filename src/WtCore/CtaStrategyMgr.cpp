@@ -54,21 +54,21 @@ bool CtaStrategyMgr::loadFactories(const char* path)
 		if (hInst == NULL)
 			continue;
 
-		FuncCreateStraFact creator = (FuncCreateStraFact)DLLHelper::get_symbol(hInst, "createStrategyFact");
+		FuncCreateStrategyFact creator = (FuncCreateStrategyFact)DLLHelper::get_symbol(hInst, "createStrategyFact");
 		if (creator == NULL)
 		{
 			DLLHelper::free_library(hInst);
 			continue;
 		}
 
-		ICtaStrategyFact* fact = creator();
+		ICtaStrategyFactory* fact = creator();
 		if(fact != NULL)
 		{
 			StraFactInfo& fInfo = _factories[fact->getName()];
 			fInfo._module_inst = hInst;
 			fInfo._module_path = iter->path().string();
 			fInfo._creator = creator;
-			fInfo._remover = (FuncDeleteStraFact)DLLHelper::get_symbol(hInst, "deleteStrategyFact");
+			fInfo._remover = (FuncDeleteStrategyFact)DLLHelper::get_symbol(hInst, "deleteStrategyFact");
 			fInfo._fact = fact;
 
 			WTSLogger::info("CTA strategy factory[{}] loaded", fact->getName());
@@ -95,7 +95,7 @@ CtaStrategyPtr CtaStrategyMgr::createStrategy(const char* factname, const char* 
 		return CtaStrategyPtr();
 
 	StraFactInfo& fInfo = (StraFactInfo&)it->second;
-	CtaStrategyPtr ret(new CtaStraWrapper(fInfo._fact->createStrategy(unitname, id), fInfo._fact));
+	CtaStrategyPtr ret(new CtaStrategyWrapper(fInfo._fact->createStrategy(unitname, id), fInfo._fact));
 	_strategies[id] = ret;
 	return ret;
 }
@@ -104,17 +104,17 @@ CtaStrategyPtr CtaStrategyMgr::createStrategy(const char* name, const char* id)
 {
 	StringVector ay = StrUtil::split(name, ".");
 	if (ay.size() < 2)
-		return CtaStrategyPtr();
+		return {};
 
-	const char* factname = ay[0].c_str();
+	const char* factoryName = ay[0].c_str();
 	const char* unitname = ay[1].c_str();
 
-	auto it = _factories.find(factname);
+	auto it = _factories.find(factoryName);
 	if (it == _factories.end())
-		return CtaStrategyPtr();
+		return {};
 
-	StraFactInfo& fInfo = (StraFactInfo&)it->second;
-	CtaStrategyPtr ret(new CtaStraWrapper(fInfo._fact->createStrategy(unitname, id), fInfo._fact));
+	auto& fInfo = (StraFactInfo&)it->second;
+	CtaStrategyPtr ret(new CtaStrategyWrapper(fInfo._fact->createStrategy(unitname, id), fInfo._fact));
 	_strategies[id] = ret;
 	return ret;
 }

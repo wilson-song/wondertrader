@@ -2036,7 +2036,7 @@ void WtDataReader::onMinuteEnd(uint32_t uDate, uint32_t uTime, uint32_t endTDate
 			if (!barsList._raw_code.empty())
 			{
 				RTKlineBlockPair* kBlk = getRTKilneBlock(barsList._exchg.c_str(), barsList._raw_code.c_str(), barsList._period);
-				if (kBlk == NULL)
+				if (kBlk == nullptr)
 					continue;
 
 				//确定上一次的读取过的实时K线条数

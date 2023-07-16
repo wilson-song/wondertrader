@@ -25,9 +25,9 @@ USING_NS_WTP;
 
 #pragma warning(disable:4200)
 
-#define  RECV_BUF_SIZE  1024*1024
+#define  RECV_BUF_SIZE  (1024*1024)
 
-inline uint32_t makeMQCientId()
+inline uint32_t makeMQClientId()
 {
 	static std::atomic<uint32_t> _auto_client_id{ 5001 };
 	return _auto_client_id.fetch_add(1);
@@ -39,11 +39,11 @@ MQClient::MQClient(MQManager* mgr)
 	, m_bReady(false)
 	, _mgr(mgr)
 	, m_bTerminated(false)
-	, _cb_message(NULL)
+	, _cb_message(nullptr)
 	, m_iCheckTime(0)
 	, m_bNeedCheck(false)
 {
-	_id = makeMQCientId();
+	_id = makeMQClientId();
 }
 
 MQClient::~MQClient()
@@ -52,8 +52,8 @@ MQClient::~MQClient()
 		return;
 
 	m_bTerminated = true;
-	if (m_thrdRecv)
-		m_thrdRecv->join();
+	if (m_threadRecv)
+		m_threadRecv->join();
 
 	if (_sock != 0)
 		nn_close(_sock);
@@ -74,8 +74,8 @@ bool MQClient::init(const char* url, FuncMQCallback cb)
 
 	nn_setsockopt(_sock, NN_SUB, NN_SUB_SUBSCRIBE, "", 0);
 
-	int bufsize = RECV_BUF_SIZE;
-	nn_setsockopt(_sock, NN_SOL_SOCKET, NN_RCVBUF, &bufsize, sizeof(bufsize));
+	int buf_size = RECV_BUF_SIZE;
+	nn_setsockopt(_sock, NN_SOL_SOCKET, NN_RCVBUF, &buf_size, sizeof(buf_size));
 
 	m_strURL = url;
 	if (nn_connect(_sock, url) < 0)
@@ -105,9 +105,9 @@ void MQClient::start()
 		return;
 	}
 
-	if (m_thrdRecv == NULL)
+	if (m_threadRecv == nullptr)
 	{
-		m_thrdRecv.reset(new StdThread([this]() {
+		m_threadRecv.reset(new StdThread([this]() {
 
 			while (!m_bTerminated)
 			{
@@ -168,14 +168,12 @@ void MQClient::extract_buffer()
 		if (_buffer.length() - proc_len < sizeof(MQPacket))
 			break;
 
-		MQPacket* packet = (MQPacket*)(_buffer.data() + proc_len);
+		auto* packet = (MQPacket*)(_buffer.data() + proc_len);
 
 		if (_buffer.length() - proc_len < sizeof(MQPacket) + packet->_length)
 			break;
 
-		char* data = packet->_data;
-
-		if (is_allowed(packet->_topic))
+        if (is_allowed(packet->_topic))
 			_cb_message(_id, packet->_topic, packet->_data, packet->_length);
 
 		proc_len += sizeof(MQPacket) + packet->_length;

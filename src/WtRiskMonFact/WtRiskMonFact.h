@@ -11,19 +11,19 @@
 
 USING_NS_WTP;
 
-class WtRiskMonFact : public IRiskMonitorFact
+class WtRiskMonFact : public IRiskMonitorFactory
 {
 public:
 	WtRiskMonFact();
-	virtual ~WtRiskMonFact();
+	~WtRiskMonFact() override;
 
 public:
-	virtual const char* getName() override;
-	virtual void enumRiskMonitors(FuncEnumRiskMonCallback cb) override;
+	const char* getName() override;
+	void enumRiskMonitors(FuncEnumRiskMonCallback cb) override;
 
-	virtual WtRiskMonitor* createRiskMonotor(const char* name) override;
+	WtRiskMonitor* createRiskMonitor(const char* name) override;
 
-	virtual bool deleteRiskMonotor(WtRiskMonitor* unit) override;
+	bool deleteRiskMonitor(WtRiskMonitor* unit) override;
 
 };
 

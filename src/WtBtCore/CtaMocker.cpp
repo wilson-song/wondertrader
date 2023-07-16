@@ -419,7 +419,7 @@ bool CtaMocker::init_cta_factory(WTSVariant* cfg)
 	if (hInst == NULL)
 		return false;
 
-	FuncCreateStraFact creator = (FuncCreateStraFact)DLLHelper::get_symbol(hInst, "createStrategyFact");
+	FuncCreateStrategyFact creator = (FuncCreateStrategyFact)DLLHelper::get_symbol(hInst, "createStrategyFact");
 	if (creator == NULL)
 	{
 		DLLHelper::free_library(hInst);
@@ -429,7 +429,7 @@ bool CtaMocker::init_cta_factory(WTSVariant* cfg)
 	_factory._module_inst = hInst;
 	_factory._module_path = module;
 	_factory._creator = creator;
-	_factory._remover = (FuncDeleteStraFact)DLLHelper::get_symbol(hInst, "deleteStrategyFact");
+	_factory._remover = (FuncDeleteStrategyFact)DLLHelper::get_symbol(hInst, "deleteStrategyFact");
 	_factory._fact = _factory._creator();
 
 	WTSVariant* cfgStra = cfg->get("strategy");

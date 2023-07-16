@@ -45,39 +45,39 @@ public:
 	inline bool isInitialized() const {return m_bInitialized;}
 
 public:
-	virtual const char* getRuleTag(const char* stdCode) override;
+	const char* getRuleTag(const char* stdCode) override;
 
-	virtual double		getRuleFactor(const char* ruleTag, const char* fullPid, uint32_t uDate  = 0 ) override;
+	double		getRuleFactor(const char* ruleTag, const char* fullPid, uint32_t uDate) override;
 
 	//////////////////////////////////////////////////////////////////////////
 	//主力接口
-	virtual const char* getRawCode(const char* exchg, const char* pid, uint32_t dt = 0) override;
+	const char* getRawCode(const char* exchg, const char* pid, uint32_t dt) override;
 
 	virtual const char* getPrevRawCode(const char* exchg, const char* pid, uint32_t dt = 0) override;
 
-	virtual bool	isHot(const char* exchg, const char* rawCode, uint32_t dt = 0) override;
+	bool	isHot(const char* exchg, const char* rawCode, uint32_t dt = 0) override;
 
-	virtual bool	splitHotSecions(const char* exchg, const char* pid, uint32_t sDt, uint32_t eDt, HotSections& sections) override;
+	virtual bool	splitHotSections(const char* exchg, const char* pid, uint32_t sDt, uint32_t eDt, HotSections& sections) override;
 
 	//////////////////////////////////////////////////////////////////////////
 	//次主力接口
-	virtual const char* getSecondRawCode(const char* exchg, const char* pid, uint32_t dt = 0) override;
+	const char* getSecondRawCode(const char* exchg, const char* pid, uint32_t dt) override;
 
 	virtual const char* getPrevSecondRawCode(const char* exchg, const char* pid, uint32_t dt = 0) override;
 
-	virtual bool		isSecond(const char* exchg, const char* rawCode, uint32_t dt = 0) override;
+	bool		isSecond(const char* exchg, const char* rawCode, uint32_t dt) override;
 
-	virtual bool		splitSecondSecions(const char* exchg, const char* hotCode, uint32_t sDt, uint32_t eDt, HotSections& sections) override;
+	bool		splitSecondSections(const char* exchg, const char* pid, uint32_t sDt, uint32_t eDt, HotSections& sections) override;
 
 	//////////////////////////////////////////////////////////////////////////
 	//通用接口
-	virtual const char* getCustomRawCode(const char* tag, const char* fullPid, uint32_t dt) override;
+	const char* getCustomRawCode(const char* tag, const char* fullPid, uint32_t dt) override;
 
-	virtual const char* getPrevCustomRawCode(const char* tag, const char* fullPid, uint32_t dt) override;
+	const char* getPrevCustomRawCode(const char* tag, const char* fullPid, uint32_t dt) override;
 
-	virtual bool		isCustomHot(const char* tag, const char* fullCode, uint32_t dt) override;
+	bool		isCustomHot(const char* tag, const char* fullCode, uint32_t dt) override;
 
-	virtual bool		splitCustomSections(const char* tag, const char* fullPid, uint32_t sDt, uint32_t eDt, HotSections& sections) override;
+	bool		splitCustomSections(const char* tag, const char* fullPid, uint32_t sDt, uint32_t eDt, HotSections& sections) override;
 
 
 private:
@@ -87,8 +87,8 @@ private:
 	//faster_hashset<ShortKey>	m_curSecCodes;
 	bool			m_bInitialized;
 
-	WTSCustomSwitchMap*	m_mapCustRules;
+	WTSCustomSwitchMap*	m_mapCustomRules;
 	typedef faster_hashmap<ShortKey, faster_hashset<ShortKey>>	CustomSwitchCodes;
-	CustomSwitchCodes	m_mapCustCodes;
+	CustomSwitchCodes	m_mapCustomCodes;
 };
 

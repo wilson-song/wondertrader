@@ -81,7 +81,7 @@ public:
 	///@param bIsMulticast 是否使用多播,mini2版本不再使用；api会根据连接的后台自动决定是否使用多播
 	///@return 创建出的UserApi
 	///modify for udp marketdata
-	static CThostFtdcMdApi *CreateFtdcMdApi(const char *pszFlowPath = "", const bool bIsUsingUdp = false, const bool bIsMulticast = false);
+	static CThostFtdcMdApi *CreateFtdcMdApi(const char *pszFlowPath = "", bool bIsUsingUdp = false, bool bIsMulticast = false);
 	
 	///获取API的版本信息
 	///@retrun 获取到的版本号
@@ -93,7 +93,7 @@ public:
 	
 	///初始化
 	///@remark 初始化运行环境,只有调用后,接口才开始工作
-	virtual void Init(bool bContinuousm = false) = 0;
+	virtual void Init(bool bContinuousm /*= false*/) = 0;
 	
 	///等待接口线程结束运行
 	///@return 线程退出代码
@@ -142,7 +142,7 @@ public:
 	virtual int ReqUserLogout(CThostFtdcUserLogoutField *pUserLogout, int nRequestID) = 0;
 	
 protected:
-	~CThostFtdcMdApi(){};
+	~CThostFtdcMdApi()= default;
 };
 
 #endif

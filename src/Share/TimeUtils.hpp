@@ -62,7 +62,7 @@ public:
 	/*
 	 *	获取本地时间，精确到毫秒
 	 */
-	static inline int64_t getLocalTimeNow(void)
+	static inline int64_t getLocalTimeNow()
 	{
 #ifdef _MSC_VER
 		LARGE_INTEGER SystemTime;
@@ -76,7 +76,7 @@ public:
 		t = t - 11644473600L * TICKSPERSEC;
 		return t / 10000;
 #else
-		timeb now;
+		timeb now{};
 		ftime(&now);
 		return now.time * 1000 + now.millitm;
 #endif
@@ -84,7 +84,7 @@ public:
 
 	static inline std::string getLocalTime(bool bIncludeMilliSec = true)
 	{
-		uint64_t ltime = getLocalTimeNow();
+		int64_t ltime = getLocalTimeNow();
 		time_t now = ltime / 1000;
 		uint32_t millitm = ltime % 1000;
 		tm * tNow = localtime(&now);
@@ -99,7 +99,7 @@ public:
 
 	static inline uint64_t getYYYYMMDDhhmmss()
 	{
-		uint64_t ltime = getLocalTimeNow();
+		int64_t ltime = getLocalTimeNow();
 		time_t now = ltime / 1000;
 
 		tm * tNow = localtime(&now);
@@ -117,7 +117,7 @@ public:
      */
 	static inline void getDateTime(uint32_t &date, uint32_t &time)
 	{
-		uint64_t ltime = getLocalTimeNow();
+		int64_t ltime = getLocalTimeNow();
 		time_t now = ltime / 1000;
 		uint32_t millitm = ltime % 1000;
 
@@ -132,7 +132,7 @@ public:
 
 	static inline uint32_t getCurDate()
 	{
-		uint64_t ltime = getLocalTimeNow();
+		int64_t ltime = getLocalTimeNow();
 		time_t now = ltime / 1000;
 		uint32_t millitm = ltime % 1000;
 
@@ -152,7 +152,7 @@ public:
 		}
 		else
 		{
-			tm t;	
+			tm t{};
 			memset(&t,0,sizeof(tm));
 			t.tm_year = uDate/10000 - 1900;
 			t.tm_mon = (uDate%10000)/100 - 1;
@@ -167,7 +167,7 @@ public:
 
 	static inline uint32_t getCurMin()
 	{
-		uint64_t ltime = getLocalTimeNow();
+		int64_t ltime = getLocalTimeNow();
 		time_t now = ltime / 1000;
 		uint32_t millitm = ltime % 1000;
 
@@ -183,7 +183,7 @@ public:
 		static int32_t offset = 99;
 		if(offset == 99)
 		{
-			time_t now = time(NULL);
+			time_t now = time(nullptr);
 			tm tm_ltm = *localtime(&now);
 			tm tm_gtm = *gmtime(&now);
 
@@ -205,7 +205,7 @@ public:
 	 */
 	static inline int64_t makeTime(long lDate, long lTimeWithMs, bool isToUTC = false)
 	{
-		tm t;	
+		tm t{};
 		memset(&t,0,sizeof(tm));
 		t.tm_year = lDate/10000 - 1900;
 		t.tm_mon = (lDate%10000)/100 - 1;
@@ -230,7 +230,7 @@ public:
 		int msec = (int) (mytime - sec * 1000);
 		if (msec < 0) return "";
 		time_t tt =  sec;
-		struct tm t;
+		struct tm t{};
 #ifdef _WIN32
 		localtime_s(&t, &tt);
 #else
@@ -248,7 +248,7 @@ public:
 
 	static uint32_t getNextDate(uint32_t curDate, int days = 1)
 	{
-		tm t;	
+		tm t{};
 		memset(&t,0,sizeof(tm));
 		t.tm_year = curDate/10000 - 1900;
 		t.tm_mon = (curDate%10000)/100 - 1;

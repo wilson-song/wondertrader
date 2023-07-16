@@ -28,24 +28,22 @@
 //////////////////////////////////////////////////////////////////////////
 //ParserAdapter
 ParserAdapter::ParserAdapter(WTSBaseDataMgr * bgMgr, DataManager* dtMgr, IndexFactory *idxFactory)
-	: _parser_api(NULL)
-	, _remover(NULL)
+	: _parser_api(nullptr)
+	, _remover(nullptr)
 	, _stopped(false)
 	, _bd_mgr(bgMgr)
 	, _dt_mgr(dtMgr)
 	, _idx_fact(idxFactory)
-	, _cfg(NULL)
+	, _cfg(nullptr)
 {
 }
 
 
-ParserAdapter::~ParserAdapter()
-{
-}
+ParserAdapter::~ParserAdapter() = default;
 
 bool ParserAdapter::initExt(const char* id, IParserApi* api)
 {
-	if (api == NULL)
+	if (api == nullptr)
 		return false;
 
 	_parser_api = api;
@@ -55,14 +53,14 @@ bool ParserAdapter::initExt(const char* id, IParserApi* api)
 	{
 		_parser_api->registerSpi(this);
 
-		if (_parser_api->init(NULL))
+		if (_parser_api->init(nullptr))
 		{
 			ContractSet contractSet;
-			WTSArray* ayContract = _bd_mgr->getContracts();
-			WTSArray::Iterator it = ayContract->begin();
+			WTSArray* ayContract = _bd_mgr->getContracts("");
+			auto it = ayContract->begin();
 			for (; it != ayContract->end(); it++)
 			{
-				WTSContractInfo* contract = STATIC_CONVERT(*it, WTSContractInfo*);
+				auto* contract = STATIC_CONVERT(*it, WTSContractInfo*);
 				contractSet.insert(contract->getFullCode());
 			}
 
@@ -83,12 +81,12 @@ bool ParserAdapter::initExt(const char* id, IParserApi* api)
 
 bool ParserAdapter::init(const char* id, WTSVariant* cfg)
 {
-	if (cfg == NULL)
+	if (cfg == nullptr)
 		return false;
 
 	_id = id;
 
-	if (_cfg != NULL)
+	if (_cfg != nullptr)
 		return false;
 
 	_cfg = cfg;
@@ -109,7 +107,7 @@ bool ParserAdapter::init(const char* id, WTSVariant* cfg)
 		}
 
 		DllHandle hInst = DLLHelper::load_library(module.c_str());
-		if (hInst == NULL)
+		if (hInst == nullptr)
 		{
 			WTSLogger::log_dyn("parser", _id.c_str(), LL_ERROR, "[{}] Parser module {} loading failed", _id.c_str(), module.c_str());
 			return false;
@@ -119,15 +117,15 @@ bool ParserAdapter::init(const char* id, WTSVariant* cfg)
 			WTSLogger::log_dyn("parser", _id.c_str(), LL_INFO, "[{}] Parser module {} loaded", _id.c_str(), module.c_str());
 		}
 
-		FuncCreateParser pFuncCreateParser = (FuncCreateParser)DLLHelper::get_symbol(hInst, "createParser");
-		if (NULL == pFuncCreateParser)
+		auto pFuncCreateParser = (FuncCreateParser)DLLHelper::get_symbol(hInst, "createParser");
+		if (nullptr == pFuncCreateParser)
 		{
 			WTSLogger::log_dyn("parser", _id.c_str(), LL_FATAL, "[{}] Entrance function createParser not found", _id.c_str());
 			return false;
 		}
 
 		_parser_api = pFuncCreateParser();
-		if (NULL == _parser_api)
+		if (nullptr == _parser_api)
 		{
 			WTSLogger::log_dyn("parser", _id.c_str(), LL_FATAL, "[{}] Creating parser api failed", _id.c_str());
 			return false;
@@ -173,7 +171,7 @@ bool ParserAdapter::init(const char* id, WTSVariant* cfg)
 				{
 					//全代码,形式如SSE.600000,期货代码为CFFEX.IF2005
 					std::string code, exchg;
-					auto ay = StrUtil::split((*it).c_str(), ".");
+					auto ay = StrUtil::split(*it, ".");
 					if (ay.size() == 1)
 						code = ay[0];
 					else if (ay.size() == 2)
@@ -212,10 +210,10 @@ bool ParserAdapter::init(const char* id, WTSVariant* cfg)
 					const char* exchg = (*it).c_str();
 					WTSArray* ayContract = _bd_mgr->getContracts(exchg);
 					auto cnt = ayContract->size();
-					WTSArray::Iterator it = ayContract->begin();
+					auto it = ayContract->begin();
 					for (; it != ayContract->end(); it++)
 					{
-						WTSContractInfo* contract = STATIC_CONVERT(*it, WTSContractInfo*);
+						auto* contract = STATIC_CONVERT(*it, WTSContractInfo*);
 						contractSet.insert(contract->getFullCode());
 					}
 
@@ -226,11 +224,11 @@ bool ParserAdapter::init(const char* id, WTSVariant* cfg)
 			}
 			else
 			{
-				WTSArray* ayContract = _bd_mgr->getContracts();
-				WTSArray::Iterator it = ayContract->begin();
+				WTSArray* ayContract = _bd_mgr->getContracts("");
+				auto it = ayContract->begin();
 				for (; it != ayContract->end(); it++)
 				{
-					WTSContractInfo* contract = STATIC_CONVERT(*it, WTSContractInfo*);
+					auto* contract = STATIC_CONVERT(*it, WTSContractInfo*);
 					contractSet.insert(contract->getFullCode());
 				}
 

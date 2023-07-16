@@ -226,7 +226,7 @@ void EventNotifier::notify(const char* trader, uint32_t localid, const char* std
 	
 }
 
-void EventNotifier::tradeToJson(const char* trader, uint32_t localid, const char* stdCode, WTSTradeInfo* trdInfo, std::string& output)
+void EventNotifier::tradeToJson(const char* trader, uint32_t localID, const char* stdCode, WTSTradeInfo* trdInfo, std::string& output)
 {
 	if(trdInfo == NULL)
 	{
@@ -244,7 +244,7 @@ void EventNotifier::tradeToJson(const char* trader, uint32_t localid, const char
 
 		root.AddMember("trader", rj::Value(trader, allocator), allocator);
 		root.AddMember("time", TimeUtils::getLocalTimeNow(), allocator);
-		root.AddMember("localid", localid, allocator);
+		root.AddMember("localid", localID, allocator);
 		root.AddMember("code", rj::Value(stdCode, allocator), allocator);
 		root.AddMember("islong", isLong, allocator);
 		root.AddMember("isopen", isOpen, allocator);
@@ -261,7 +261,7 @@ void EventNotifier::tradeToJson(const char* trader, uint32_t localid, const char
 	}
 }
 
-void EventNotifier::orderToJson(const char* trader, uint32_t localid, const char* stdCode, WTSOrderInfo* ordInfo, std::string& output)
+void EventNotifier::orderToJson(const char* trader, uint32_t localID, const char* stdCode, WTSOrderInfo* ordInfo, std::string& output)
 {
 	if (ordInfo == NULL)
 	{
@@ -280,7 +280,7 @@ void EventNotifier::orderToJson(const char* trader, uint32_t localid, const char
 
 		root.AddMember("trader", rj::Value(trader, allocator), allocator);
 		root.AddMember("time", TimeUtils::getLocalTimeNow(), allocator);
-		root.AddMember("localid", localid, allocator);
+		root.AddMember("localid", localID, allocator);
 		root.AddMember("code", rj::Value(stdCode, allocator), allocator);
 		root.AddMember("islong", isLong, allocator);
 		root.AddMember("isopen", isOpen, allocator);

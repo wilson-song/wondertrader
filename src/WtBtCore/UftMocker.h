@@ -248,7 +248,7 @@ private:
 
 	UftStrategy*	_strategy;
 
-	//StdThreadPtr		_thrd;
+	//StdThreadPtr		_thread;
 	StdUniqueMutex		_mtx;
 	std::queue<Task>	_tasks;
 	//bool				_stopped;

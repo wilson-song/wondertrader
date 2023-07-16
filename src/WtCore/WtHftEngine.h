@@ -54,7 +54,7 @@ public:
 public:
 	void on_minute_end(uint32_t curDate, uint32_t curTime);
 
-	void addContext(HftContextPtr ctx);
+	void addContext(const HftContextPtr& ctx);
 
 	HftContextPtr	getContext(uint32_t id);
 

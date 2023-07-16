@@ -308,7 +308,7 @@ bool WtRtRunner::createExtExecuter(const char* id)
 {
 	ExpExecuter* executer = new ExpExecuter(id);
 	executer->init();
-	_cta_engine.addExecuter(ExecCmdPtr(executer));
+    _cta_engine.addExecutor(ExecCmdPtr(executer));
 	WTSLogger::info("Extended Executer created");
 	return true;
 }
@@ -655,7 +655,7 @@ bool WtRtRunner::config(const char* cfgFile, bool isFile /* = true */)
 					WTSVariant* var = WTSCfgLoader::load_from_file(filename);
 					if (var)
 					{
-						if (!initExecuters(var->get("executers")))
+						if (!initExecutors(var->get("executers")))
 							WTSLogger::error("Loading executers failed");
 
 						WTSVariant* c = var->get("routers");
@@ -676,7 +676,7 @@ bool WtRtRunner::config(const char* cfgFile, bool isFile /* = true */)
 			}
 			else if(cfgExec->type() == WTSVariant::VT_Array)
 			{
-				initExecuters(cfgExec);
+                initExecutors(cfgExec);
 			}
 		}
 
@@ -697,11 +697,11 @@ bool WtRtRunner::config(const char* cfgFile, bool isFile /* = true */)
 bool WtRtRunner::initCtaStrategies()
 {
 	WTSVariant* cfg = _config->get("strategies");
-	if (cfg == NULL || cfg->type() != WTSVariant::VT_Object)
+	if (cfg == nullptr || cfg->type() != WTSVariant::VT_Object)
 		return false;
 
 	cfg = cfg->get("cta");
-	if (cfg == NULL || cfg->type() != WTSVariant::VT_Array)
+	if (cfg == nullptr || cfg->type() != WTSVariant::VT_Array)
 		return false;
 
 	for (uint32_t idx = 0; idx < cfg->size(); idx++)
@@ -713,10 +713,10 @@ bool WtRtRunner::initCtaStrategies()
 		const char* id = cfgItem->getCString("id");
 		const char* name = cfgItem->getCString("name");
 		int32_t slippage = cfgItem->getInt32("slippage");
-		CtaStrategyPtr stra = _cta_mgr.createStrategy(name, id);
-		stra->self()->init(cfgItem->get("params"));
-		CtaStraContext* ctx = new CtaStraContext(&_cta_engine, id, slippage);
-		ctx->set_strategy(stra->self());
+		CtaStrategyPtr strategy = _cta_mgr.createStrategy(name, id);
+		strategy->self()->init(cfgItem->get("params"));
+		auto* ctx = new CtaStraContext(&_cta_engine, id, slippage);
+		ctx->set_strategy(strategy->self());
 		_cta_engine.addContext(CtaContextPtr(ctx));
 	}
 
@@ -726,11 +726,11 @@ bool WtRtRunner::initCtaStrategies()
 bool WtRtRunner::initSelStrategies()
 {
 	WTSVariant* cfg = _config->get("strategies");
-	if (cfg == NULL || cfg->type() != WTSVariant::VT_Object)
+	if (cfg == nullptr || cfg->type() != WTSVariant::VT_Object)
 		return false;
 
 	cfg = cfg->get("cta");
-	if (cfg == NULL || cfg->type() != WTSVariant::VT_Array)
+	if (cfg == nullptr || cfg->type() != WTSVariant::VT_Array)
 		return false;
 
 	for (uint32_t idx = 0; idx < cfg->size(); idx++)
@@ -761,7 +761,7 @@ bool WtRtRunner::initSelStrategies()
 
 		SelStrategyPtr stra = _sel_mgr.createStrategy(name, id);
 		stra->self()->init(cfgItem->get("params"));
-		SelStraContext* ctx = new SelStraContext(&_sel_engine, id, slippage);
+		auto* ctx = new SelStraContext(&_sel_engine, id, slippage);
 		ctx->set_strategy(stra->self());
 		_sel_engine.addContext(SelContextPtr(ctx), date, time, ptype);
 	}
@@ -772,11 +772,11 @@ bool WtRtRunner::initSelStrategies()
 bool WtRtRunner::initHftStrategies()
 {
 	WTSVariant* cfg = _config->get("strategies");
-	if (cfg == NULL || cfg->type() != WTSVariant::VT_Object)
+	if (cfg == nullptr || cfg->type() != WTSVariant::VT_Object)
 		return false;
 
 	cfg = cfg->get("hft");
-	if (cfg == NULL || cfg->type() != WTSVariant::VT_Array)
+	if (cfg == nullptr || cfg->type() != WTSVariant::VT_Array)
 		return false;
 
 	for (uint32_t idx = 0; idx < cfg->size(); idx++)
@@ -791,11 +791,11 @@ bool WtRtRunner::initHftStrategies()
 		int32_t slippage = cfgItem->getInt32("slippage");
 
 		HftStrategyPtr stra = _hft_mgr.createStrategy(name, id);
-		if (stra == NULL)
+		if (stra == nullptr)
 			continue;
 
 		stra->self()->init(cfgItem->get("params"));
-		HftStraContext* ctx = new HftStraContext(&_hft_engine, id, bAgent, slippage);
+		auto* ctx = new HftStraContext(&_hft_engine, id, bAgent, slippage);
 		ctx->set_strategy(stra->self());
 
 		const char* traderid = cfgItem->getCString("trader");
@@ -819,7 +819,7 @@ bool WtRtRunner::initHftStrategies()
 bool WtRtRunner::initEngine()
 {
 	WTSVariant* cfg = _config->get("env");
-	if (cfg == NULL)
+	if (cfg == nullptr)
 		return false;
 
 	const char* name = cfg->getCString("name");
@@ -865,10 +865,10 @@ bool WtRtRunner::initEngine()
 bool WtRtRunner::initDataMgr()
 {
 	WTSVariant* cfg = _config->get("data");
-	if (cfg == NULL)
+	if (cfg == nullptr)
 		return false;
 
-	_data_mgr.regsiter_loader(this);
+    _data_mgr.register_loader(this);
 
 	_data_mgr.init(cfg, _engine);
 
@@ -878,7 +878,7 @@ bool WtRtRunner::initDataMgr()
 
 bool WtRtRunner::initParsers(WTSVariant* cfgParsers)
 {
-	if (cfgParsers == NULL || cfgParsers->type() != WTSVariant::VT_Array)
+	if (cfgParsers == nullptr || cfgParsers->type() != WTSVariant::VT_Array)
 		return false;
 
 	uint32_t count = 0;
@@ -911,9 +911,9 @@ bool WtRtRunner::initParsers(WTSVariant* cfgParsers)
 	return true;
 }
 
-bool WtRtRunner::initExecuters(WTSVariant* cfgExecuter)
+bool WtRtRunner::initExecutors(WTSVariant* cfgExecutor)
 {
-	if (cfgExecuter == NULL || cfgExecuter->type() != WTSVariant::VT_Array)
+	if (cfgExecutor == NULL || cfgExecutor->type() != WTSVariant::VT_Array)
 		return false;
 
 	//先加载自带的执行器工厂
@@ -921,9 +921,9 @@ bool WtRtRunner::initExecuters(WTSVariant* cfgExecuter)
 	_exe_factory.loadFactories(path.c_str());
 
 	uint32_t count = 0;
-	for (uint32_t idx = 0; idx < cfgExecuter->size(); idx++)
+	for (uint32_t idx = 0; idx < cfgExecutor->size(); idx++)
 	{
-		WTSVariant* cfgItem = cfgExecuter->get(idx);
+		WTSVariant* cfgItem = cfgExecutor->get(idx);
 		if (!cfgItem->getBoolean("active"))
 			continue;
 
@@ -957,7 +957,7 @@ bool WtRtRunner::initExecuters(WTSVariant* cfgExecuter)
 				}
 			}
 
-			_cta_engine.addExecuter(ExecCmdPtr(executer));
+            _cta_engine.addExecutor(ExecCmdPtr(executer));
 		}
 		else if (name == "diff")
 		{
@@ -984,7 +984,7 @@ bool WtRtRunner::initExecuters(WTSVariant* cfgExecuter)
 				}
 			}
 
-			_cta_engine.addExecuter(ExecCmdPtr(executer));
+            _cta_engine.addExecutor(ExecCmdPtr(executer));
 		}
 		else
 		{
@@ -992,7 +992,7 @@ bool WtRtRunner::initExecuters(WTSVariant* cfgExecuter)
 			if (!executer->init(cfgItem))
 				return false;
 
-			_cta_engine.addExecuter(ExecCmdPtr(executer));
+            _cta_engine.addExecutor(ExecCmdPtr(executer));
 		}
 		
 		count++;

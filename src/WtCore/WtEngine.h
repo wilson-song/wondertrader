@@ -10,7 +10,7 @@
 #pragma once
 #include <queue>
 #include <functional>
-#include <stdint.h>
+#include <cstdint>
 
 #include "ParserAdapter.h"
 #include "WtFilterMgr.h"
@@ -51,12 +51,12 @@ typedef std::function<void()>	TaskItem;
 class WtRiskMonWrapper
 {
 public:
-	WtRiskMonWrapper(WtRiskMonitor* mon, IRiskMonitorFact* fact) :_mon(mon), _fact(fact){}
+	WtRiskMonWrapper(WtRiskMonitor* mon, IRiskMonitorFactory* fact) : _mon(mon), _fact(fact){}
 	~WtRiskMonWrapper()
 	{
 		if (_mon)
 		{
-			_fact->deleteRiskMonotor(_mon);
+            _fact->deleteRiskMonitor(_mon);
 		}
 	}
 
@@ -65,7 +65,7 @@ public:
 
 private:
 	WtRiskMonitor*		_mon;
-	IRiskMonitorFact*	_fact;
+	IRiskMonitorFactory*	_fact;
 };
 typedef std::shared_ptr<WtRiskMonWrapper>	WtRiskMonPtr;
 
@@ -74,10 +74,10 @@ class IEngineEvtListener
 public:
 	virtual void on_initialize_event() {}
 	virtual void on_schedule_event(uint32_t uDate, uint32_t uTime) {}
-	virtual void on_session_event(uint32_t uDate, bool isBegin = true) {}
+	virtual void on_session_event(uint32_t uDate, bool isBegin) {}
 };
 
-class WtEngine : public WtPortContext, public IParserStub
+class WtEngine : public WtPortfolioContext, public IParserStub
 {
 public:
 	WtEngine();
@@ -88,11 +88,11 @@ public:
 
 	void set_trading_date(uint32_t curTDate);
 
-	inline uint32_t get_date() { return _cur_date; }
-	inline uint32_t get_min_time() { return _cur_time; }
-	inline uint32_t get_raw_time() { return _cur_raw_time; }
-	inline uint32_t get_secs() { return _cur_secs; }
-	inline uint32_t get_trading_date() { return _cur_tdate; }
+	inline uint32_t get_date() const { return _cur_date; }
+	inline uint32_t get_min_time() const { return _cur_time; }
+	inline uint32_t get_raw_time() const { return _cur_raw_time; }
+	inline uint32_t get_secs() const { return _cur_secs; }
+	inline uint32_t get_trading_date() const { return _cur_tdate; }
 
 	inline IBaseDataMgr*		get_basedata_mgr(){ return _base_data_mgr; }
 	inline IHotMgr*				get_hot_mgr() { return _hot_mgr; }
@@ -116,7 +116,7 @@ public:
 	 *	@stdCode	合约代码
 	 *	@commInfo	品种信息
 	 */
-	double get_exright_factor(const char* stdCode, WTSCommodityInfo* commInfo = NULL);
+	double get_exright_factor(const char* stdCode, WTSCommodityInfo* commInfo = nullptr);
 
 	uint32_t get_adjusting_flag();
 
@@ -134,27 +134,27 @@ public:
 
 	//////////////////////////////////////////////////////////////////////////
 	//WtPortContext接口
-	virtual WTSPortFundInfo* getFundInfo() override;
+	WTSPortFundInfo* getFundInfo() override;
 
-	virtual void setVolScale(double scale) override;
+	void setVolScale(double scale) override;
 
-	virtual bool isInTrading() override;
+	bool isInTrading() override;
 
-	virtual void writeRiskLog(const char* message) override;
+	void writeRiskLog(const char* message) override;
 
-	virtual uint32_t	getCurDate() override;
-	virtual uint32_t	getCurTime() override;
-	virtual uint32_t	getTradingDate() override;
-	virtual uint32_t	transTimeToMin(uint32_t uTime) override{ return 0; }
+	uint32_t	getCurDate() override;
+	uint32_t	getCurTime() override;
+	uint32_t	getTradingDate() override;
+	uint32_t	transTimeToMin(uint32_t uTime) override{ return 0; }
 
 	//////////////////////////////////////////////////////////////////////////
 	/// IParserStub接口
-	virtual void handle_push_quote(WTSTickData* newTick, uint32_t hotFlag) override;
+	void handle_push_quote(WTSTickData* newTick, uint32_t hotFlag) override;
 
 public:
 	virtual void init(WTSVariant* cfg, IBaseDataMgr* bdMgr, WtDtMgr* dataMgr, IHotMgr* hotMgr, EventNotifier* notifier);
 
-	virtual void run(bool bAsync = false) = 0;
+	virtual void run(bool bAsync) = 0;
 
 	virtual void on_tick(const char* stdCode, WTSTickData* curTick);
 
@@ -191,17 +191,17 @@ private:
 		double profit, double totalprofit = 0);
 
 protected:
-	uint32_t		_cur_date;		//当前日期
-	uint32_t		_cur_time;		//当前时间, 是1分钟线时间, 比如0900, 这个时候的1分钟线是0901, _cur_time也就是0901, 这个是为了CTA里面方便
+	uint32_t		_cur_date{};		//当前日期
+	uint32_t		_cur_time{};		//当前时间, 是1分钟线时间, 比如0900, 这个时候的1分钟线是0901, _cur_time也就是0901, 这个是为了CTA里面方便
 	uint32_t		_cur_raw_time;	//当前真实时间
 	uint32_t		_cur_secs;		//当前秒数, 包含毫秒
 	uint32_t		_cur_tdate;		//当前交易日
 
 	uint32_t		_fund_udt_span;	//组合资金更新时间间隔
 
-	IBaseDataMgr*	_base_data_mgr;	//基础数据管理器
-	IHotMgr*		_hot_mgr;		//主力管理器
-	WtDtMgr*		_data_mgr;		//数据管理器
+	IBaseDataMgr*	_base_data_mgr{};	//基础数据管理器
+	IHotMgr*		_hot_mgr{};		//主力管理器
+	WtDtMgr*		_data_mgr{};		//数据管理器
 	IEngineEvtListener*	_evt_listener;
 
 	//By Wesley @ 2022.02.07
@@ -300,7 +300,7 @@ protected:
 
 	//后台任务线程, 把风控和资金, 持仓更新都放到这个线程里去
 	typedef std::queue<TaskItem>	TaskQueue;
-	StdThreadPtr	_thrd_task;
+	StdThreadPtr	_thread_task;
 	TaskQueue		_task_queue;
 	StdUniqueMutex	_mtx_task;
 	StdCondVariable	_cond_task;
@@ -310,7 +310,7 @@ protected:
 	{
 		std::string		_module_path;
 		DllHandle		_module_inst;
-		IRiskMonitorFact*	_fact;
+		IRiskMonitorFactory*	_fact;
 		FuncCreateRiskMonFact	_creator;
 		FuncDeleteRiskMonFact	_remover;
 	} RiskMonFactInfo;

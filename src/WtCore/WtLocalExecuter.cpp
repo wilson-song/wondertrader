@@ -180,7 +180,7 @@ WTSTickSlice* WtLocalExecuter::getTicks(const char* stdCode, uint32_t count, uin
 	if (_data_mgr == NULL)
 		return NULL;
 
-	return _data_mgr->get_tick_slice(stdCode, count);
+	return _data_mgr->get_tick_slice(stdCode, count, 0);
 }
 
 WTSTickData* WtLocalExecuter::grabLastTick(const char* stdCode)

@@ -271,7 +271,7 @@ void TraderAdapter::onRspOrders(const WTSArray* ayOrders)
 void TraderAdapter::onPushOrder(WTSOrderInfo* oInfo)
 {
 	WTSContractInfo* cInfo = _bd_mgr->getContract(oInfo->getCode(), oInfo->getExchg());
-	if (cInfo == NULL)
+	if (cInfo == nullptr)
 		return;
 
 	//如果订单回报中，订单状态是已结束，则刷新资金和持仓
@@ -292,9 +292,9 @@ void TraderAdapter::onRspPosition(const WTSArray* ayPositions)
 	{
 		for (std::size_t idx = 0; idx < ((WTSArray*)ayPositions)->size(); idx++)
 		{
-			WTSPositionItem* pItem = (WTSPositionItem*)(((WTSArray*)ayPositions)->at(idx));
-			WTSContractInfo* cInfo = _bd_mgr->getContract(pItem->getCode());
-			if (cInfo == NULL)
+			auto* pItem = (WTSPositionItem*)(((WTSArray*)ayPositions)->at(idx));
+			WTSContractInfo* cInfo = _bd_mgr->getContract(pItem->getCode(), "");
+			if (cInfo == nullptr)
 				continue;
 			WTSCommodityInfo* commInfo = cInfo->getCommInfo();
 

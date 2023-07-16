@@ -733,16 +733,16 @@ void TraderCTPMini::OnRspQryInvestorPosition(CThostFtdcInvestorPositionField *pI
 
 	if (!IsErrorRspInfo(pRspInfo) && pInvestorPosition)
 	{
-		if (NULL == m_mapPosition)
+		if (nullptr == m_mapPosition)
 			m_mapPosition = PositionMap::create();
 
-		WTSContractInfo* contract = m_bdMgr->getContract(pInvestorPosition->InstrumentID);
+		WTSContractInfo* contract = m_bdMgr->getContract(pInvestorPosition->InstrumentID, "");
 		if (contract)
 		{
 			WTSCommodityInfo* commInfo = contract->getCommInfo();
 			std::string key = fmt::format("{}-{}", pInvestorPosition->InstrumentID, pInvestorPosition->PosiDirection);
-			WTSPositionItem* pos = (WTSPositionItem*)m_mapPosition->get(key);
-			if(pos == NULL)
+			auto* pos = (WTSPositionItem*)m_mapPosition->get(key);
+			if(pos == nullptr)
 			{
 				pos = WTSPositionItem::create(pInvestorPosition->InstrumentID, commInfo->getCurrency(), commInfo->getExchg());
 				pos->setContractInfo(contract);
@@ -1087,7 +1087,7 @@ int TraderCTPMini::wrapActionFlag(WTSActionFlag actionFlag)
 
 WTSOrderInfo* TraderCTPMini::makeOrderInfo(CThostFtdcOrderField* orderField)
 {
-	WTSContractInfo* contract = m_bdMgr->getContract(orderField->InstrumentID);
+	WTSContractInfo* contract = m_bdMgr->getContract(orderField->InstrumentID, "");
 	if (contract == NULL)
 		return NULL;
 
@@ -1174,9 +1174,9 @@ WTSOrderInfo* TraderCTPMini::makeOrderInfo(CThostFtdcOrderField* orderField)
 
 WTSEntrust* TraderCTPMini::makeEntrust(CThostFtdcInputOrderField *entrustField)
 {
-	WTSContractInfo* ct = m_bdMgr->getContract(entrustField->InstrumentID);
-	if (ct == NULL)
-		return NULL;
+	WTSContractInfo* ct = m_bdMgr->getContract(entrustField->InstrumentID, "");
+	if (ct == nullptr)
+		return nullptr;
 
 	WTSEntrust* pRet = WTSEntrust::create(
 		entrustField->InstrumentID,
@@ -1221,8 +1221,8 @@ WTSError* TraderCTPMini::makeError(CThostFtdcRspInfoField* rspInfo)
 WTSTradeInfo* TraderCTPMini::makeTradeRecord(CThostFtdcTradeField *tradeField)
 {
 	WTSContractInfo* contract = m_bdMgr->getContract(tradeField->InstrumentID, tradeField->ExchangeID);
-	if (contract == NULL)
-		return NULL;
+	if (contract == nullptr)
+		return nullptr;
 
 	WTSCommodityInfo* commInfo = contract->getCommInfo();
 
@@ -1234,7 +1234,7 @@ WTSTradeInfo* TraderCTPMini::makeTradeRecord(CThostFtdcTradeField *tradeField)
 
 	std::string strTime = tradeField->TradeTime;
 	StrUtil::replace(strTime, ":", "");
-	uint32_t uTime = strtoul(strTime.c_str(), NULL, 10);
+	uint32_t uTime = strtoul(strTime.c_str(), nullptr, 10);
 
 	/*
 	 *	By Wesley @ 2021.12.16

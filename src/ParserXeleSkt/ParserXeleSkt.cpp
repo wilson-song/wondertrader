@@ -163,12 +163,12 @@ bool ParserXeleSkt::prepare()
 		return false;
 	}
 
-	if (_tick_cache == NULL)
+	if (_tick_cache == nullptr)
 		_tick_cache = TickCache::create();
 	
 	write_log(_sink, LL_INFO, "[ParserXeleSkt] Preparing snapshots via tcp tunnel {}:{}...", _tcp_host, _tcp_port);
 
-	boost::array<char, 4096> buffer;
+	boost::array<char, 4096> buffer{};
 	std::string content;
 	auto snap_size = sizeof(CXeleShfeSnapShot) + sizeof(CXeleShfeMarketHead);
 	for (;;)
@@ -186,7 +186,7 @@ bool ParserXeleSkt::prepare()
 
 	while (content.size() > snap_size)
 	{
-		CXeleShfeMarketHead *mh = (CXeleShfeMarketHead *)(content.data());
+		auto *mh = (CXeleShfeMarketHead *)(content.data());
 		int8_t version = mh->Version;
 		if (version != XELE_MD_DATA_VERSION)
 			break;
@@ -195,10 +195,10 @@ bool ParserXeleSkt::prepare()
 		if (type != MESSAGE_SNAP_SHOT)
 			break;
 
-		CXeleShfeSnapShot *p = (CXeleShfeSnapShot *)(content.data() + sizeof(CXeleShfeMarketHead));
+		auto *p = (CXeleShfeSnapShot *)(content.data() + sizeof(CXeleShfeMarketHead));
 		int instrumentNo = p->InstrumentNo;
-		WTSContractInfo* ct = _bd_mgr->getContract(p->InstrumentID);
-		if (ct != NULL)
+		WTSContractInfo* ct = _bd_mgr->getContract(p->InstrumentID, "");
+		if (ct != nullptr)
 		{
 			auto it = _set_subs.find(ct->getFullCode());
 			if (it != _set_subs.end())
@@ -276,11 +276,11 @@ bool ParserXeleSkt::connect()
 
 bool ParserXeleSkt::disconnect()
 {
-	if(_udp_socket != NULL)
+	if(_udp_socket != nullptr)
 	{
 		_udp_socket->close();
 		delete _udp_socket;
-		_udp_socket = NULL;
+		_udp_socket = nullptr;
 	}
 
 	_stopped = true;
@@ -399,7 +399,8 @@ void ParserXeleSkt::extract_buffer(uint32_t length)
 				quote.action_time = actTime;
 				if(quote.trading_date == 0)
 				{
-					quote.trading_date = _bd_mgr->calcTradingDate(tick->getContractInfo()->getFullPid(), actDate, actTime / 100000);
+					quote.trading_date = _bd_mgr->calcTradingDate(
+                            tick->getContractInfo()->getFullPid(), actDate, actTime / 100000, false);
 				}
 
 				quote.price = p->LastPrice*scale;
@@ -459,7 +460,8 @@ void ParserXeleSkt::extract_buffer(uint32_t length)
 				quote.action_time = actTime;
 				if (quote.trading_date == 0)
 				{
-					quote.trading_date = _bd_mgr->calcTradingDate(tick->getContractInfo()->getFullPid(), actDate, actTime / 100000);
+					quote.trading_date = _bd_mgr->calcTradingDate(
+                            tick->getContractInfo()->getFullPid(), actDate, actTime / 100000, false);
 				}
 				quote.price = p->LastPrice*scale;
 				quote.high = std::max(quote.high, p->LastPrice*scale);
@@ -513,7 +515,7 @@ void ParserXeleSkt::extract_buffer(uint32_t length)
 			}
 		}
 		else if (type == MESSAGE_TYPE_HEART_BEAT) {
-			CXeleShfeHeartBeat *p = reinterpret_cast<CXeleShfeHeartBeat *>(data + sizeof(CXeleShfeMarketHead));
+			auto *p = reinterpret_cast<CXeleShfeHeartBeat *>(data + sizeof(CXeleShfeMarketHead));
 			static std::size_t packLen = sizeof(CXeleShfeMarketHead) + sizeof(CXeleShfeHeartBeat);
 			len += packLen;
 			write_log(_sink, LL_DEBUG, "[ParserXeleSkt] Receiving heartbeat packet, length: %d\n", packLen);

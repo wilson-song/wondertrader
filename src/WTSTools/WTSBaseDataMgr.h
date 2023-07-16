@@ -33,20 +33,20 @@ public:
 	~WTSBaseDataMgr();
 
 public:
-	virtual WTSCommodityInfo*	getCommodity(const char* stdPID) override;
-	virtual WTSCommodityInfo*	getCommodity(const char* exchg, const char* pid) override;
+	WTSCommodityInfo*	getCommodity(const char* stdPID) override;
+	WTSCommodityInfo*	getCommodity(const char* exchange, const char* pid) override;
 
-	virtual WTSContractInfo*	getContract(const char* code, const char* exchg = "") override;
-	virtual WTSArray*			getContracts(const char* exchg = "") override;
+	WTSContractInfo*	getContract(const char* code, const char* exchange) override;
+	WTSArray*			getContracts(const char* exchange) override;
 
-	virtual WTSSessionInfo*		getSession(const char* sid) override;
-	virtual WTSSessionInfo*		getSessionByCode(const char* code, const char* exchg = "") override;
-	virtual WTSArray*			getAllSessions() override;
-	virtual bool				isHoliday(const char* stdPID, uint32_t uDate, bool isTpl = false) override;
+	WTSSessionInfo*		getSession(const char* sid) override;
+	WTSSessionInfo*		getSessionByCode(const char* code, const char* exchange) override;
+	WTSArray*			getAllSessions() override;
+	bool				isHoliday(const char* stdPID, uint32_t uDate, bool isTpl) override;
 
 
-	virtual uint32_t			calcTradingDate(const char* stdPID, uint32_t uDate, uint32_t uTime, bool isSession = false) override;
-	virtual uint64_t			getBoundaryTime(const char* stdPID, uint32_t tDate, bool isSession = false, bool isStart = true) override;
+	uint32_t			calcTradingDate(const char* stdPID, uint32_t uDate, uint32_t uTime, bool isSession) override;
+	uint64_t			getBoundaryTime(const char* stdPID, uint32_t tDate, bool isSession, bool isStart) override;
 	void		release();
 
 

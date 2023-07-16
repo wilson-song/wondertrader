@@ -22,7 +22,7 @@ struct Tag {
     NON_SPECIFIC
   };
 
-  Tag(const Token& token);
+  explicit Tag(const Token& token);
   const std::string Translate(const Directives& directives);
 
   TYPE type;

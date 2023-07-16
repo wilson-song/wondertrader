@@ -37,13 +37,13 @@ namespace rj = rapidjson;
 USING_NS_WTP;
 
 WtEngine::WtEngine()
-	: _port_fund(NULL)
+	: _port_fund(nullptr)
 	, _risk_volscale(1.0)
 	, _risk_date(0)
 	, _terminated(false)
-	, _evt_listener(NULL)
-	, _adapter_mgr(NULL)
-	, _notifier(NULL)
+	, _evt_listener(nullptr)
+	, _adapter_mgr(nullptr)
+	, _notifier(nullptr)
 	, _fund_udt_span(0)
 	, _ready(false)
 {
@@ -584,7 +584,7 @@ void WtEngine::load_datas()
 
 WTSTickSlice* WtEngine::get_tick_slice(uint32_t sid, const char* code, uint32_t count)
 {
-	return _data_mgr->get_tick_slice(code, count);
+	return _data_mgr->get_tick_slice(code, count, 0);
 }
 
 WTSTickData* WtEngine::get_last_tick(uint32_t sid, const char* stdCode)
@@ -596,8 +596,8 @@ WTSKlineSlice* WtEngine::get_kline_slice(uint32_t sid, const char* stdCode, cons
 {
 	CodeHelper::CodeInfo codeInfo = CodeHelper::extractStdCode(stdCode, _hot_mgr);
 	WTSCommodityInfo* cInfo = _base_data_mgr->getCommodity(codeInfo._exchg, codeInfo._product);
-	if (cInfo == NULL)
-		return NULL;
+	if (cInfo == nullptr)
+		return nullptr;
 
 	//WTSSessionInfo* sInfo = cInfo->getSessionInfo();
 
@@ -1071,9 +1071,9 @@ void WtEngine::push_task(TaskItem task)
 	}
 	
 
-	if (_thrd_task == NULL)
+	if (_thread_task == NULL)
 	{
-		_thrd_task.reset(new StdThread([this]{
+		_thread_task.reset(new StdThread([this]{
 			task_loop();
 		}));
 	}
@@ -1111,7 +1111,7 @@ void WtEngine::task_loop()
 
 bool WtEngine::init_riskmon(WTSVariant* cfg)
 {
-	if (cfg == NULL)
+	if (cfg == nullptr)
 		return false;
 
 	if (!cfg->getBoolean("active"))
@@ -1125,14 +1125,14 @@ bool WtEngine::init_riskmon(WTSVariant* cfg)
 		dllpath = WtHelper::getInstDir() + module;
 
 	DllHandle hInst = DLLHelper::load_library(dllpath.c_str());
-	if (hInst == NULL)
+	if (hInst == nullptr)
 	{
 		WTSLogger::log_by_cat("risk", LL_ERROR, "Riskmon module {} loading failed", dllpath.c_str());
 		return false;
 	}
 
-	FuncCreateRiskMonFact creator = (FuncCreateRiskMonFact)DLLHelper::get_symbol(hInst, "createRiskMonFact");
-	if (creator == NULL)
+	auto creator = (FuncCreateRiskMonFact)DLLHelper::get_symbol(hInst, "createRiskMonFact");
+	if (creator == nullptr)
 	{
 		DLLHelper::free_library(hInst);
 		WTSLogger::log_by_cat("risk", LL_ERROR, "Riskmon module {} is not compatible", module.c_str());
@@ -1147,7 +1147,7 @@ bool WtEngine::init_riskmon(WTSVariant* cfg)
 
 	const char* name = cfg->getCString("name");
 	
-	_risk_mon.reset(new WtRiskMonWrapper(_risk_fact._fact->createRiskMonotor(name), _risk_fact._fact));
+	_risk_mon.reset(new WtRiskMonWrapper(_risk_fact._fact->createRiskMonitor(name), _risk_fact._fact));
 	_risk_mon->self()->init(this, cfg);
 
 	return true;

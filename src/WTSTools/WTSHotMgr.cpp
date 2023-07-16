@@ -21,7 +21,7 @@
 
 
 WTSHotMgr::WTSHotMgr()
-	: m_mapCustRules(NULL)
+	: m_mapCustomRules(NULL)
 	, m_bInitialized(false)
 {
 }
@@ -33,7 +33,7 @@ WTSHotMgr::~WTSHotMgr()
 
 const char* WTSHotMgr::getRuleTag(const char* stdCode)
 {
-	if (m_mapCustRules == NULL)
+	if (m_mapCustomRules == NULL)
 		return "";
 
 	auto len = strlen(stdCode);
@@ -43,16 +43,16 @@ const char* WTSHotMgr::getRuleTag(const char* stdCode)
 	auto idx = StrUtil::findLast(stdCode, '.');
 	if (idx == std::string::npos)
 	{
-		auto it = m_mapCustRules->find(ShortKey(stdCode, len));
-		if (it == m_mapCustRules->end())
+		auto it = m_mapCustomRules->find(ShortKey(stdCode, len));
+		if (it == m_mapCustomRules->end())
 			return "";
 
 		return it->first.c_str();
 	}
 
 	const char* tail = stdCode + idx + 1;
-	auto it = m_mapCustRules->find(ShortKey(tail, len - idx - 1));
-	if (it == m_mapCustRules->end())
+	auto it = m_mapCustomRules->find(ShortKey(tail, len - idx - 1));
+	if (it == m_mapCustomRules->end())
 		return "";
 
 	return it->first.c_str();
@@ -60,10 +60,10 @@ const char* WTSHotMgr::getRuleTag(const char* stdCode)
 
 double WTSHotMgr::getRuleFactor(const char* ruleTag, const char* fullPid, uint32_t uDate /* = 0 */ )
 {
-	if (m_mapCustRules == NULL)
+	if (m_mapCustomRules == NULL)
 		return 1.0;
 
-	WTSProductHotMap* prodMap = (WTSProductHotMap*)m_mapCustRules->get(ruleTag);
+	WTSProductHotMap* prodMap = (WTSProductHotMap*)m_mapCustomRules->get(ruleTag);
 	if (prodMap == NULL)
 		return 1.0;
 
@@ -145,7 +145,7 @@ bool WTSHotMgr::isHot(const char* exchg, const char* rawCode, uint32_t dt)
 	return isCustomHot("HOT", fullCode, dt);
 }
 
-bool WTSHotMgr::splitHotSecions(const char* exchg, const char* pid, uint32_t sDt, uint32_t eDt, HotSections& sections)
+bool WTSHotMgr::splitHotSections(const char* exchg, const char* pid, uint32_t sDt, uint32_t eDt, HotSections& sections)
 {
 	static thread_local char fullPid[64] = { 0 };
 	fmtutil::format_to(fullPid, "{}.{}", exchg, pid);
@@ -184,7 +184,7 @@ bool WTSHotMgr::isSecond(const char* exchg, const char* rawCode, uint32_t dt)
 	return isCustomHot("2NDT", fullCode, dt);
 }
 
-bool WTSHotMgr::splitSecondSecions(const char* exchg, const char* pid, uint32_t sDt, uint32_t eDt, HotSections& sections)
+bool WTSHotMgr::splitSecondSections(const char* exchg, const char* pid, uint32_t sDt, uint32_t eDt, HotSections& sections)
 {
 	static thread_local char fullPid[64] = { 0 };
 	fmtutil::format_to(fullPid, "{}.{}", exchg, pid);
@@ -203,17 +203,17 @@ bool WTSHotMgr::loadCustomRules(const char* tag, const char* filename)
 	}
 
 	WTSVariant* root = WTSCfgLoader::load_from_file(filename);
-	if (root == NULL)
+	if (root == nullptr)
 		return false;
 
-	if (m_mapCustRules == NULL)
-		m_mapCustRules = WTSCustomSwitchMap::create();
+	if (m_mapCustomRules == nullptr)
+        m_mapCustomRules = WTSCustomSwitchMap::create();
 
-	WTSProductHotMap* prodMap = (WTSProductHotMap*)m_mapCustRules->get(tag);
-	if(prodMap == NULL)
+	WTSProductHotMap* prodMap = (WTSProductHotMap*)m_mapCustomRules->get(tag);
+	if(prodMap == nullptr)
 	{
 		prodMap = WTSProductHotMap::create();
-		m_mapCustRules->add(tag, prodMap, false);
+		m_mapCustomRules->add(tag, prodMap, false);
 	}
 
 	for (const std::string& exchg : root->memberNames())
@@ -248,7 +248,7 @@ bool WTSHotMgr::loadCustomRules(const char* tag, const char* filename)
 			}
 
 			std::string fullCode = fmt::format("{}.{}", exchg.c_str(), lastCode.c_str());
-			m_mapCustCodes[tag].insert(fullCode);
+			m_mapCustomCodes[tag].insert(fullCode);
 		}
 	}
 
@@ -258,16 +258,16 @@ bool WTSHotMgr::loadCustomRules(const char* tag, const char* filename)
 
 const char* WTSHotMgr::getPrevCustomRawCode(const char* tag, const char* fullPid, uint32_t dt /* = 0 */)
 {
-	if (m_mapCustRules == NULL)
+	if (m_mapCustomRules == nullptr)
 		return "";
 
 	if (dt == 0)
 		dt = TimeUtils::getCurDate();
 
-	if (m_mapCustRules == NULL)
+	if (m_mapCustomRules == nullptr)
 		return "";
 
-	WTSProductHotMap* prodMap = (WTSProductHotMap*)m_mapCustRules->get(tag);
+	WTSProductHotMap* prodMap = (WTSProductHotMap*)m_mapCustomRules->get(tag);
 	if (prodMap == NULL)
 		return "";
 
@@ -307,13 +307,13 @@ const char* WTSHotMgr::getPrevCustomRawCode(const char* tag, const char* fullPid
 
 const char* WTSHotMgr::getCustomRawCode(const char* tag, const char* fullPid, uint32_t dt /* = 0 */)
 {
-	if (m_mapCustRules == NULL)
+	if (m_mapCustomRules == NULL)
 		return "";
 
 	if (dt == 0)
 		dt = TimeUtils::getCurDate();
 
-	WTSProductHotMap* prodMap = (WTSProductHotMap*)m_mapCustRules->get(tag);
+	WTSProductHotMap* prodMap = (WTSProductHotMap*)m_mapCustomRules->get(tag);
 	if (prodMap == NULL)
 		return "";
 
@@ -344,10 +344,10 @@ const char* WTSHotMgr::getCustomRawCode(const char* tag, const char* fullPid, ui
 
 bool WTSHotMgr::isCustomHot(const char* tag, const char* fullCode, uint32_t dt /* = 0 */)
 {
-	if (m_mapCustRules == NULL)
+	if (m_mapCustomRules == NULL)
 		return false;
 
-	const auto& curHotCodes = m_mapCustCodes[tag];
+	const auto& curHotCodes = m_mapCustomCodes[tag];
 	if (curHotCodes.empty())
 		return false;
 
@@ -366,7 +366,7 @@ bool WTSHotMgr::isCustomHot(const char* tag, const char* fullCode, uint32_t dt /
 	fullPid += ".";
 	fullPid += CodeHelper::rawMonthCodeToRawCommID(rawCode);
 
-	WTSProductHotMap* prodMap = (WTSProductHotMap*)m_mapCustRules->get(tag);
+	WTSProductHotMap* prodMap = (WTSProductHotMap*)m_mapCustomRules->get(tag);
 	if (prodMap == NULL)
 		return "";
 
@@ -399,10 +399,10 @@ bool WTSHotMgr::isCustomHot(const char* tag, const char* fullCode, uint32_t dt /
 
 bool WTSHotMgr::splitCustomSections(const char* tag, const char* fullPid, uint32_t sDt, uint32_t eDt, HotSections& sections)
 {
-	if (m_mapCustRules == NULL)
+	if (m_mapCustomRules == NULL)
 		return false;
 
-	WTSProductHotMap* prodMap = (WTSProductHotMap*)m_mapCustRules->get(tag);
+	WTSProductHotMap* prodMap = (WTSProductHotMap*)m_mapCustomRules->get(tag);
 	if (prodMap == NULL)
 		return false;
 
@@ -463,9 +463,9 @@ void WTSHotMgr::release()
 	//	m_pExchgScndMap = NULL;
 	//}
 
-	if(m_mapCustRules)
+	if(m_mapCustomRules)
 	{
-		m_mapCustRules->release();
-		m_mapCustRules = NULL;
+		m_mapCustomRules->release();
+        m_mapCustomRules = NULL;
 	}
 }

@@ -1,5 +1,5 @@
 #pragma once
-#include <string.h>
+#include <cstring>
 #include <boost/container_hash/hash.hpp>
 #include "WTSMarcos.h"
 

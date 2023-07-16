@@ -25,23 +25,21 @@ USING_NS_WTP;
 //////////////////////////////////////////////////////////////////////////
 //ParserAdapter
 ParserAdapter::ParserAdapter()
-	: _parser_api(NULL)
-	, _remover(NULL)
+	: _parser_api(nullptr)
+	, _remover(nullptr)
 	, _stopped(false)
-	, _bd_mgr(NULL)
-	, _stub(NULL)
-	, _cfg(NULL)
+	, _bd_mgr(nullptr)
+	, _stub(nullptr)
+	, _cfg(nullptr)
 {
 }
 
 
-ParserAdapter::~ParserAdapter()
-{
-}
+ParserAdapter::~ParserAdapter() = default;
 
 bool ParserAdapter::init(const char* id, WTSVariant* cfg, IParserStub* stub, IBaseDataMgr* bgMgr)
 {
-	if (cfg == NULL)
+	if (cfg == nullptr)
 		return false;
 
 	_stub = stub;
@@ -125,10 +123,10 @@ bool ParserAdapter::init(const char* id, WTSVariant* cfg, IParserStub* stub, IBa
 		if (_parser_api->init(cfg))
 		{
 			ContractSet contractSet;
-			WTSArray* ay = _bd_mgr->getContracts();
-			for(auto it = ay->begin(); it != ay->end(); it++)
+			WTSArray* ay = _bd_mgr->getContracts("");
+			for(auto & it : *ay)
 			{
-				WTSContractInfo* cInfo = STATIC_CONVERT(*it, WTSContractInfo*);
+				auto* cInfo = STATIC_CONVERT(it, WTSContractInfo*);
 
 				//先检查合约和品种是否符合条件
 				if(!_code_filter.empty())
@@ -181,7 +179,7 @@ bool ParserAdapter::init(const char* id, WTSVariant* cfg, IParserStub* stub, IBa
 
 bool ParserAdapter::initExt(const char* id, IParserApi* api, IParserStub* stub, IBaseDataMgr* bgMgr)
 {
-	if (api == NULL)
+	if (api == nullptr)
 		return false;
 
 	_parser_api = api;
@@ -193,13 +191,13 @@ bool ParserAdapter::initExt(const char* id, IParserApi* api, IParserStub* stub, 
 	{
 		_parser_api->registerSpi(this);
 
-		if (_parser_api->init(NULL))
+		if (_parser_api->init(nullptr))
 		{
 			ContractSet contractSet;
-			WTSArray* ay = _bd_mgr->getContracts();
-			for (auto it = ay->begin(); it != ay->end(); it++)
+			WTSArray* ay = _bd_mgr->getContracts("");
+			for (auto & it : *ay)
 			{
-				WTSContractInfo* cInfo = STATIC_CONVERT(*it, WTSContractInfo*);
+				auto* cInfo = STATIC_CONVERT(it, WTSContractInfo*);
 
 				//先检查合约和品种是否符合条件
 				if (!_code_filter.empty())
@@ -262,7 +260,7 @@ void ParserAdapter::release()
 
 bool ParserAdapter::run()
 {
-	if (_parser_api == NULL)
+	if (_parser_api == nullptr)
 		return false;
 
 	_parser_api->connect();
@@ -271,12 +269,12 @@ bool ParserAdapter::run()
 
 void ParserAdapter::handleQuote(WTSTickData *quote, uint32_t procFlag)
 {
-	if (quote == NULL || _stopped || quote->actiondate() == 0 || quote->tradingdate() == 0)
+	if (quote == nullptr || _stopped || quote->actiondate() == 0 || quote->tradingdate() == 0)
 		return;
 
 	WTSContractInfo* cInfo = quote->getContractInfo();
-	if (cInfo == NULL) cInfo = _bd_mgr->getContract(quote->code(), quote->exchg());
-	if (cInfo == NULL)
+	if (cInfo == nullptr) cInfo = _bd_mgr->getContract(quote->code(), quote->exchg());
+	if (cInfo == nullptr)
 		return;
 
 	quote->setCode(cInfo->getFullCode());

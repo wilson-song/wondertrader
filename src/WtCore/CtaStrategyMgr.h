@@ -16,26 +16,26 @@
 
 #include "../Share/DLLHelper.hpp"
 
-class CtaStraWrapper
+class CtaStrategyWrapper
 {
 public:
-	CtaStraWrapper(CtaStrategy* stra, ICtaStrategyFact* fact) :_stra(stra), _fact(fact){}
-	~CtaStraWrapper()
+	CtaStrategyWrapper(CtaStrategy* strategy, ICtaStrategyFactory* fact) : _strategy(strategy), _factory(fact){}
+	~CtaStrategyWrapper()
 	{
-		if (_stra)
+		if (_strategy)
 		{
-			_fact->deleteStrategy(_stra);
+			_factory->deleteStrategy(_strategy);
 		}
 	}
 
-	CtaStrategy* self(){ return _stra; }
+	CtaStrategy* self(){ return _strategy; }
 
 
 private:
-	CtaStrategy*		_stra;
-	ICtaStrategyFact*	_fact;
+	CtaStrategy*		_strategy;
+	ICtaStrategyFactory*	_factory;
 };
-typedef std::shared_ptr<CtaStraWrapper>	CtaStrategyPtr;
+typedef std::shared_ptr<CtaStrategyWrapper>	CtaStrategyPtr;
 
 
 class CtaStrategyMgr : private boost::noncopyable
@@ -56,9 +56,9 @@ private:
 	{
 		std::string		_module_path;
 		DllHandle		_module_inst;
-		ICtaStrategyFact*	_fact;
-		FuncCreateStraFact	_creator;
-		FuncDeleteStraFact	_remover;
+		ICtaStrategyFactory*	_fact;
+		FuncCreateStrategyFact	_creator;
+		FuncDeleteStrategyFact	_remover;
 	} StraFactInfo;
 	typedef faster_hashmap<LongKey, StraFactInfo> StraFactMap;
 

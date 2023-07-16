@@ -56,7 +56,7 @@ bool ParserAdapter::initExt(const char* id, IParserApi* api)
 		if (_parser_api->init(NULL))
 		{
 			ContractSet contractSet;
-			WTSArray* ayContract = _bd_mgr->getContracts();
+			WTSArray* ayContract = _bd_mgr->getContracts("");
 			WTSArray::Iterator it = ayContract->begin();
 			for (; it != ayContract->end(); it++)
 			{
@@ -210,10 +210,10 @@ bool ParserAdapter::init(const char* id, WTSVariant* cfg)
 					const char* exchg = (*it).c_str();
 					WTSArray* ayContract = _bd_mgr->getContracts(exchg);
 					auto cnt = ayContract->size();
-					WTSArray::Iterator it = ayContract->begin();
+					auto it = ayContract->begin();
 					for (; it != ayContract->end(); it++)
 					{
-						WTSContractInfo* contract = STATIC_CONVERT(*it, WTSContractInfo*);
+						auto* contract = STATIC_CONVERT(*it, WTSContractInfo*);
 						contractSet.insert(contract->getFullCode());
 					}
 
@@ -224,11 +224,11 @@ bool ParserAdapter::init(const char* id, WTSVariant* cfg)
 			}
 			else
 			{
-				WTSArray* ayContract = _bd_mgr->getContracts();
-				WTSArray::Iterator it = ayContract->begin();
+				WTSArray* ayContract = _bd_mgr->getContracts("");
+				auto it = ayContract->begin();
 				for (; it != ayContract->end(); it++)
 				{
-					WTSContractInfo* contract = STATIC_CONVERT(*it, WTSContractInfo*);
+					auto* contract = STATIC_CONVERT(*it, WTSContractInfo*);
 					contractSet.insert(contract->getFullCode());
 				}
 

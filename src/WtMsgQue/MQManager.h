@@ -26,10 +26,10 @@ typedef std::shared_ptr<MQClient> MQClientPtr;
 class MQManager
 {
 public:
-	MQManager() : _cb_log(NULL) {}
+	MQManager() : _cb_log(nullptr) {}
 
 public:
-	inline void		regiter_callbacks(FuncLogCallback cbLog) { _cb_log = cbLog; }
+	inline void		register_callbacks(FuncLogCallback cbLog) { _cb_log = cbLog; }
 
 	WtUInt32	create_server(const char* url, bool confirm);
 	void		destroy_server(WtUInt32 id);

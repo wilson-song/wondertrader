@@ -36,7 +36,7 @@ namespace rj = rapidjson;
 boost::asio::io_service g_asyncIO;
 
 WtCtaEngine::WtCtaEngine()
-	: _tm_ticker(NULL)
+	: _tm_ticker(nullptr)
 {
 	
 }
@@ -47,7 +47,7 @@ WtCtaEngine::~WtCtaEngine()
 	if (_tm_ticker)
 	{
 		delete _tm_ticker;
-		_tm_ticker = NULL;
+		_tm_ticker = nullptr;
 	}
 
 	if (_cfg)
@@ -65,28 +65,28 @@ void WtCtaEngine::run(bool bAsync /* = false */)
 		rj::Document root(rj::kObjectType);
 		rj::Document::AllocatorType &allocator = root.GetAllocator();
 
-		rj::Value jStraList(rj::kArrayType);
+		rj::Value jStrategyList(rj::kArrayType);
 		for (auto& m : _ctx_map)
 		{
 			const CtaContextPtr& ctx = m.second;
-			jStraList.PushBack(rj::Value(ctx->name(), allocator), allocator);
+			jStrategyList.PushBack(rj::Value(ctx->name(), allocator), allocator);
 		}
 
-		root.AddMember("marks", jStraList, allocator);
+		root.AddMember("marks", jStrategyList, allocator);
 
-		rj::Value jChnlList(rj::kArrayType);
+		rj::Value jChannelList(rj::kArrayType);
 		for (auto& m : _adapter_mgr->getAdapters())
 		{
 			const TraderAdapterPtr& adapter = m.second;
-			jChnlList.PushBack(rj::Value(adapter->id(), allocator), allocator);
+			jChannelList.PushBack(rj::Value(adapter->id(), allocator), allocator);
 		}
 
-		root.AddMember("channels", jChnlList, allocator);
+		root.AddMember("channels", jChannelList, allocator);
 
 		rj::Value jExecList(rj::kArrayType);
-		_exec_mgr.enum_executer([&jExecList, &allocator](ExecCmdPtr executer) {
-			if(executer)
-				jExecList.PushBack(rj::Value(executer->name(), allocator), allocator);
+		_exec_mgr.enum_executer([&jExecList, &allocator](const ExecCmdPtr& executor) {
+			if(executor)
+				jExecList.PushBack(rj::Value(executor->name(), allocator), allocator);
 		});
 
 		root.AddMember("executers", jExecList, allocator);
@@ -124,7 +124,7 @@ void WtCtaEngine::init(WTSVariant* cfg, IBaseDataMgr* bdMgr, WtDtMgr* dataMgr, I
 	_exec_mgr.set_filter_mgr(&_filter_mgr);
 }
 
-void WtCtaEngine::addContext(CtaContextPtr ctx)
+void WtCtaEngine::addContext(const CtaContextPtr& ctx)
 {
 	uint32_t sid = ctx->id();
 	_ctx_map[sid] = ctx;
@@ -134,7 +134,7 @@ CtaContextPtr WtCtaEngine::getContext(uint32_t id)
 {
 	auto it = _ctx_map.find(id);
 	if (it == _ctx_map.end())
-		return CtaContextPtr();
+		return {};
 
 	return it->second;
 }
@@ -143,9 +143,9 @@ void WtCtaEngine::on_init()
 {
 	//faster_hashmap<LongKey, double> target_pos;
 	_exec_mgr.clear_cached_targets();
-	for (auto it = _ctx_map.begin(); it != _ctx_map.end(); it++)
+	for (const auto & it : _ctx_map)
 	{
-		CtaContextPtr& ctx = (CtaContextPtr&)it->second;
+		auto& ctx = (CtaContextPtr&)it.second;
 		ctx->on_init();
 
 		const auto& exec_ids = _exec_mgr.get_route(ctx->name());
@@ -153,8 +153,8 @@ void WtCtaEngine::on_init()
 		ctx->enum_position([this, ctx, exec_ids](const char* stdCode, double qty){
 
 			double oldQty = qty;
-			bool bFilterd = _filter_mgr.is_filtered_by_strategy(ctx->name(), qty);
-			if (!bFilterd)
+			bool bFiltered = _filter_mgr.is_filtered_by_strategy(ctx->name(), qty);
+			if (!bFiltered)
 			{
 				if (!decimal::eq(qty, oldQty))
 				{
@@ -213,9 +213,9 @@ void WtCtaEngine::on_init()
 void WtCtaEngine::on_session_begin()
 {
 	WTSLogger::info("Trading day {} begun", _cur_tdate);
-	for (auto it = _ctx_map.begin(); it != _ctx_map.end(); it++)
+	for (const auto & it : _ctx_map)
 	{
-		CtaContextPtr& ctx = (CtaContextPtr&)it->second;
+		auto& ctx = (CtaContextPtr&)it.second;
 		ctx->on_session_begin(_cur_tdate);
 	}
 
@@ -229,9 +229,9 @@ void WtCtaEngine::on_session_end()
 {
 	WtEngine::on_session_end();
 
-	for (auto it = _ctx_map.begin(); it != _ctx_map.end(); it++)
+	for (const auto & it : _ctx_map)
 	{
-		CtaContextPtr& ctx = (CtaContextPtr&)it->second;
+		auto& ctx = (CtaContextPtr&)it.second;
 		ctx->on_session_end(_cur_tdate);
 	}
 
@@ -246,9 +246,9 @@ void WtCtaEngine::on_schedule(uint32_t curDate, uint32_t curTime)
 	_filter_mgr.load_filters();
 	_exec_mgr.clear_cached_targets();
 	faster_hashmap<LongKey, double> target_pos;
-	for (auto it = _ctx_map.begin(); it != _ctx_map.end(); it++)
+	for (const auto & it : _ctx_map)
 	{
-		CtaContextPtr& ctx = (CtaContextPtr&)it->second;
+		auto& ctx = (CtaContextPtr&)it.second;
 		ctx->on_schedule(curDate, curTime);
 		const auto& exec_ids = _exec_mgr.get_route(ctx->name());
 		ctx->enum_position([this, ctx, exec_ids, &target_pos](const char* stdCode, double qty){
@@ -403,8 +403,8 @@ void WtCtaEngine::handle_pos_change(const char* straName, const char* stdCode, d
 	 *	如果策略没有绑定执行通道，就提交全量
 	 */
 	const auto& exec_ids = _exec_mgr.get_route(straName);
-	for(auto& execid : exec_ids)
-		_exec_mgr.handle_pos_change(realCode.c_str(), targetPos, diffPos, execid.c_str());
+	for(auto& id : exec_ids)
+		_exec_mgr.handle_pos_change(realCode.c_str(), targetPos, diffPos, id.c_str());
 }
 
 void WtCtaEngine::on_tick(const char* stdCode, WTSTickData* curTick)
@@ -442,16 +442,16 @@ void WtCtaEngine::on_tick(const char* stdCode, WTSTickData* curTick)
 		//By Wesley
 		//这里做一个拷贝，虽然有点开销，但是可以规避掉一些问题，比如ontick的时候订阅tick
 		SubList sids = sit->second;
-		for (auto it = sids.begin(); it != sids.end(); it++)
+		for (const auto & it : sids)
 		{
-			uint32_t sid = it->first;
+			uint32_t sid = it.first;
 				
 
 			auto cit = _ctx_map.find(sid);
 			if (cit != _ctx_map.end())
 			{
-				CtaContextPtr& ctx = (CtaContextPtr&)cit->second;
-				uint32_t opt = it->second.second;
+				auto& ctx = (CtaContextPtr&)cit->second;
+				uint32_t opt = it.second.second;
 					
 				if (opt == 0)
 				{
@@ -524,13 +524,13 @@ void WtCtaEngine::on_bar(const char* stdCode, const char* period, uint32_t times
 	fmtutil::format_to(key, "{}-{}-{}", stdCode, period, times);
 
 	const SubList& sids = _bar_sub_map[key];
-	for (auto it = sids.begin(); it != sids.end(); it++)
+	for (const auto & it : sids)
 	{
-		uint32_t sid = it->first;
+		uint32_t sid = it.first;
 		auto cit = _ctx_map.find(sid);
 		if(cit != _ctx_map.end())
 		{
-			CtaContextPtr& ctx = (CtaContextPtr&)cit->second;
+			auto& ctx = (CtaContextPtr&)cit->second;
 			ctx->on_bar(stdCode, period, times, newBar);
 		}
 	}
@@ -545,7 +545,7 @@ bool WtCtaEngine::isInTrading()
 
 uint32_t WtCtaEngine::transTimeToMin(uint32_t uTime)
 {
-	return _tm_ticker->time_to_mins(uTime);
+	return _tm_ticker->time_to_minutes(uTime);
 }
 
 WTSCommodityInfo* WtCtaEngine::get_comm_info(const char* stdCode)
@@ -558,8 +558,8 @@ WTSSessionInfo* WtCtaEngine::get_sess_info(const char* stdCode)
 {
 	CodeHelper::CodeInfo codeInfo = CodeHelper::extractStdCode(stdCode, _hot_mgr);
 	WTSCommodityInfo* cInfo = _base_data_mgr->getCommodity(codeInfo._exchg, codeInfo._product);
-	if (cInfo == NULL)
-		return NULL;
+	if (cInfo == nullptr)
+		return nullptr;
 
 	return cInfo->getSessionInfo();
 }
