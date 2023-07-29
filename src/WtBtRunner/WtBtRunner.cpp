@@ -52,7 +52,7 @@ int main()
 		filename = "configbt.yaml";
 
 	WTSVariant* cfg = WTSCfgLoader::load_from_file(filename.c_str());
-	if (cfg == NULL)
+	if (cfg == nullptr)
 	{
 		WTSLogger::info("Loading configuration file {} failed", filename);
 		return -1;
@@ -66,7 +66,7 @@ int main()
 	int32_t slippage = cfgEnv->getInt32("slippage");
 	if (strcmp(mode, "cta") == 0)
 	{
-		CtaMocker* mocker = new CtaMocker(&replayer, "cta", slippage);
+		auto* mocker = new CtaMocker(&replayer, "cta", slippage);
 		mocker->init_cta_factory(cfg->get("cta"));
 		const char* stra_id = cfg->get("cta")->get("strategy")->getCString("id");
 		// 加载增量回测的基础历史回测数据
@@ -79,27 +79,27 @@ int main()
 	}
 	else if (strcmp(mode, "hft") == 0)
 	{
-		HftMocker* mocker = new HftMocker(&replayer, "hft");
+		auto* mocker = new HftMocker(&replayer, "hft");
 		mocker->init_hft_factory(cfg->get("hft"));
 		const char* stra_id = cfg->get("hft")->get("strategy")->getCString("id");
 		replayer.register_sink(mocker, stra_id);
 	}
 	else if (strcmp(mode, "sel") == 0)
 	{
-		SelMocker* mocker = new SelMocker(&replayer, "sel", slippage);
+		auto* mocker = new SelMocker(&replayer, "sel", slippage);
 		mocker->init_sel_factory(cfg->get("sel"));
 		const char* stra_id = cfg->get("sel")->get("strategy")->getCString("id");
 		replayer.register_sink(mocker, stra_id);
 	}
 	else if (strcmp(mode, "exec") == 0)
 	{
-		ExecMocker* mocker = new ExecMocker(&replayer);
+		auto* mocker = new ExecMocker(&replayer);
 		mocker->init(cfg->get("exec"));
 		replayer.register_sink(mocker, "exec");
 	}
 	else if (strcmp(mode, "uft") == 0)
 	{
-		UftMocker* mocker = new UftMocker(&replayer, "uft");
+		auto* mocker = new UftMocker(&replayer, "uft");
 		mocker->init_uft_factory(cfg->get("uft"));
 		const char* stra_id = cfg->get("uft")->get("strategy")->getCString("id");
 		replayer.register_sink(mocker, stra_id);
