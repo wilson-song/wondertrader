@@ -97,7 +97,7 @@ bool ParserAdapter::init(const char* id, WTSVariant* cfg)
 		if (cfg->getString("module").empty())
 			return false;
 
-		std::string module = DLLHelper::wrap_module(cfg->getCString("module"), "lib");;
+		std::string module = DLLHelper::wrap_module(cfg->getCString("module"), "lib");
 
 		if (!StdFile::exists(module.c_str()))
 		{
@@ -267,7 +267,7 @@ void ParserAdapter::release()
 
 bool ParserAdapter::run()
 {
-	if (_parser_api == NULL)
+	if (_parser_api == nullptr)
 		return false;
 
 	_parser_api->connect();
@@ -289,7 +289,7 @@ void ParserAdapter::handleTransaction(WTSTransData* transData)
 		return;
 
 	WTSContractInfo* contract = _bd_mgr->getContract(transData->code(), transData->exchg());
-	if (contract == NULL)
+	if (contract == nullptr)
 		return;
 
 	_dt_mgr->writeTransaction(transData);
@@ -304,7 +304,7 @@ void ParserAdapter::handleOrderDetail(WTSOrdDtlData* ordDetailData)
 		return;
 
 	WTSContractInfo* contract = _bd_mgr->getContract(ordDetailData->code(), ordDetailData->exchg());
-	if (contract == NULL)
+	if (contract == nullptr)
 		return;
 
 	_dt_mgr->writeOrderDetail(ordDetailData);
@@ -319,7 +319,7 @@ void ParserAdapter::handleOrderQueue(WTSOrdQueData* ordQueData)
 		return;
 
 	WTSContractInfo* contract = _bd_mgr->getContract(ordQueData->code(), ordQueData->exchg());
-	if (contract == NULL)
+	if (contract == nullptr)
 		return;
 		
 	_dt_mgr->writeOrderQueue(ordQueData);
@@ -334,13 +334,13 @@ void ParserAdapter::handleQuote( WTSTickData *quote, uint32_t procFlag )
 		return;
 
 	WTSContractInfo* contract = quote->getContractInfo();
-	if (contract == NULL)
+	if (contract == nullptr)
 	{
 		contract = _bd_mgr->getContract(quote->code(), quote->exchg());
 		quote->setContractInfo(contract);
 	}
 
-	if (contract == NULL)
+	if (contract == nullptr)
 		return;
 
 	if (!_dt_mgr->writeTick(quote, procFlag))
@@ -368,9 +368,9 @@ IBaseDataMgr* ParserAdapter::getBaseDataMgr()
 //ParserAdapterMgr
 void ParserAdapterMgr::release()
 {
-	for (auto it = _adapters.begin(); it != _adapters.end(); it++)
+	for (const auto & _adapter : _adapters)
 	{
-		it->second->release();
+		_adapter.second->release();
 	}
 
 	_adapters.clear();
@@ -378,7 +378,7 @@ void ParserAdapterMgr::release()
 
 bool ParserAdapterMgr::addAdapter(const char* id, ParserAdapterPtr& adapter)
 {
-	if (adapter == NULL || strlen(id) == 0)
+	if (adapter == nullptr || strlen(id) == 0)
 		return false;
 
 	auto it = _adapters.find(id);
@@ -401,14 +401,14 @@ ParserAdapterPtr ParserAdapterMgr::getAdapter(const char* id)
 		return it->second;
 	}
 
-	return ParserAdapterPtr();
+	return {};
 }
 
 void ParserAdapterMgr::run()
 {
-	for (auto it = _adapters.begin(); it != _adapters.end(); it++)
+	for (const auto & _adapter : _adapters)
 	{
-		it->second->run();
+		_adapter.second->run();
 	}
 
 	WTSLogger::info("{} parsers started", _adapters.size());

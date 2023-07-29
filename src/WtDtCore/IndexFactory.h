@@ -8,7 +8,7 @@ class DataManager;
 class IndexFactory
 {
 public:
-	IndexFactory():_hot_mgr(NULL), _bd_mgr(NULL){}
+	IndexFactory():_hot_mgr(nullptr), _bd_mgr(nullptr){}
 
 public:
 	bool	init(WTSVariant* config, IHotMgr* hotMgr, IBaseDataMgr* bdMgr, DataManager* dataMgr);
@@ -27,7 +27,7 @@ private:
 	IndexWorkers	_workers;
 	IHotMgr*		_hot_mgr;
 	IBaseDataMgr*	_bd_mgr;
-	DataManager*	_data_mgr;
+	DataManager*	_data_mgr{};
 
 	typedef std::shared_ptr<boost::threadpool::pool> ThreadPoolPtr;
 	ThreadPoolPtr	_pool;

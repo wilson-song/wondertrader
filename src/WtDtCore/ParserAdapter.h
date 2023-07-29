@@ -42,19 +42,19 @@ public:
 	const char* id() const { return _id.c_str(); }
 
 public:
-	virtual void handleSymbolList(const WTSArray* aySymbols) override;
+	void handleSymbolList(const WTSArray* aySymbols) override;
 
-	virtual void handleQuote(WTSTickData *quote, uint32_t procFlag) override;
+	void handleQuote(WTSTickData *quote, uint32_t procFlag) override;
 
-	virtual void handleOrderQueue(WTSOrdQueData* ordQueData) override;
+	void handleOrderQueue(WTSOrdQueData* ordQueData) override;
 
-	virtual void handleTransaction(WTSTransData* transData) override;
+	void handleTransaction(WTSTransData* transData) override;
 
-	virtual void handleOrderDetail(WTSOrdDtlData* ordDetailData) override;
+	void handleOrderDetail(WTSOrdDtlData* ordDetailData) override;
 
-	virtual void handleParserLog(WTSLogLevel ll, const char* message) override;
+	void handleParserLog(WTSLogLevel ll, const char* message) override;
 
-	virtual IBaseDataMgr* getBaseDataMgr() override;
+	IBaseDataMgr* getBaseDataMgr() override;
 
 private:
 	IParserApi*			_parser_api;

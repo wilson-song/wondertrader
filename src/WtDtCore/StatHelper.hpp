@@ -21,13 +21,13 @@ public:
 	}
 
 public:
-	typedef struct _StatInfo
+	typedef struct StatInfo
 	{
 		uint32_t	_recv_packs;
 		uint32_t	_send_packs;
 		uint64_t	_send_bytes;
 
-		_StatInfo()
+		StatInfo()
 		{
 			_recv_packs = 0;
 			_send_bytes = 0;

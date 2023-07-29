@@ -20,21 +20,19 @@
 
 
 DataManager::DataManager()
-	: _writer(NULL)
-	, _bd_mgr(NULL)
-	, _state_mon(NULL)
-	, _udp_caster(NULL)
+	: _writer(nullptr)
+	, _bd_mgr(nullptr)
+	, _state_mon(nullptr)
+	, _udp_caster(nullptr)
 {
 }
 
 
-DataManager::~DataManager()
-{
-}
+DataManager::~DataManager() = default;
 
 bool DataManager::isSessionProceeded(const char* sid)
 {
-	if (_writer == NULL)
+	if (_writer == nullptr)
 		return false;
 
 	return _writer->isSessionProceeded(sid);
@@ -55,14 +53,14 @@ bool DataManager::init(WTSVariant* params, WTSBaseDataMgr* bdMgr, StateMonitor* 
 	DllHandle libWriter = DLLHelper::load_library(module.c_str());
 	if (libWriter)
 	{
-		FuncCreateWriter pFuncCreateWriter = (FuncCreateWriter)DLLHelper::get_symbol(libWriter, "createWriter");
-		if (pFuncCreateWriter == NULL)
+		auto pFuncCreateWriter = (FuncCreateWriter)DLLHelper::get_symbol(libWriter, "createWriter");
+		if (pFuncCreateWriter == nullptr)
 		{
 			WTSLogger::error("Initializing of data writer failed: function createWriter not found...");
 		}
 
-		FuncDeleteWriter pFuncDeleteWriter = (FuncDeleteWriter)DLLHelper::get_symbol(libWriter, "deleteWriter");
-		if (pFuncDeleteWriter == NULL)
+		auto pFuncDeleteWriter = (FuncDeleteWriter)DLLHelper::get_symbol(libWriter, "deleteWriter");
+		if (pFuncDeleteWriter == nullptr)
 		{
 			WTSLogger::error("Initializing of data writer failed: function deleteWriter not found...");
 		}
@@ -85,7 +83,7 @@ bool DataManager::init(WTSVariant* params, WTSBaseDataMgr* bdMgr, StateMonitor* 
 
 void DataManager::add_ext_dumper(const char* id, IHisDataDumper* dumper)
 {
-	if (_writer == NULL)
+	if (_writer == nullptr)
 		return;
 
 	_writer->add_ext_dumper(id, dumper);
@@ -102,7 +100,7 @@ void DataManager::release()
 
 bool DataManager::writeTick(WTSTickData* curTick, uint32_t procFlag)
 {
-	if (_writer == NULL)
+	if (_writer == nullptr)
 		return false;
 
 	return _writer->writeTick(curTick, procFlag);
@@ -110,7 +108,7 @@ bool DataManager::writeTick(WTSTickData* curTick, uint32_t procFlag)
 
 bool DataManager::writeOrderQueue(WTSOrdQueData* curOrdQue)
 {
-	if (_writer == NULL)
+	if (_writer == nullptr)
 		return false;
 
 	return _writer->writeOrderQueue(curOrdQue);
@@ -118,7 +116,7 @@ bool DataManager::writeOrderQueue(WTSOrdQueData* curOrdQue)
 
 bool DataManager::writeOrderDetail(WTSOrdDtlData* curOrdDtl)
 {
-	if (_writer == NULL)
+	if (_writer == nullptr)
 		return false;
 
 	return _writer->writeOrderDetail(curOrdDtl);
@@ -126,7 +124,7 @@ bool DataManager::writeOrderDetail(WTSOrdDtlData* curOrdDtl)
 
 bool DataManager::writeTransaction(WTSTransData* curTrans)
 {
-	if (_writer == NULL)
+	if (_writer == nullptr)
 		return false;
 
 	return _writer->writeTransaction(curTrans);
@@ -134,8 +132,8 @@ bool DataManager::writeTransaction(WTSTransData* curTrans)
 
 WTSTickData* DataManager::getCurTick(const char* code, const char* exchg/* = ""*/)
 {
-	if (_writer == NULL)
-		return NULL;
+	if (_writer == nullptr)
+		return nullptr;
 
 	return _writer->getCurTick(code, exchg);
 }
@@ -157,7 +155,7 @@ bool DataManager::canSessionReceive(const char* sid)
 {
 	//By Wesley @ 2021.12.27
 	//如果状态机为NULL，说明是全天候模式，直接返回true即可
-	if (_state_mon == NULL)
+	if (_state_mon == nullptr)
 		return true;
 
 	return _state_mon->isInState(sid, SS_RECEIVING);

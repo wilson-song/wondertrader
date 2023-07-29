@@ -21,7 +21,7 @@ const char* WEIGHT_ALGS[] =
 
 bool IndexWorker::init(WTSVariant* config)
 {
-	if (config == NULL)
+	if (config == nullptr)
 		return false;
 
 	_exchg = config->getCString("exchg");
@@ -51,7 +51,7 @@ bool IndexWorker::init(WTSVariant* config)
 
 	WTSVariant* cfgComms = config->get("commodities");
 	WTSVariant* cfgCodes = config->get("codes");
-	if (cfgComms != NULL && cfgComms->size() > 0)
+	if (cfgComms != nullptr && cfgComms->size() > 0)
 	{
 		IBaseDataMgr* bdMgr = _factor->get_bd_mgr();
 
@@ -77,7 +77,7 @@ bool IndexWorker::init(WTSVariant* config)
 
 			//通过品种代码找到对应的合约列表，并订阅
 			WTSCommodityInfo* commInfo = bdMgr->getCommodity(fullPid.c_str());
-			if (commInfo == NULL)
+			if (commInfo == nullptr)
 				continue;
 
 			const auto& codes = commInfo->getCodes();
@@ -99,7 +99,7 @@ bool IndexWorker::init(WTSVariant* config)
 			}
 		}
 	}
-	else if (cfgCodes != NULL && cfgCodes->size() > 0)
+	else if (cfgCodes != nullptr && cfgCodes->size() > 0)
 	{
 		IBaseDataMgr* bdMgr = _factor->get_bd_mgr();
 		IHotMgr* hotMgr = _factor->get_hot_mgr();
@@ -150,7 +150,7 @@ bool IndexWorker::init(WTSVariant* config)
 			}
 
 			WTSContractInfo* cInfo = _factor->get_bd_mgr()->getContract(code.c_str(), exchg.c_str());
-			if(cInfo == NULL)
+			if(cInfo == nullptr)
 			{
 				WTSLogger::error("Consist {} of block index {}.{} not exists", fullCode, _exchg, _code);
 				continue;
@@ -186,12 +186,12 @@ void IndexWorker::handle_quote(WTSTickData* newTick)
 		if (it == _weight_scales.end())
 			return;
 
-		WeightFactor& wFactor = (WeightFactor&)it->second;
+		auto& wFactor = (WeightFactor&)it->second;
 		memcpy(&wFactor._tick, &newTick->getTickStruct(), sizeof(WTSTickStruct));
 	}
 
 	//如果使用time，那么当第一个成分合约的行情进来以后，会去更新指数重算时间
-	if(_trigger != "time" && _trigger.compare(fullCode) != 0)
+	if(_trigger != "time" && _trigger != fullCode)
 		return;
 
 	//如果是_trigger，则开始准备触发了
@@ -202,7 +202,7 @@ void IndexWorker::handle_quote(WTSTickData* newTick)
 	}
 	else
 	{
-		if(_thrd_trigger == NULL)
+		if(_thrd_trigger == nullptr)
 		{
 			_thrd_trigger.reset(new StdThread([this]() {
 				while(!_stopped)

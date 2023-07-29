@@ -34,7 +34,7 @@ public:
 	~DataManager();
 
 public:
-	bool init(WTSVariant* params, WTSBaseDataMgr* bdMgr, StateMonitor* stMonitor, UDPCaster* caster = NULL);
+	bool init(WTSVariant* params, WTSBaseDataMgr* bdMgr, StateMonitor* stMonitor, UDPCaster* caster = nullptr);
 
 	void add_ext_dumper(const char* id, IHisDataDumper* dumper);
 
@@ -57,32 +57,32 @@ public:
 public:
 	//////////////////////////////////////////////////////////////////////////
 	//IDataWriterSink
-	virtual IBaseDataMgr* getBDMgr() override;
+	IBaseDataMgr* getBDMgr() override;
 
-	virtual bool canSessionReceive(const char* sid) override;
+	bool canSessionReceive(const char* sid) override;
 
-	virtual void broadcastTick(WTSTickData* curTick) override;
+	void broadcastTick(WTSTickData* curTick) override;
 
-	virtual void broadcastOrdQue(WTSOrdQueData* curOrdQue) override;
+	void broadcastOrdQue(WTSOrdQueData* curOrdQue) override;
 
-	virtual void broadcastOrdDtl(WTSOrdDtlData* curOrdDtl) override;
+	void broadcastOrdDtl(WTSOrdDtlData* curOrdDtl) override;
 
-	virtual void broadcastTrans(WTSTransData* curTrans) override;
+	void broadcastTrans(WTSTransData* curTrans) override;
 
-	virtual CodeSet* getSessionComms(const char* sid) override;
+	CodeSet* getSessionComms(const char* sid) override;
 
-	virtual uint32_t getTradingDate(const char* pid) override;
+	uint32_t getTradingDate(const char* pid) override;
 
 	/*
 	*	处理解析模块的日志
 	*	@ll			日志级别
 	*	@message	日志内容
 	*/
-	virtual void outputLog(WTSLogLevel ll, const char* message) override;
+	void outputLog(WTSLogLevel ll, const char* message) override;
 
 private:
 	IDataWriter*		_writer;
-	FuncDeleteWriter	_remover;
+	FuncDeleteWriter	_remover{};
 	WTSBaseDataMgr*		_bd_mgr;
 	StateMonitor*		_state_mon;
 	UDPCaster*			_udp_caster;

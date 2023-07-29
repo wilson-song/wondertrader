@@ -15,6 +15,7 @@
 
 #include <boost/asio.hpp>
 #include <queue>
+#include <utility>
 
 NS_WTP_BEGIN
 	class WTSTickData;
@@ -44,7 +45,7 @@ public:
 
 		tagUDPReceiver(EndPoint ep, uint32_t t)
 		{
-			_ep = ep;
+			_ep = std::move(ep);
 			_type = t;
 		}
 
@@ -53,8 +54,8 @@ public:
 	typedef std::vector<UDPReceiverPtr>		ReceiverList;
 
 private:
-	void handle_send_broad(const EndPoint& ep, const boost::system::error_code& error, std::size_t bytes_transferred); 
-	void handle_send_multi(const EndPoint& ep, const boost::system::error_code& error, std::size_t bytes_transferred); 
+	static void handle_send_broad(const EndPoint& ep, const boost::system::error_code& error, std::size_t bytes_transferred);
+	static void handle_send_multi(const EndPoint& ep, const boost::system::error_code& error, std::size_t bytes_transferred);
 
 	void do_receive();
 	void do_send();
@@ -84,7 +85,7 @@ private:
 	};
 
 	boost::asio::ip::udp::endpoint	m_senderEP;
-	char			m_data[max_length];
+	char			m_data[max_length]{};
 
 	//¹ã²¥
 	ReceiverList	m_listFlatRecver;
@@ -109,31 +110,31 @@ private:
 	WTSBaseDataMgr*	m_bdMgr;
 	DataManager*	m_dtMgr;
 
-	typedef struct _CastData
+	typedef struct CastData
 	{
 		uint32_t	_datatype;
 		WTSObject*	_data;
 
-		_CastData(WTSObject* obj = NULL, uint32_t dataType = 0)
+		explicit CastData(WTSObject* obj = nullptr, uint32_t dataType = 0)
 			: _data(obj), _datatype(dataType)
 		{
 			if (_data)
 				_data->retain();
 		}
 
-		_CastData(const _CastData& data)
+		CastData(const CastData& data)
 			: _data(data._data), _datatype(data._datatype)
 		{
 			if (_data)
 				_data->retain();
 		}
 
-		~_CastData()
+		~CastData()
 		{
 			if (_data)
 			{
 				_data->release();
-				_data = NULL;
+				_data = nullptr;
 			}
 		}
 	} CastData;

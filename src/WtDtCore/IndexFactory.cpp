@@ -18,7 +18,7 @@ bool IndexFactory::init(WTSVariant* config, IHotMgr* hotMgr, IBaseDataMgr* bdMgr
 	}
 
 	WTSVariant* cfgIdx = config->get("indice");
-	if(cfgIdx == NULL || !cfgIdx->isArray())
+	if(cfgIdx == nullptr || !cfgIdx->isArray())
 	{
 		return false;
 	}
@@ -42,7 +42,7 @@ bool IndexFactory::init(WTSVariant* config, IHotMgr* hotMgr, IBaseDataMgr* bdMgr
 
 void IndexFactory::handle_quote(WTSTickData* newTick)
 {
-	if (newTick == NULL)
+	if (newTick == nullptr)
 		return;
 
 	const char* fullCode = newTick->getContractInfo()->getFullCode();

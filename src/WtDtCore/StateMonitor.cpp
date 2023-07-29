@@ -22,15 +22,13 @@
 
 StateMonitor::StateMonitor()
 	: _stopped(false)
-	, _bd_mgr(NULL)
-	, _dt_mgr(NULL)
+	, _bd_mgr(nullptr)
+	, _dt_mgr(nullptr)
 {
 }
 
 
-StateMonitor::~StateMonitor()
-{
-}
+StateMonitor::~StateMonitor() = default;
 
 bool StateMonitor::initialize(const char* filename, WTSBaseDataMgr* bdMgr, DataManager* dtMgr)
 {
@@ -44,7 +42,7 @@ bool StateMonitor::initialize(const char* filename, WTSBaseDataMgr* bdMgr, DataM
 	}
 
 	WTSVariant* config = WTSCfgLoader::load_from_file(filename);
-	if (config == NULL)
+	if (config == nullptr)
 	{
 		WTSLogger::error("Loading state config failed");
 		return false;
@@ -56,7 +54,7 @@ bool StateMonitor::initialize(const char* filename, WTSBaseDataMgr* bdMgr, DataM
 		WTSVariant* jItem = config->get(sid.c_str());
 
 		WTSSessionInfo* ssInfo = _bd_mgr->getSession(sid.c_str());
-		if (ssInfo == NULL)
+		if (ssInfo == nullptr)
 		{
 			WTSLogger::error("Trading session template [{}] not exists,state control rule skipped", sid);
 			continue;
@@ -84,10 +82,9 @@ bool StateMonitor::initialize(const char* filename, WTSBaseDataMgr* bdMgr, DataM
 		}
 
 		auto sections = ssInfo->getTradingSections();//这里面是偏移过的时间,要注意了!!!
-		for (auto it = sections.begin(); it != sections.end(); it++)
+		for (auto secInfo : sections)
 		{
-			auto secInfo = *it;
-			uint32_t stime = secInfo.first;
+				uint32_t stime = secInfo.first;
 			uint32_t etime = secInfo.second;
 
 			stime = stime / 100 * 60 + stime % 100;//先将时间转成分钟数
@@ -113,9 +110,9 @@ bool StateMonitor::initialize(const char* filename, WTSBaseDataMgr* bdMgr, DataM
 
 			//先获取基准的交易日
 
-			for (auto it = pCommSet->begin(); it != pCommSet->end(); it++)
+			for (const auto & it : *pCommSet)
 			{
-				const char* pid = (*it).c_str();
+				const char* pid = it.c_str();
 
 				 _bd_mgr->setTradingDate(pid,  _bd_mgr->getTradingDate(pid, offDate, offMin, false), false);
 				uint32_t prevDate = TimeUtils::getNextDate(curDate, -1);
@@ -135,7 +132,7 @@ bool StateMonitor::initialize(const char* filename, WTSBaseDataMgr* bdMgr, DataM
 
 void StateMonitor::run()
 {
-	if(_thrd == NULL)
+	if(_thrd == nullptr)
 	{
 		_thrd.reset(new StdThread([this](){
 
@@ -164,7 +161,7 @@ void StateMonitor::run()
 				auto it = _map.begin();
 				for (; it != _map.end(); it++)
 				{
-					StatePtr& sInfo = (StatePtr&)it->second;
+					auto& sInfo = (StatePtr&)it->second;
 					WTSSessionInfo* mInfo =  _bd_mgr->getSession(sInfo->_session);
 
 					uint32_t offDate = mInfo->getOffsetDate(curDate, curMin);
@@ -184,9 +181,9 @@ void StateMonitor::run()
 							CodeSet* pCommSet =  _bd_mgr->getSessionComms(sInfo->_session);
 							if (pCommSet)
 							{
-								for (auto it = pCommSet->begin(); it != pCommSet->end(); it++)
+								for (const auto & it : *pCommSet)
 								{
-									const char* pid = (*it).c_str();
+									const char* pid = it.c_str();
 									/*
 									 *	如果时间往后偏移
 									 *	如果当前日期不是交易日,且不处于夜盘后半夜（交易时间且昨天是交易日）
@@ -333,9 +330,9 @@ void StateMonitor::run()
 							CodeSet* pCommSet =  _bd_mgr->getSessionComms(sInfo->_session);
 							if (pCommSet)
 							{
-								for (auto it = pCommSet->begin(); it != pCommSet->end(); it++)
+								for (const auto & it : *pCommSet)
 								{
-									const char* pid = (*it).c_str();
+									const char* pid = it.c_str();
 									if ((mInfo->getOffsetMins() > 0 &&
 										(! _bd_mgr->isTradingDate(pid, curDate) &&
 										!(mInfo->isInTradingTime(curMin) &&  _bd_mgr->isTradingDate(pid, prevDate)))) ||
@@ -410,9 +407,9 @@ void StateMonitor::run()
 								CodeSet* pCommSet =  _bd_mgr->getSessionComms(sInfo->_session);
 								if (pCommSet)
 								{
-									for (auto it = pCommSet->begin(); it != pCommSet->end(); it++)
+									for (const auto & it : *pCommSet)
 									{
-										const char* pid = (*it).c_str();
+										const char* pid = it.c_str();
 										if ((mInfo->getOffsetMins() > 0 &&
 											(! _bd_mgr->isTradingDate(pid, curDate) &&
 											!(mInfo->isInTradingTime(curMin) &&  _bd_mgr->isTradingDate(pid, prevDate)))) ||

@@ -24,15 +24,15 @@ typedef enum tagSimpleState
 	SS_Holiday	= 99	//½Ú¼ÙÈÕ
 } SimpleState;
 
-typedef struct _StateInfo
+typedef struct StateInfo
 {
-	char		_session[16];
+	char		_session[16]{};
 	uint32_t	_init_time;
 	uint32_t	_close_time;
 	uint32_t	_proc_time;
 	SimpleState	_state;
 
-	typedef struct _Section
+	typedef struct Section
 	{
 		uint32_t _from;
 		uint32_t _end;
@@ -41,16 +41,15 @@ typedef struct _StateInfo
 
 	bool isInSections(uint32_t curTime)
 	{
-		for (auto it = _sections.begin(); it != _sections.end(); it++)
+		for (auto & sec : _sections)
 		{
-			const Section& sec = *it;
-			if (sec._from <= curTime && curTime < sec._end)
+				if (sec._from <= curTime && curTime < sec._end)
 				return true;
 		}
 		return false;
 	}
 
-	_StateInfo()
+	StateInfo()
 	{
 		_session[0] = '\0';
 		_init_time = 0;

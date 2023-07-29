@@ -27,7 +27,7 @@
 
 #pragma pack(push,1)
 //UDP请求包
-typedef struct _UDPReqPacket
+typedef struct UDPReqPacket
 {
 	uint32_t		_type;
 	char			_data[1020];
@@ -48,16 +48,14 @@ typedef UDPDataPacket<WTSTransStruct>	UDPTransPacket;
 
 UDPCaster::UDPCaster()
 	: m_bTerminated(false)
-	, m_bdMgr(NULL)
-	, m_dtMgr(NULL)
+	, m_bdMgr(nullptr)
+	, m_dtMgr(nullptr)
 {
 	
 }
 
 
-UDPCaster::~UDPCaster()
-{
-}
+UDPCaster::~UDPCaster() = default;
 
 bool UDPCaster::init(WTSVariant* cfg, WTSBaseDataMgr* bdMgr, DataManager* dtMgr)
 {
@@ -155,7 +153,7 @@ void UDPCaster::do_receive()
 
 		if (bytes_recvd == sizeof(UDPReqPacket))
 		{
-			UDPReqPacket* req = (UDPReqPacket*)m_data;
+			auto* req = (UDPReqPacket*)m_data;
 
 			std::string data;
 			//处理请求
@@ -165,7 +163,7 @@ void UDPCaster::do_receive()
 				std::string code, exchg;
 				for(const std::string& fullcode : ay)
 				{
-					auto pos = fullcode.find(".");
+					auto pos = fullcode.find('.');
 					if (pos == std::string::npos)
 						code = fullcode;
 					else
@@ -174,16 +172,16 @@ void UDPCaster::do_receive()
 						exchg = fullcode.substr(0, pos);
 					}
 					WTSContractInfo* ct = m_bdMgr->getContract(code.c_str(), exchg.c_str());
-					if (ct == NULL)
+					if (ct == nullptr)
 						continue;
 
 					WTSTickData* curTick = m_dtMgr->getCurTick(code.c_str(), exchg.c_str());
-					if(curTick == NULL)
+					if(curTick == nullptr)
 						continue;
 
-					std::string* data = new std::string();
+					auto* data = new std::string();
 					data->resize(sizeof(UDPTickPacket), 0);
-					UDPTickPacket* pkt = (UDPTickPacket*)data->data();
+					auto* pkt = (UDPTickPacket*)data->data();
 					pkt->_type = req->_type;
 					memcpy(&pkt->_data, &curTick->getTickStruct(), sizeof(WTSTickStruct));
 					curTick->release();
@@ -202,7 +200,7 @@ void UDPCaster::do_receive()
 		}
 		else
 		{
-			std::string* data = new std::string("Can not indentify the command");
+			auto* data = new std::string("Can not indentify the command");
 			m_sktSubscribe->async_send_to(
 				boost::asio::buffer(*data, data->size()), m_senderEP,
 				[this, data](const boost::system::error_code& ec, std::size_t /*bytes_sent*/)
@@ -287,15 +285,15 @@ void UDPCaster::broadcast(WTSTransData* curTrans)
 
 void UDPCaster::broadcast(WTSObject* data, uint32_t dataType)
 {
-	if(m_sktBroadcast == NULL || data == NULL || m_bTerminated)
+	if(m_sktBroadcast == nullptr || data == nullptr || m_bTerminated)
 		return;
 
 	{
 		StdUniqueLock lock(m_mtxCast);
-		m_dataQue.push(CastData(data, dataType));
+		m_dataQue.emplace(data, dataType);
 	}
 
-	if(m_thrdCast == NULL)
+	if(m_thrdCast == nullptr)
 	{
 		m_thrdCast.reset(new StdThread([this](){
 
@@ -318,7 +316,7 @@ void UDPCaster::broadcast(WTSObject* data, uint32_t dataType)
 				{
 					const CastData& castData = tmpQue.front();
 
-					if (castData._data == NULL)
+					if (castData._data == nullptr)
 						break;
 
 					//直接广播
@@ -328,33 +326,33 @@ void UDPCaster::broadcast(WTSObject* data, uint32_t dataType)
 						if (castData._datatype == UDP_MSG_PUSHTICK)
 						{
 							buf_raw.resize(sizeof(UDPTickPacket));
-							UDPTickPacket* pack = (UDPTickPacket*)buf_raw.data();
+							auto* pack = (UDPTickPacket*)buf_raw.data();
 							pack->_type = castData._datatype;
-							WTSTickData* curObj = (WTSTickData*)castData._data;
+							auto* curObj = (WTSTickData*)castData._data;
 							memcpy(&pack->_data, &curObj->getTickStruct(), sizeof(WTSTickStruct));
 						}
 						else if (castData._datatype == UDP_MSG_PUSHORDDTL)
 						{
 							buf_raw.resize(sizeof(UDPOrdDtlPacket));
-							UDPOrdDtlPacket* pack = (UDPOrdDtlPacket*)buf_raw.data();
+							auto* pack = (UDPOrdDtlPacket*)buf_raw.data();
 							pack->_type = castData._datatype;
-							WTSOrdDtlData* curObj = (WTSOrdDtlData*)castData._data;
+							auto* curObj = (WTSOrdDtlData*)castData._data;
 							memcpy(&pack->_data, &curObj->getOrdDtlStruct(), sizeof(WTSOrdDtlStruct));
 						}
 						else if (castData._datatype == UDP_MSG_PUSHORDQUE)
 						{
 							buf_raw.resize(sizeof(UDPOrdQuePacket));
-							UDPOrdQuePacket* pack = (UDPOrdQuePacket*)buf_raw.data();
+							auto* pack = (UDPOrdQuePacket*)buf_raw.data();
 							pack->_type = castData._datatype;
-							WTSOrdQueData* curObj = (WTSOrdQueData*)castData._data;
+							auto* curObj = (WTSOrdQueData*)castData._data;
 							memcpy(&pack->_data, &curObj->getOrdQueStruct(), sizeof(WTSOrdQueStruct));
 						}
 						else if (castData._datatype == UDP_MSG_PUSHTRANS)
 						{
 							buf_raw.resize(sizeof(UDPTransPacket));
-							UDPTransPacket* pack = (UDPTransPacket*)buf_raw.data();
+							auto* pack = (UDPTransPacket*)buf_raw.data();
 							pack->_type = castData._datatype;
-							WTSTransData* curObj = (WTSTransData*)castData._data;
+							auto* curObj = (WTSTransData*)castData._data;
 							memcpy(&pack->_data, &curObj->getTransStruct(), sizeof(WTSTransStruct));
 						}
 						else
@@ -364,10 +362,9 @@ void UDPCaster::broadcast(WTSObject* data, uint32_t dataType)
 
 						//广播
 						boost::system::error_code ec;
-						for (auto it = m_listRawRecver.begin(); it != m_listRawRecver.end(); it++)
+						for (auto & receiver : m_listRawRecver)
 						{
-							const UDPReceiverPtr& receiver = (*it);
-							m_sktBroadcast->send_to(boost::asio::buffer(buf_raw), receiver->_ep, 0, ec);
+								m_sktBroadcast->send_to(boost::asio::buffer(buf_raw), receiver->_ep, 0, ec);
 							if (ec)
 							{
 								WTSLogger::error("Error occured while sending to ({}:{}): {}({})", 
@@ -376,10 +373,10 @@ void UDPCaster::broadcast(WTSObject* data, uint32_t dataType)
 						}
 
 						//组播
-						for (auto it = m_listRawGroup.begin(); it != m_listRawGroup.end(); it++)
+						for (auto & it : m_listRawGroup)
 						{
-							const MulticastPair& item = *it;
-							it->first->send_to(boost::asio::buffer(buf_raw), item.second->_ep, 0, ec);
+							const MulticastPair& item = it;
+							it.first->send_to(boost::asio::buffer(buf_raw), item.second->_ep, 0, ec);
 							if (ec)
 							{
 								WTSLogger::error("Error occured while sending to ({}:{}): {}({})",

@@ -22,7 +22,7 @@ class IndexFactory;
 class IndexWorker
 {
 public:
-	IndexWorker(IndexFactory* factor):_factor(factor), _stopped(false), _process(false) {}
+	explicit IndexWorker(IndexFactory* factor):_factor(factor), _stopped(false), _process(false) {}
 
 public:
 	bool	init(WTSVariant* config);
@@ -36,24 +36,24 @@ protected:
 	std::string		_exchg;
 	std::string		_code;
 	std::string		_trigger;
-	uint32_t		_timeout;
-	uint64_t		_recalc_time;
-	double			_stand_scale;
+	uint32_t		_timeout{};
+	uint64_t		_recalc_time{};
+	double			_stand_scale{};
 	WTSTickStruct	_cache;
-	WTSContractInfo*	_cInfo;
+	WTSContractInfo*	_cInfo{};
 
-	typedef struct _WeightFactor
+	typedef struct WeightFactor
 	{
-		double			_weight;
+		double			_weight{};
 		WTSTickStruct	_tick;
-		_WeightFactor()
+		WeightFactor()
 		{
-			memset(this, 0, sizeof(_WeightFactor));
+			memset(this, 0, sizeof(WeightFactor));
 		}
 	}WeightFactor;
 	SpinMutex	_mtx_data;
 	faster_hashmap<LongKey, WeightFactor>	_weight_scales;
-	uint32_t	_weight_alg;
+	uint32_t	_weight_alg{};
 
 	StdThreadPtr	_thrd_trigger;
 	StdUniqueMutex	_mtx_trigger;
