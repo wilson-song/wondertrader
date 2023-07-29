@@ -54,14 +54,14 @@ bool EventNotifier::init(WTSVariant* cfg)
 		dllpath = WtHelper::getInstDir() + module;
 
 	DllHandle dllInst = DLLHelper::load_library(dllpath.c_str());
-	if (dllInst == NULL)
+	if (dllInst == nullptr)
 	{
 		WTSLogger::error("MQ module %{} loading failed", dllpath.c_str());
 		return false;
 	}
 
 	_creator = (FuncCreateMQServer)DLLHelper::get_symbol(dllInst, "create_server");
-	if (_creator == NULL)
+	if (_creator == nullptr)
 	{
 		DLLHelper::free_library(dllInst);
 		WTSLogger::error("MQ module {} is not compatible", dllpath.c_str());

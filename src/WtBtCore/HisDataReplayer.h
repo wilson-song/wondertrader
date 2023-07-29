@@ -152,7 +152,7 @@ private:
 	typedef faster_hashmap<std::string, HftDataList<WTSTransStruct>>	TransCache;
 
 
-	typedef struct _BarsList
+	typedef struct BarsList
 	{
 		std::string		_code;
 		WTSKlinePeriod	_period;
@@ -168,7 +168,7 @@ private:
 		std::vector<WTSBarStruct>	_bars;
 		double			_factor;	//最后一条复权因子
 
-		_BarsList() :_cursor(UINT_MAX), _count(0), _times(1), _factor(1){}
+		BarsList() :_cursor(UINT_MAX), _count(0), _times(1), _factor(1){}
 	} BarsList;
 
 	/*
@@ -194,7 +194,7 @@ private:
 		TPT_Yearly		//每年,遇到节假日顺延
 	}TaskPeriodType;
 
-	typedef struct _TaskInfo
+	typedef struct TaskInfo
 	{
 		uint32_t	_id;
 		char		_name[16];		//任务名
@@ -321,7 +321,7 @@ private:
 	void	run_by_ticks(bool bNeedDump = false);
 
 public:
-	bool init(WTSVariant* cfg, EventNotifier* notifier = NULL, IBtDataLoader* dataLoader = NULL);
+	bool init(WTSVariant* cfg, EventNotifier* notifier = nullptr, IBtDataLoader* dataLoader = nullptr);
 
 	bool prepare();
 
@@ -425,7 +425,7 @@ private:
 
 	//By Wesley @ 2022.08.15
 	//复权标记，采用位运算表示，1|2|4,1表示成交量复权，2表示成交额复权，4表示总持复权，其他待定
-	uint32_t		_adjust_flag; 
+	uint32_t		_adjust_flag{};
 
 	uint32_t		_cur_date;
 	uint32_t		_cur_time;
@@ -443,19 +443,19 @@ private:
 	uint64_t		_end_time;
 
 	bool			_running;
-	bool			_terminated;
+	bool			_terminated{};
 	//////////////////////////////////////////////////////////////////////////
 	//手续费模板
-	typedef struct _FeeItem
+	typedef struct FeeItem
 	{
-		double	_open;
-		double	_close;
-		double	_close_today;
-		bool	_by_volume;
+		double	_open{};
+		double	_close{};
+		double	_close_today{};
+		bool	_by_volume{};
 
-		_FeeItem()
+		FeeItem()
 		{
-			memset(this, 0, sizeof(_FeeItem));
+			memset(this, 0, sizeof(FeeItem));
 		}
 	} FeeItem;
 	typedef faster_hashmap<std::string, FeeItem>	FeeMap;
@@ -479,7 +479,7 @@ private:
 	StraSubMap		_trans_sub_map;		//transaction数据订阅表
 
 	//除权因子
-	typedef struct _AdjFactor
+	typedef struct AdjFactor
 	{
 		uint32_t	_date;
 		double		_factor;
@@ -490,7 +490,7 @@ private:
 
 	const AdjFactorList& getAdjFactors(const char* code, const char* exchg, const char* pid);
 
-	EventNotifier*	_notifier;
+	EventNotifier*	_notifier{};
 
 	HisDataMgr		_his_dt_mgr;
 };

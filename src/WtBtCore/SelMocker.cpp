@@ -40,16 +40,14 @@ SelMocker::SelMocker(HisDataReplayer* replayer, const char* name, int32_t slippa
 	, _emit_times(0)
 	, _is_in_schedule(false)
 	, _ud_modified(false)
-	, _strategy(NULL)
+	, _strategy(nullptr)
 	, _slippage(slippage)
 {
 	_context_id = makeSelCtxId();
 }
 
 
-SelMocker::~SelMocker()
-{
-}
+SelMocker::~SelMocker() = default;
 
 void SelMocker::dump_stradata()
 {
@@ -60,10 +58,10 @@ void SelMocker::dump_stradata()
 
 		rj::Document::AllocatorType &allocator = root.GetAllocator();
 
-		for (auto it = _pos_map.begin(); it != _pos_map.end(); it++)
+		for (const auto & it : _pos_map)
 		{
-			const char* stdCode = it->first.c_str();
-			const PosInfo& pInfo = it->second;
+			const char* stdCode = it.first.c_str();
+			const PosInfo& pInfo = it.second;
 
 			rj::Value pItem(rj::kObjectType);
 			pItem.AddMember("code", rj::Value(stdCode, allocator), allocator);
@@ -72,10 +70,9 @@ void SelMocker::dump_stradata()
 			pItem.AddMember("dynprofit", pInfo._dynprofit, allocator);
 
 			rj::Value details(rj::kArrayType);
-			for (auto dit = pInfo._details.begin(); dit != pInfo._details.end(); dit++)
+			for (const auto & dInfo : pInfo._details)
 			{
-				const DetailInfo& dInfo = *dit;
-				rj::Value dItem(rj::kObjectType);
+					rj::Value dItem(rj::kObjectType);
 				dItem.AddMember("long", dInfo._long, allocator);
 				dItem.AddMember("price", dInfo._price, allocator);
 				dItem.AddMember("volume", dInfo._volume, allocator);
@@ -186,9 +183,9 @@ void SelMocker::dump_outputs()
 	{
 		rj::Document root(rj::kObjectType);
 		rj::Document::AllocatorType &allocator = root.GetAllocator();
-		for (auto it = _user_datas.begin(); it != _user_datas.end(); it++)
+		for (const auto & _user_data : _user_datas)
 		{
-			root.AddMember(rj::Value(it->first.c_str(), allocator), rj::Value(it->second.c_str(), allocator), allocator);
+			root.AddMember(rj::Value(_user_data.first.c_str(), allocator), rj::Value(_user_data.second.c_str(), allocator), allocator);
 		}
 
 		filename = folder;
@@ -223,17 +220,17 @@ void SelMocker::log_close(const char* stdCode, bool isLong, uint64_t openTime, d
 
 bool SelMocker::init_sel_factory(WTSVariant* cfg)
 {
-	if (cfg == NULL)
+	if (cfg == nullptr)
 		return false;
 
 	const char* module = cfg->getCString("module");
 
 	DllHandle hInst = DLLHelper::load_library(module);
-	if (hInst == NULL)
+	if (hInst == nullptr)
 		return false;
 
-	FuncCreateSelStraFact creator = (FuncCreateSelStraFact)DLLHelper::get_symbol(hInst, "createSelStrategyFact");
-	if (creator == NULL)
+	auto creator = (FuncCreateSelStraFact)DLLHelper::get_symbol(hInst, "createSelStrategyFact");
+	if (creator == nullptr)
 	{
 		DLLHelper::free_library(hInst);
 		return false;
@@ -371,7 +368,7 @@ void SelMocker::handle_tick(const char* stdCode, WTSTickData* newTick, uint32_t 
 //回调函数
 void SelMocker::on_bar(const char* stdCode, const char* period, uint32_t times, WTSBarStruct* newBar)
 {
-	if (newBar == NULL)
+	if (newBar == nullptr)
 		return;
 
 	std::string realPeriod;
@@ -400,7 +397,7 @@ void SelMocker::update_dyn_profit(const char* stdCode, double price)
 	auto it = _pos_map.find(stdCode);
 	if (it != _pos_map.end())
 	{
-		PosInfo& pInfo = (PosInfo&)it->second;
+		auto& pInfo = (PosInfo&)it->second;
 		if (pInfo._volume == 0)
 		{
 			pInfo._dynprofit = 0;
@@ -409,10 +406,9 @@ void SelMocker::update_dyn_profit(const char* stdCode, double price)
 		{
 			WTSCommodityInfo* commInfo = _replayer->get_commodity_info(stdCode);
 			double dynprofit = 0;
-			for (auto pit = pInfo._details.begin(); pit != pInfo._details.end(); pit++)
+			for (auto & dInfo : pInfo._details)
 			{
-				DetailInfo& dInfo = *pit;
-				dInfo._profit = dInfo._volume*(price - dInfo._price)*commInfo->getVolScale()*(dInfo._long ? 1 : -1);
+					dInfo._profit = dInfo._volume*(price - dInfo._price)*commInfo->getVolScale()*(dInfo._long ? 1 : -1);
 				if (dInfo._profit > 0)
 					dInfo._max_profit = max(dInfo._profit, dInfo._max_profit);
 				else if (dInfo._profit < 0)
@@ -502,7 +498,7 @@ void SelMocker::on_session_begin(uint32_t curTDate)
 	for (auto& it : _pos_map)
 	{
 		const char* stdCode = it.first.c_str();
-		PosInfo& pInfo = (PosInfo&)it.second;
+		auto& pInfo = (PosInfo&)it.second;
 		if (!decimal::eq(pInfo._frozen, 0))
 		{
 			log_debug("{} of {} frozen released on {}", pInfo._frozen, stdCode, curTDate);
@@ -521,14 +517,14 @@ void SelMocker::enum_position(FuncEnumSelPositionCallBack cb)
 		desPos[stdCode] = pInfo._volume;
 	}
 
-	for (auto sit : _sig_map)
+	for (const auto& sit : _sig_map)
 	{
 		const char* stdCode = sit.first.c_str();
 		const SigInfo& sInfo = sit.second;
 		desPos[stdCode] = sInfo._volume;
 	}
 
-	for (auto v : desPos)
+	for (const auto& v : desPos)
 	{
 		cb(v.first.c_str(), v.second);
 	}
@@ -541,10 +537,10 @@ void SelMocker::on_session_end(uint32_t curTDate)
 	double total_profit = 0;
 	double total_dynprofit = 0;
 
-	for (auto it = _pos_map.begin(); it != _pos_map.end(); it++)
+	for (const auto & it : _pos_map)
 	{
-		const char* stdCode = it->first.c_str();
-		const PosInfo& pInfo = it->second;
+		const char* stdCode = it.first.c_str();
+		const PosInfo& pInfo = it.second;
 		total_profit += pInfo._closeprofit;
 		total_dynprofit += pInfo._dynprofit;
 
@@ -575,7 +571,7 @@ double SelMocker::stra_get_price(const char* stdCode)
 void SelMocker::stra_set_position(const char* stdCode, double qty, const char* userTag /* = "" */)
 {
 	WTSCommodityInfo* commInfo = _replayer->get_commodity_info(stdCode);
-	if (commInfo == NULL)
+	if (commInfo == nullptr)
 	{
 		log_error("Cannot find corresponding commodity info of {}", stdCode);
 		return;
@@ -597,7 +593,7 @@ void SelMocker::stra_set_position(const char* stdCode, double qty, const char* u
 	{
 		double valid = stra_get_position(stdCode, true);
 		double frozen = total - valid;
-		//如果是T+1规则，则目标仓位不能小于冻结仓位
+		//如果是 T+1 规则，则目标仓位不能小于冻结仓位
 		if (decimal::lt(qty, frozen))
 		{
 			WTSLogger::log_dyn("strategy", _name.c_str(), LL_ERROR, 
@@ -640,7 +636,7 @@ void SelMocker::do_set_position(const char* stdCode, double qty, double price /*
 		return;
 
 	WTSCommodityInfo* commInfo = _replayer->get_commodity_info(stdCode);
-	if (commInfo == NULL)
+	if (commInfo == nullptr)
 		return;
 
 	//成交价
@@ -771,7 +767,7 @@ WTSKlineSlice* SelMocker::stra_get_bars(const char* stdCode, const char* period,
 	basePeriod[0] = period[0];
 	uint32_t times = 1;
 	if (strlen(period) > 1)
-		times = strtoul(period + 1, NULL, 10);
+		times = strtoul(period + 1, nullptr, 10);
 	else
 		strcat(key, "1");
 
@@ -911,10 +907,9 @@ double SelMocker::stra_get_position(const char* stdCode, bool bOnlyValid/* = fal
 			return pInfo._volume;
 	}
 
-	for (auto it = pInfo._details.begin(); it != pInfo._details.end(); it++)
+	for (const auto & dInfo : pInfo._details)
 	{
-		const DetailInfo& dInfo = (*it);
-		if (strcmp(dInfo._opentag, userTag) != 0)
+			if (strcmp(dInfo._opentag, userTag) != 0)
 			continue;
 
 		return dInfo._volume;

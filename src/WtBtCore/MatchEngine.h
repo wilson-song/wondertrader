@@ -1,9 +1,9 @@
 #pragma once
-#include <stdint.h>
+#include <cstdint>
 #include <map>
 #include <vector>
 #include <functional>
-#include <string.h>
+#include <cstring>
 
 #include "../Includes/WTSMarcos.h"
 #include "../Includes/WTSCollection.hpp"
@@ -54,7 +54,7 @@ typedef std::function<void(double)> FuncCancelCallback;
 class MatchEngine
 {
 public:
-	MatchEngine() : _tick_cache(NULL),_cancelrate(0), _sink(NULL)
+	MatchEngine() : _tick_cache(nullptr),_cancelrate(0), _sink(nullptr)
 	{
 
 	}
@@ -80,23 +80,23 @@ public:
 	virtual OrderIDs cancel(const char* stdCode, bool isBuy, double qty, FuncCancelCallback cb);
 
 private:
-	typedef struct _OrderInfo
+	typedef struct OrderInfo
 	{
-		char		_code[32];
-		bool		_buy;
-		double		_qty;
-		double		_left;
-		double		_traded;
-		double		_limit;
-		double		_price;
-		uint32_t	_state;
-		uint64_t	_time;
-		double		_queue;
-		bool		_positive;
+		char		_code[32]{};
+		bool		_buy{};
+		double		_qty{};
+		double		_left{};
+		double		_traded{};
+		double		_limit{};
+		double		_price{};
+		uint32_t	_state{};
+		uint64_t	_time{};
+		double		_queue{};
+		bool		_positive{};
 
-		_OrderInfo()
+		OrderInfo()
 		{
-			memset(this, 0, sizeof(_OrderInfo));
+			memset(this, 0, sizeof(OrderInfo));
 		}
 	} OrderInfo;
 
@@ -105,7 +105,7 @@ private:
 
 	typedef std::map<uint32_t, double>	LOBItems;
 
-	typedef struct _LmtOrdBook
+	typedef struct LmtOrdBook
 	{
 		LOBItems	_items;
 		uint32_t	_cur_px;
@@ -120,7 +120,7 @@ private:
 			_bid_px = 0;
 		}
 
-		_LmtOrdBook()
+		LmtOrdBook()
 		{
 			_cur_px = 0;
 			_ask_px = 0;

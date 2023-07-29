@@ -28,7 +28,7 @@ class SelMocker : public ISelStraCtx, public IDataSink
 {
 public:
 	SelMocker(HisDataReplayer* replayer, const char* name, int32_t slippage = 0);
-	virtual ~SelMocker();
+	~SelMocker() override;
 
 private:
 	template<typename... Args>
@@ -71,63 +71,63 @@ public:
 public:
 	//////////////////////////////////////////////////////////////////////////
 	//IDataSink
-	virtual void	handle_tick(const char* stdCode, WTSTickData* curTick, uint32_t pxType) override;
-	virtual void	handle_bar_close(const char* stdCode, const char* period, uint32_t times, WTSBarStruct* newBar) override;
-	virtual void	handle_schedule(uint32_t uDate, uint32_t uTime) override;
+	void	handle_tick(const char* stdCode, WTSTickData* curTick, uint32_t pxType) override;
+	void	handle_bar_close(const char* stdCode, const char* period, uint32_t times, WTSBarStruct* newBar) override;
+	void	handle_schedule(uint32_t uDate, uint32_t uTime) override;
 
-	virtual void	handle_init() override;
-	virtual void	handle_session_begin(uint32_t uCurDate) override;
-	virtual void	handle_session_end(uint32_t uCurDate) override;
-	virtual void	handle_replay_done() override;
+	void	handle_init() override;
+	void	handle_session_begin(uint32_t uCurDate) override;
+	void	handle_session_end(uint32_t uCurDate) override;
+	void	handle_replay_done() override;
 
 	//////////////////////////////////////////////////////////////////////////
 	//ICtaStraCtx
-	virtual uint32_t id() { return _context_id; }
+	uint32_t id() override { return _context_id; }
 
 	//回调函数
-	virtual void on_init() override;
-	virtual void on_session_begin(uint32_t curTDate) override;
-	virtual void on_session_end(uint32_t curTDate) override;
-	virtual void on_tick(const char* stdCode, WTSTickData* newTick, bool bEmitStrategy = true) override;
-	virtual void on_bar(const char* stdCode, const char* period, uint32_t times, WTSBarStruct* newBar) override;
-	virtual bool on_schedule(uint32_t curDate, uint32_t curTime, uint32_t fireTime) override;
-	virtual void enum_position(FuncEnumSelPositionCallBack cb) override;
+	void on_init() override;
+	void on_session_begin(uint32_t curTDate) override;
+	void on_session_end(uint32_t curTDate) override;
+	void on_tick(const char* stdCode, WTSTickData* newTick, bool bEmitStrategy = true) override;
+	void on_bar(const char* stdCode, const char* period, uint32_t times, WTSBarStruct* newBar) override;
+	bool on_schedule(uint32_t curDate, uint32_t curTime, uint32_t fireTime) override;
+	void enum_position(FuncEnumSelPositionCallBack cb) override;
 
-	virtual void on_tick_updated(const char* stdCode, WTSTickData* newTick) override;
-	virtual void on_bar_close(const char* stdCode, const char* period, WTSBarStruct* newBar) override;
-	virtual void on_strategy_schedule(uint32_t curDate, uint32_t curTime) override;
+	void on_tick_updated(const char* stdCode, WTSTickData* newTick) override;
+	void on_bar_close(const char* stdCode, const char* period, WTSBarStruct* newBar) override;
+	void on_strategy_schedule(uint32_t curDate, uint32_t curTime) override;
 
 
 	//////////////////////////////////////////////////////////////////////////
 	//策略接口
-	virtual double stra_get_position(const char* stdCode, bool bOnlyValid = false, const char* userTag = "") override;
-	virtual void stra_set_position(const char* stdCode, double qty, const char* userTag = "") override;
-	virtual double stra_get_price(const char* stdCode) override;
+	double stra_get_position(const char* stdCode, bool bOnlyValid = false, const char* userTag = "") override;
+	void stra_set_position(const char* stdCode, double qty, const char* userTag = "") override;
+	double stra_get_price(const char* stdCode) override;
 
-	virtual uint32_t stra_get_date() override;
-	virtual uint32_t stra_get_time() override;
+	uint32_t stra_get_date() override;
+	uint32_t stra_get_time() override;
 
-	virtual WTSCommodityInfo* stra_get_comminfo(const char* stdCode) override;
-	virtual WTSSessionInfo* stra_get_sessinfo(const char* stdCode) override;
-	virtual WTSKlineSlice*	stra_get_bars(const char* stdCode, const char* period, uint32_t count) override;
-	virtual WTSTickSlice*	stra_get_ticks(const char* stdCode, uint32_t count) override;
-	virtual WTSTickData*	stra_get_last_tick(const char* stdCode) override;
+	WTSCommodityInfo* stra_get_comminfo(const char* stdCode) override;
+	WTSSessionInfo* stra_get_sessinfo(const char* stdCode) override;
+	WTSKlineSlice*	stra_get_bars(const char* stdCode, const char* period, uint32_t count) override;
+	WTSTickSlice*	stra_get_ticks(const char* stdCode, uint32_t count) override;
+	WTSTickData*	stra_get_last_tick(const char* stdCode) override;
 
 	/*
 	 *	获取分月合约代码
 	 */
-	virtual std::string		stra_get_rawcode(const char* stdCode) override;
+	std::string		stra_get_rawcode(const char* stdCode) override;
 
-	virtual void stra_sub_ticks(const char* stdCode) override;
+	void stra_sub_ticks(const char* stdCode) override;
 
-	virtual void stra_log_info(const char* message) override;
-	virtual void stra_log_debug(const char* message) override;
-	virtual void stra_log_warn(const char* message) override;
-	virtual void stra_log_error(const char* message) override;
+	void stra_log_info(const char* message) override;
+	void stra_log_debug(const char* message) override;
+	void stra_log_warn(const char* message) override;
+	void stra_log_error(const char* message) override;
 
-	virtual void stra_save_user_data(const char* key, const char* val) override;
+	void stra_save_user_data(const char* key, const char* val) override;
 
-	virtual const char* stra_load_user_data(const char* key, const char* defVal = "") override;
+	const char* stra_load_user_data(const char* key, const char* defVal = "") override;
 
 protected:
 	uint32_t			_context_id;
@@ -139,11 +139,11 @@ protected:
 
 	std::string		_main_key;
 
-	typedef struct _KlineTag
+	typedef struct KlineTag
 	{
 		bool			_closed;
 
-		_KlineTag() :_closed(false){}
+		KlineTag() :_closed(false){}
 
 	} KlineTag;
 	typedef faster_hashmap<std::string, KlineTag> KlineTags;
@@ -153,25 +153,25 @@ protected:
 	typedef faster_hashmap<std::string, PriceInfo> PriceMap;
 	PriceMap		_price_map;
 
-	typedef struct _DetailInfo
+	typedef struct DetailInfo
 	{
-		bool		_long;
-		double		_price;
-		double		_volume;
-		uint64_t	_opentime;
-		uint32_t	_opentdate;
-		double		_max_profit;
-		double		_max_loss;
-		double		_profit;
-		char		_opentag[32];
+		bool		_long{};
+		double		_price{};
+		double		_volume{};
+		uint64_t	_opentime{};
+		uint32_t	_opentdate{};
+		double		_max_profit{};
+		double		_max_loss{};
+		double		_profit{};
+		char		_opentag[32]{};
 
-		_DetailInfo()
+		DetailInfo()
 		{
-			memset(this, 0, sizeof(_DetailInfo));
+			memset(this, 0, sizeof(DetailInfo));
 		}
 	} DetailInfo;
 
-	typedef struct _PosInfo
+	typedef struct PosInfo
 	{
 		double		_volume;
 		double		_closeprofit;
@@ -180,7 +180,7 @@ protected:
 
 		std::vector<DetailInfo> _details;
 
-		_PosInfo()
+		PosInfo()
 		{
 			_volume = 0;
 			_closeprofit = 0;
@@ -193,7 +193,7 @@ protected:
 	typedef faster_hashmap<std::string, PosInfo> PositionMap;
 	PositionMap		_pos_map;
 
-	typedef struct _SigInfo
+	typedef struct SigInfo
 	{
 		double		_volume;
 		std::string	_usertag;
@@ -202,7 +202,7 @@ protected:
 		bool		_triggered;
 		uint64_t	_gentime;
 
-		_SigInfo()
+		SigInfo()
 		{
 			_volume = 0;
 			_sigprice = 0;
@@ -228,35 +228,35 @@ protected:
 	StringHashMap	_user_datas;
 	bool			_ud_modified;
 
-	typedef struct _StraFundInfo
+	typedef struct StraFundInfo
 	{
-		double	_total_profit;
-		double	_total_dynprofit;
-		double	_total_fees;
+		double	_total_profit{};
+		double	_total_dynprofit{};
+		double	_total_fees{};
 
-		_StraFundInfo()
+		StraFundInfo()
 		{
-			memset(this, 0, sizeof(_StraFundInfo));
+			memset(this, 0, sizeof(StraFundInfo));
 		}
 	} StraFundInfo;
 
 	StraFundInfo		_fund_info;
 
-	typedef struct _StraFactInfo
+	typedef struct StraFactInfo
 	{
 		std::string		_module_path;
 		DllHandle		_module_inst;
 		ISelStrategyFact*		_fact;
-		FuncCreateSelStraFact	_creator;
-		FuncDeleteSelStraFact	_remover;
+		FuncCreateSelStraFact	_creator{};
+		FuncDeleteSelStraFact	_remover{};
 
-		_StraFactInfo()
+		StraFactInfo()
 		{
-			_module_inst = NULL;
-			_fact = NULL;
+			_module_inst = nullptr;
+			_fact = nullptr;
 		}
 
-		~_StraFactInfo()
+		~StraFactInfo()
 		{
 			if (_fact)
 				_remover(_fact);
@@ -266,7 +266,7 @@ protected:
 
 	SelStrategy*	_strategy;
 
-	uint32_t		_cur_tdate;
+	uint32_t		_cur_tdate{};
 
 	//tick订阅列表
 	faster_hashset<std::string> _tick_subs;

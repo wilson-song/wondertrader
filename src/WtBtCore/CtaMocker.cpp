@@ -61,7 +61,7 @@ CtaMocker::CtaMocker(HisDataReplayer* replayer, const char* name, int32_t slippa
 	, _emit_times(0)
 	, _is_in_schedule(false)
 	, _ud_modified(false)
-	, _strategy(NULL)
+	, _strategy(nullptr)
 	, _slippage(slippage)
 	, _schedule_times(0)
 	, _total_closeprofit(0)
@@ -77,9 +77,7 @@ CtaMocker::CtaMocker(HisDataReplayer* replayer, const char* name, int32_t slippa
 }
 
 
-CtaMocker::~CtaMocker()
-{
-}
+CtaMocker::~CtaMocker() = default;
 
 void CtaMocker::dump_stradata()
 {
@@ -90,10 +88,10 @@ void CtaMocker::dump_stradata()
 
 		rj::Document::AllocatorType &allocator = root.GetAllocator();
 
-		for (auto it = _pos_map.begin(); it != _pos_map.end(); it++)
+		for (const auto & it : _pos_map)
 		{
-			const char* stdCode = it->first.c_str();
-			const PosInfo& pInfo = it->second;
+			const char* stdCode = it.first.c_str();
+			const PosInfo& pInfo = it.second;
 
 			rj::Value pItem(rj::kObjectType);
 			pItem.AddMember("code", rj::Value(stdCode, allocator), allocator);
@@ -104,10 +102,9 @@ void CtaMocker::dump_stradata()
 			pItem.AddMember("lastexittime", pInfo._last_exittime, allocator);
 
 			rj::Value details(rj::kArrayType);
-			for (auto dit = pInfo._details.begin(); dit != pInfo._details.end(); dit++)
+			for (const auto & dInfo : pInfo._details)
 			{
-				const DetailInfo& dInfo = *dit;
-				rj::Value dItem(rj::kObjectType);
+					rj::Value dItem(rj::kObjectType);
 				dItem.AddMember("long", dInfo._long, allocator);
 				dItem.AddMember("price", dInfo._price, allocator);
 				dItem.AddMember("maxprice", dInfo._max_price, allocator);
@@ -172,10 +169,10 @@ void CtaMocker::dump_stradata()
 
 		rj::Document::AllocatorType &allocator = root.GetAllocator();
 
-		for (auto it = _condtions.begin(); it != _condtions.end(); it++)
+		for (const auto & _condtion : _condtions)
 		{
-			const char* code = it->first.c_str();
-			const CondList& condList = it->second;
+			const char* code = _condtion.first.c_str();
+			const CondList& condList = _condtion.second;
 
 			rj::Value cArray(rj::kArrayType);
 			for (auto& condInfo : condList)
@@ -372,9 +369,9 @@ void CtaMocker::dump_outputs()
 	{
 		rj::Document root(rj::kObjectType);
 		rj::Document::AllocatorType &allocator = root.GetAllocator();
-		for (auto it = _user_datas.begin(); it != _user_datas.end(); it++)
+		for (const auto & _user_data : _user_datas)
 		{
-			root.AddMember(rj::Value(it->first.c_str(), allocator), rj::Value(it->second.c_str(), allocator), allocator);
+			root.AddMember(rj::Value(_user_data.first.c_str(), allocator), rj::Value(_user_data.second.c_str(), allocator), allocator);
 		}
 
 		filename = folder;
@@ -410,17 +407,17 @@ void CtaMocker::log_close(const char* stdCode, bool isLong, uint64_t openTime, d
 
 bool CtaMocker::init_cta_factory(WTSVariant* cfg)
 {
-	if (cfg == NULL)
+	if (cfg == nullptr)
 		return false;
 
 	const char* module = cfg->getCString("module");
 
 	DllHandle hInst = DLLHelper::load_library(module);
-	if (hInst == NULL)
+	if (hInst == nullptr)
 		return false;
 
-	FuncCreateStrategyFact creator = (FuncCreateStrategyFact)DLLHelper::get_symbol(hInst, "createStrategyFact");
-	if (creator == NULL)
+	auto creator = (FuncCreateStrategyFact)DLLHelper::get_symbol(hInst, "createStrategyFact");
+	if (creator == nullptr)
 	{
 		DLLHelper::free_library(hInst);
 		return false;
@@ -724,7 +721,7 @@ void CtaMocker::proc_tick(const char* stdCode, double last_px, double cur_px)
 
 		const CondList& condList = it->second;
 		double curPrice = cur_px;
-		const CondEntrust* matchedEntrust = NULL;
+		const CondEntrust* matchedEntrust = nullptr;
 		for (const CondEntrust& entrust : condList)
 		{
 			/*
@@ -804,7 +801,7 @@ void CtaMocker::proc_tick(const char* stdCode, double last_px, double cur_px)
 					* 1 alg不同的条件单，或者alg为WCT_Equal，以最先设置的那个为准
 					* 2 alg一样的调价单，如果是WCT_Larger与WCT_LargerOrEqual，取触发价较小的，WCT_Smaller与WCT_SmallerOrEqual，取触发价较大的
 					*/
-					if (matchedEntrust == NULL)
+					if (matchedEntrust == nullptr)
 					{
 						matchedEntrust = &entrust;
 						if (entrust._alg == WCT_Larger || entrust._alg == WCT_LargerOrEqual)
@@ -837,7 +834,7 @@ void CtaMocker::proc_tick(const char* stdCode, double last_px, double cur_px)
 			}
 		}
 
-		if (matchedEntrust != NULL)
+		if (matchedEntrust != nullptr)
 		{
 			const CondEntrust& entrust = *matchedEntrust;
 			double price = curPrice;
@@ -940,7 +937,7 @@ void CtaMocker::handle_tick(const char* stdCode, WTSTickData* newTick, uint32_t 
 //回调函数
 void CtaMocker::on_bar(const char* stdCode, const char* period, uint32_t times, WTSBarStruct* newBar)
 {
-	if (newBar == NULL)
+	if (newBar == nullptr)
 		return;
 
 	thread_local static char realPeriod[8] = { 0 };
@@ -970,7 +967,7 @@ void CtaMocker::update_dyn_profit(const char* stdCode, double price)
 	auto it = _pos_map.find(stdCode);
 	if (it != _pos_map.end())
 	{
-		PosInfo& pInfo = (PosInfo&)it->second;
+		auto& pInfo = (PosInfo&)it->second;
 		if (pInfo._volume == 0)
 		{
 			pInfo._dynprofit = 0;
@@ -979,10 +976,9 @@ void CtaMocker::update_dyn_profit(const char* stdCode, double price)
 		{
 			WTSCommodityInfo* commInfo = _replayer->get_commodity_info(stdCode);
 			double dynprofit = 0;
-			for (auto pit = pInfo._details.begin(); pit != pInfo._details.end(); pit++)
+			for (auto & dInfo : pInfo._details)
 			{
-				DetailInfo& dInfo = *pit;
-				dInfo._profit = dInfo._volume*(price - dInfo._price)*commInfo->getVolScale()*(dInfo._long ? 1 : -1);
+					dInfo._profit = dInfo._volume*(price - dInfo._price)*commInfo->getVolScale()*(dInfo._long ? 1 : -1);
 				if (dInfo._profit > 0)
 					dInfo._max_profit = max(dInfo._profit, dInfo._max_profit);
 				else if (dInfo._profit < 0)
@@ -1097,10 +1093,10 @@ bool CtaMocker::on_schedule(uint32_t curDate, uint32_t curTime)
 	bool isMainUdt = false;
 	bool emmited = false;
 
-	for (auto it = _kline_tags.begin(); it != _kline_tags.end(); it++)
+	for (const auto & _kline_tag : _kline_tags)
 	{
-		const std::string& key = it->first;
-		KlineTag& marker = (KlineTag&)it->second;
+		const std::string& key = _kline_tag.first;
+		auto& marker = (KlineTag&)_kline_tag.second;
 
 		StringVector ay = StrUtil::split(key, "#");
 		const char* stdCode = ay[0].c_str();
@@ -1215,7 +1211,7 @@ void CtaMocker::on_session_begin(uint32_t curTDate)
 	for (auto& it : _pos_map)
 	{
 		const char* stdCode = it.first.c_str();
-		PosInfo& pInfo = (PosInfo&)it.second;
+		auto& pInfo = (PosInfo&)it.second;
 		if (!decimal::eq(pInfo._frozen, 0))
 		{
 			log_debug("{} of {} frozen released on {}", pInfo._frozen, stdCode, curTDate);
@@ -1243,14 +1239,14 @@ void CtaMocker::enum_position(FuncEnumCtaPosCallBack cb, bool bForExecute)
 		desPos[stdCode] = pInfo._volume;
 	}
 
-	for (auto sit : _sig_map)
+	for (const auto& sit : _sig_map)
 	{
 		const char* stdCode = sit.first.c_str();
 		const SigInfo& sInfo = sit.second;
 		desPos[stdCode] = sInfo._volume;
 	}
 
-	for (auto v : desPos)
+	for (const auto& v : desPos)
 	{
 		cb(v.first.c_str(), v.second);
 	}
@@ -1266,10 +1262,10 @@ void CtaMocker::on_session_end(uint32_t curTDate)
 	double total_profit = 0;
 	double total_dynprofit = 0;
 
-	for (auto it = _pos_map.begin(); it != _pos_map.end(); it++)
+	for (const auto & it : _pos_map)
 	{
-		const char* stdCode = it->first.c_str();
-		const PosInfo& pInfo = it->second;
+		const char* stdCode = it.first.c_str();
+		const PosInfo& pInfo = it.second;
 		total_profit += pInfo._closeprofit;
 		total_dynprofit += pInfo._dynprofit;
 
@@ -1300,7 +1296,7 @@ CondList& CtaMocker::get_cond_entrusts(const char* stdCode)
 void CtaMocker::stra_enter_long(const char* stdCode, double qty, const char* userTag /* = "" */, double limitprice, double stopprice)
 {
 	WTSCommodityInfo* commInfo = _replayer->get_commodity_info(stdCode);
-	if(commInfo == NULL)
+	if(commInfo == nullptr)
 	{
 		log_error("Cannot find corresponding commodity info of {}", stdCode);
 		return;
@@ -1345,7 +1341,7 @@ void CtaMocker::stra_enter_long(const char* stdCode, double qty, const char* use
 void CtaMocker::stra_enter_short(const char* stdCode, double qty, const char* userTag /* = "" */, double limitprice, double stopprice)
 {
 	WTSCommodityInfo* commInfo = _replayer->get_commodity_info(stdCode);
-	if (commInfo == NULL)
+	if (commInfo == nullptr)
 	{
 		log_error("Cannot find corresponding commodity info of {}", stdCode);
 		return;
@@ -1397,7 +1393,7 @@ void CtaMocker::stra_enter_short(const char* stdCode, double qty, const char* us
 void CtaMocker::stra_exit_long(const char* stdCode, double qty, const char* userTag /* = "" */, double limitprice, double stopprice)
 {
 	WTSCommodityInfo* commInfo = _replayer->get_commodity_info(stdCode);
-	if (commInfo == NULL)
+	if (commInfo == nullptr)
 	{
 		log_error("Cannot find corresponding commodity info of {}", stdCode);
 		return;
@@ -1443,7 +1439,7 @@ void CtaMocker::stra_exit_long(const char* stdCode, double qty, const char* user
 void CtaMocker::stra_exit_short(const char* stdCode, double qty, const char* userTag /* = "" */, double limitprice, double stopprice)
 {
 	WTSCommodityInfo* commInfo = _replayer->get_commodity_info(stdCode);
-	if (commInfo == NULL)
+	if (commInfo == nullptr)
 	{
 		log_error("Cannot find corresponding commodity info of {}", stdCode);
 		return;
@@ -1510,7 +1506,7 @@ double CtaMocker::stra_get_day_price(const char* stdCode, int flag /* = 0 */)
 void CtaMocker::stra_set_position(const char* stdCode, double qty, const char* userTag /* = "" */, double limitprice /* = 0.0 */, double stopprice /* = 0.0 */)
 {
 	WTSCommodityInfo* commInfo = _replayer->get_commodity_info(stdCode);
-	if (commInfo == NULL)
+	if (commInfo == nullptr)
 	{
 		log_error("Cannot find corresponding commodity info of {}", stdCode);
 		return;
@@ -1532,7 +1528,7 @@ void CtaMocker::stra_set_position(const char* stdCode, double qty, const char* u
 	{
 		double valid = stra_get_position(stdCode, true);
 		double frozen = total - valid;
-		//如果是T+1规则，则目标仓位不能小于冻结仓位
+		//如果是 T+1 规则，则目标仓位不能小于冻结仓位
 		if(decimal::lt(qty, frozen))
 		{
 			WTSLogger::log_dyn("strategy", _name.c_str(), LL_ERROR, "New position of {} cannot be set to {} due to {} being frozen", stdCode, qty, frozen);
@@ -1604,7 +1600,7 @@ void CtaMocker::do_set_position(const char* stdCode, double qty, double price /*
 		return;
 
 	WTSCommodityInfo* commInfo = _replayer->get_commodity_info(stdCode);
-	if (commInfo == NULL)
+	if (commInfo == nullptr)
 		return;
 
 	//成交价
@@ -1745,7 +1741,7 @@ WTSKlineSlice* CtaMocker::stra_get_bars(const char* stdCode, const char* period,
 	basePeriod[0] = period[0];
 	uint32_t times = 1;
 	if (strlen(period) > 1)
-		times = strtoul(period + 1, NULL, 10);
+		times = strtoul(period + 1, nullptr, 10);
 	else
 		strcat(key, "1");
 
@@ -1756,7 +1752,7 @@ WTSKlineSlice* CtaMocker::stra_get_bars(const char* stdCode, const char* period,
 		else if (_main_key != key)
 		{
 			WTSLogger::error("Main k bars can only be setup once");
-			return NULL;
+			return nullptr;
 		}
 
 		/*
@@ -1984,10 +1980,9 @@ double CtaMocker::stra_get_position(const char* stdCode, bool bOnlyValid /* = fa
 			return pInfo._volume;
 	}
 
-	for (auto it = pInfo._details.begin(); it != pInfo._details.end(); it++)
+	for (const auto & dInfo : pInfo._details)
 	{
-		const DetailInfo& dInfo = (*it);
-		if (strcmp(dInfo._opentag, userTag) != 0)
+			if (strcmp(dInfo._opentag, userTag) != 0)
 			continue;
 
 		return dInfo._volume;
@@ -2007,10 +2002,9 @@ double CtaMocker::stra_get_position_avgpx(const char* stdCode)
 		return 0.0;
 
 	double amount = 0.0;
-	for (auto dit = pInfo._details.begin(); dit != pInfo._details.end(); dit++)
+	for (const auto & dInfo : pInfo._details)
 	{
-		const DetailInfo& dInfo = *dit;
-		amount += dInfo._price*dInfo._volume;
+			amount += dInfo._price*dInfo._volume;
 	}
 
 	return amount / pInfo._volume;
@@ -2033,10 +2027,9 @@ uint64_t CtaMocker::stra_get_detail_entertime(const char* stdCode, const char* u
 		return 0;
 
 	const PosInfo& pInfo = it->second;
-	for (auto it = pInfo._details.begin(); it != pInfo._details.end(); it++)
+	for (const auto & dInfo : pInfo._details)
 	{
-		const DetailInfo& dInfo = (*it);
-		if (strcmp(dInfo._opentag, userTag) != 0)
+			if (strcmp(dInfo._opentag, userTag) != 0)
 			continue;
 
 		return dInfo._opentime;
@@ -2052,10 +2045,9 @@ double CtaMocker::stra_get_detail_cost(const char* stdCode, const char* userTag)
 		return 0;
 
 	const PosInfo& pInfo = it->second;
-	for (auto it = pInfo._details.begin(); it != pInfo._details.end(); it++)
+	for (const auto & dInfo : pInfo._details)
 	{
-		const DetailInfo& dInfo = (*it);
-		if (strcmp(dInfo._opentag, userTag) != 0)
+			if (strcmp(dInfo._opentag, userTag) != 0)
 			continue;
 
 		return dInfo._price;
@@ -2071,10 +2063,9 @@ double CtaMocker::stra_get_detail_profit(const char* stdCode, const char* userTa
 		return 0;
 
 	const PosInfo& pInfo = it->second;
-	for (auto it = pInfo._details.begin(); it != pInfo._details.end(); it++)
+	for (const auto & dInfo : pInfo._details)
 	{
-		const DetailInfo& dInfo = (*it);
-		if (strcmp(dInfo._opentag, userTag) != 0)
+			if (strcmp(dInfo._opentag, userTag) != 0)
 			continue;
 
 		switch (flag)

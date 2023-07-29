@@ -27,7 +27,7 @@ class HftMocker : public IDataSink, public IHftStraCtx
 {
 public:
 	HftMocker(HisDataReplayer* replayer, const char* name);
-	virtual ~HftMocker();
+	~HftMocker() override;
 
 private:
 	template<typename... Args>
@@ -54,104 +54,104 @@ private:
 public:
 	//////////////////////////////////////////////////////////////////////////
 	//IDataSink
-	virtual void	handle_tick(const char* stdCode, WTSTickData* curTick, uint32_t pxType) override;
-	virtual void	handle_order_queue(const char* stdCode, WTSOrdQueData* curOrdQue) override;
-	virtual void	handle_order_detail(const char* stdCode, WTSOrdDtlData* curOrdDtl) override;
-	virtual void	handle_transaction(const char* stdCode, WTSTransData* curTrans) override;
+	void	handle_tick(const char* stdCode, WTSTickData* curTick, uint32_t pxType) override;
+	void	handle_order_queue(const char* stdCode, WTSOrdQueData* curOrdQue) override;
+	void	handle_order_detail(const char* stdCode, WTSOrdDtlData* curOrdDtl) override;
+	void	handle_transaction(const char* stdCode, WTSTransData* curTrans) override;
 
-	virtual void	handle_bar_close(const char* stdCode, const char* period, uint32_t times, WTSBarStruct* newBar) override;
-	virtual void	handle_schedule(uint32_t uDate, uint32_t uTime) override;
+	void	handle_bar_close(const char* stdCode, const char* period, uint32_t times, WTSBarStruct* newBar) override;
+	void	handle_schedule(uint32_t uDate, uint32_t uTime) override;
 
-	virtual void	handle_init() override;
-	virtual void	handle_session_begin(uint32_t curTDate) override;
-	virtual void	handle_session_end(uint32_t curTDate) override;
+	void	handle_init() override;
+	void	handle_session_begin(uint32_t curTDate) override;
+	void	handle_session_end(uint32_t curTDate) override;
 
-	virtual void	handle_replay_done() override;
+	void	handle_replay_done() override;
 
-	virtual void	on_tick_updated(const char* stdCode, WTSTickData* newTick) override;
-	virtual void	on_ordque_updated(const char* stdCode, WTSOrdQueData* newOrdQue) override;
-	virtual void	on_orddtl_updated(const char* stdCode, WTSOrdDtlData* newOrdDtl) override;
-	virtual void	on_trans_updated(const char* stdCode, WTSTransData* newTrans) override;
+	void	on_tick_updated(const char* stdCode, WTSTickData* newTick) override;
+	void	on_ordque_updated(const char* stdCode, WTSOrdQueData* newOrdQue) override;
+	void	on_orddtl_updated(const char* stdCode, WTSOrdDtlData* newOrdDtl) override;
+	void	on_trans_updated(const char* stdCode, WTSTransData* newTrans) override;
 
 	//////////////////////////////////////////////////////////////////////////
 	//IHftStraCtx
-	virtual void on_tick(const char* stdCode, WTSTickData* newTick) override;
+	void on_tick(const char* stdCode, WTSTickData* newTick) override;
 
-	virtual void on_order_queue(const char* stdCode, WTSOrdQueData* newOrdQue) override;
+	void on_order_queue(const char* stdCode, WTSOrdQueData* newOrdQue) override;
 
-	virtual void on_order_detail(const char* stdCode, WTSOrdDtlData* newOrdDtl) override;
+	void on_order_detail(const char* stdCode, WTSOrdDtlData* newOrdDtl) override;
 
-	virtual void on_transaction(const char* stdCode, WTSTransData* newTrans) override;
+	void on_transaction(const char* stdCode, WTSTransData* newTrans) override;
 
-	virtual uint32_t id() override;
+	uint32_t id() override;
 
-	virtual void on_init() override;
+	void on_init() override;
 
-	virtual void on_bar(const char* stdCode, const char* period, uint32_t times, WTSBarStruct* newBar) override;
+	void on_bar(const char* stdCode, const char* period, uint32_t times, WTSBarStruct* newBar) override;
 
-	virtual void on_session_begin(uint32_t curTDate) override;
+	void on_session_begin(uint32_t curTDate) override;
 
-	virtual void on_session_end(uint32_t curTDate) override;
+	void on_session_end(uint32_t curTDate) override;
 
-	virtual bool stra_cancel(uint32_t localid) override;
+	bool stra_cancel(uint32_t localid) override;
 
-	virtual OrderIDs stra_cancel(const char* stdCode, bool isBuy, double qty = 0) override;
+	OrderIDs stra_cancel(const char* stdCode, bool isBuy, double qty = 0) override;
 
-	virtual OrderIDs stra_buy(const char* stdCode, double price, double qty, const char* userTag, int flag = 0, bool bForceClose = false) override;
+	OrderIDs stra_buy(const char* stdCode, double price, double qty, const char* userTag, int flag = 0, bool bForceClose = false) override;
 
-	virtual OrderIDs stra_sell(const char* stdCode, double price, double qty, const char* userTag, int flag = 0, bool bForceClose = false) override;
+	OrderIDs stra_sell(const char* stdCode, double price, double qty, const char* userTag, int flag = 0, bool bForceClose = false) override;
 
-	virtual WTSCommodityInfo* stra_get_comminfo(const char* stdCode) override;
+	WTSCommodityInfo* stra_get_comminfo(const char* stdCode) override;
 
-	virtual WTSKlineSlice* stra_get_bars(const char* stdCode, const char* period, uint32_t count) override;
+	WTSKlineSlice* stra_get_bars(const char* stdCode, const char* period, uint32_t count) override;
 
-	virtual WTSTickSlice* stra_get_ticks(const char* stdCode, uint32_t count) override;
+	WTSTickSlice* stra_get_ticks(const char* stdCode, uint32_t count) override;
 
-	virtual WTSOrdDtlSlice*	stra_get_order_detail(const char* stdCode, uint32_t count) override;
+	WTSOrdDtlSlice*	stra_get_order_detail(const char* stdCode, uint32_t count) override;
 
-	virtual WTSOrdQueSlice*	stra_get_order_queue(const char* stdCode, uint32_t count) override;
+	WTSOrdQueSlice*	stra_get_order_queue(const char* stdCode, uint32_t count) override;
 
-	virtual WTSTransSlice*	stra_get_transaction(const char* stdCode, uint32_t count) override;
+	WTSTransSlice*	stra_get_transaction(const char* stdCode, uint32_t count) override;
 
-	virtual WTSTickData* stra_get_last_tick(const char* stdCode) override;
+	WTSTickData* stra_get_last_tick(const char* stdCode) override;
 
 	/*
 	 *	获取分月合约代码
 	 */
-	virtual std::string		stra_get_rawcode(const char* stdCode) override;
+	std::string		stra_get_rawcode(const char* stdCode) override;
 
-	virtual double stra_get_position(const char* stdCode, bool bOnlyValid = false, int flag = 3) override;
+	double stra_get_position(const char* stdCode, bool bOnlyValid = false, int flag = 3) override;
 
-	virtual double stra_get_position_avgpx(const char* stdCode) override;
+	double stra_get_position_avgpx(const char* stdCode) override;
 
-	virtual double stra_get_position_profit(const char* stdCode) override;
+	double stra_get_position_profit(const char* stdCode) override;
 
-	virtual double stra_get_undone(const char* stdCode) override;
+	double stra_get_undone(const char* stdCode) override;
 
-	virtual double stra_get_price(const char* stdCode) override;
+	double stra_get_price(const char* stdCode) override;
 
-	virtual uint32_t stra_get_date() override;
+	uint32_t stra_get_date() override;
 
-	virtual uint32_t stra_get_time() override;
+	uint32_t stra_get_time() override;
 
-	virtual uint32_t stra_get_secs() override;
+	uint32_t stra_get_secs() override;
 
-	virtual void stra_sub_ticks(const char* stdCode) override;
+	void stra_sub_ticks(const char* stdCode) override;
 
-	virtual void stra_sub_order_queues(const char* stdCode) override;
+	void stra_sub_order_queues(const char* stdCode) override;
 
-	virtual void stra_sub_order_details(const char* stdCode) override;
+	void stra_sub_order_details(const char* stdCode) override;
 
-	virtual void stra_sub_transactions(const char* stdCode) override;
+	void stra_sub_transactions(const char* stdCode) override;
 
-	virtual void stra_log_info(const char* message) override;
-	virtual void stra_log_debug(const char* message) override;
-	virtual void stra_log_warn(const char* message) override;
-	virtual void stra_log_error(const char* message) override;
+	void stra_log_info(const char* message) override;
+	void stra_log_debug(const char* message) override;
+	void stra_log_warn(const char* message) override;
+	void stra_log_error(const char* message) override;
 
-	virtual void stra_save_user_data(const char* key, const char* val) override;
+	void stra_save_user_data(const char* key, const char* val) override;
 
-	virtual const char* stra_load_user_data(const char* key, const char* defVal = "") override;
+	const char* stra_load_user_data(const char* key, const char* defVal = "") override;
 
 	//////////////////////////////////////////////////////////////////////////
 	virtual void on_trade(uint32_t localid, const char* stdCode, bool isBuy, double vol, double price, const char* userTag);
@@ -170,7 +170,7 @@ public:
 
 private:
 	typedef std::function<void()> Task;
-	void	postTask(Task task);
+	void	postTask(const Task& task);
 	void	procTask();
 
 	bool	procOrder(uint32_t localid);
@@ -194,21 +194,21 @@ private:
 	PriceMap		_price_map;
 
 
-	typedef struct _StraFactInfo
+	typedef struct StraFactInfo
 	{
 		std::string		_module_path;
 		DllHandle		_module_inst;
 		IHftStrategyFact*	_fact;
-		FuncCreateHftStraFact	_creator;
-		FuncDeleteHftStraFact	_remover;
+		FuncCreateHftStraFact	_creator{};
+		FuncDeleteHftStraFact	_remover{};
 
-		_StraFactInfo()
+		StraFactInfo()
 		{
-			_module_inst = NULL;
-			_fact = NULL;
+			_module_inst = nullptr;
+			_fact = nullptr;
 		}
 
-		~_StraFactInfo()
+		~StraFactInfo()
 		{
 			if (_fact)
 				_remover(_fact);
@@ -223,32 +223,32 @@ private:
 
 	StdRecurMutex		_mtx_control;
 
-	typedef struct _OrderInfo
+	typedef struct OrderInfo
 	{
-		bool	_isBuy;
-		char	_code[32];
-		double	_price;
-		double	_total;
-		double	_left;
-		char	_usertag[32];
+		bool	_isBuy{};
+		char	_code[32]{};
+		double	_price{};
+		double	_total{};
+		double	_left{};
+		char	_usertag[32]{};
 		
-		uint32_t	_localid;
+		uint32_t	_localid{};
 
-		bool	_proced_after_placed;	//下单后是否处理过			
+		bool	_proced_after_placed{};	//下单后是否处理过
 
-		_OrderInfo()
+		OrderInfo()
 		{
-			memset(this, 0, sizeof(_OrderInfo));
+			memset(this, 0, sizeof(OrderInfo));
 		}
 
-		_OrderInfo(const struct _OrderInfo& rhs)
+		OrderInfo(const struct OrderInfo& rhs)
 		{
-			memcpy(this, &rhs, sizeof(_OrderInfo));
+			memcpy(this, &rhs, sizeof(OrderInfo));
 		}
 
-		_OrderInfo& operator =(const struct _OrderInfo& rhs)
+		OrderInfo& operator =(const struct OrderInfo& rhs)
 		{
-			memcpy(this, &rhs, sizeof(_OrderInfo));
+			memcpy(this, &rhs, sizeof(OrderInfo));
 			return *this;
 		}
 
@@ -264,27 +264,27 @@ private:
 	//用户数据
 	typedef faster_hashmap<std::string, std::string> StringHashMap;
 	StringHashMap	_user_datas;
-	bool			_ud_modified;
+	bool			_ud_modified{};
 
-	typedef struct _DetailInfo
+	typedef struct DetailInfo
 	{
-		bool		_long;
-		double		_price;
-		double		_volume;
-		uint64_t	_opentime;
-		uint32_t	_opentdate;
-		double		_max_profit;
-		double		_max_loss;
-		double		_profit;
-		char		_usertag[32];
+		bool		_long{};
+		double		_price{};
+		double		_volume{};
+		uint64_t	_opentime{};
+		uint32_t	_opentdate{};
+		double		_max_profit{};
+		double		_max_loss{};
+		double		_profit{};
+		char		_usertag[32]{};
 
-		_DetailInfo()
+		DetailInfo()
 		{
-			memset(this, 0, sizeof(_DetailInfo));
+			memset(this, 0, sizeof(DetailInfo));
 		}
 	} DetailInfo;
 
-	typedef struct _PosInfo
+	typedef struct PosInfo
 	{
 		double		_volume;
 		double		_closeprofit;
@@ -293,7 +293,7 @@ private:
 
 		std::vector<DetailInfo> _details;
 
-		_PosInfo()
+		PosInfo()
 		{
 			_volume = 0;
 			_closeprofit = 0;
@@ -312,15 +312,15 @@ private:
 	std::stringstream	_sig_logs;
 	std::stringstream	_pos_logs;
 
-	typedef struct _StraFundInfo
+	typedef struct StraFundInfo
 	{
-		double	_total_profit;
-		double	_total_dynprofit;
-		double	_total_fees;
+		double	_total_profit{};
+		double	_total_dynprofit{};
+		double	_total_fees{};
 
-		_StraFundInfo()
+		StraFundInfo()
 		{
-			memset(this, 0, sizeof(_StraFundInfo));
+			memset(this, 0, sizeof(StraFundInfo));
 		}
 	} StraFundInfo;
 

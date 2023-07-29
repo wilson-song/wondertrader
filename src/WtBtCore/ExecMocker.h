@@ -21,56 +21,56 @@ USING_NS_WTP;
 class ExecMocker : public ExecuteContext, public IDataSink, public IMatchSink
 {
 public:
-	ExecMocker(HisDataReplayer* replayer);
-	virtual ~ExecMocker();
+	explicit ExecMocker(HisDataReplayer* replayer);
+	~ExecMocker() override;
 
 public:
 	//////////////////////////////////////////////////////////////////////////
 	//IMatchSink
-	virtual void handle_trade(uint32_t localid, const char* stdCode, bool isBuy, double vol, double fireprice, double price, uint64_t ordTime) override;
-	virtual void handle_order(uint32_t localid, const char* stdCode, bool isBuy, double leftover, double price, bool isCanceled, uint64_t ordTime) override;
-	virtual void handle_entrust(uint32_t localid, const char* stdCode, bool bSuccess, const char* message, uint64_t ordTime) override;
+	void handle_trade(uint32_t localid, const char* stdCode, bool isBuy, double vol, double fireprice, double price, uint64_t ordTime) override;
+	void handle_order(uint32_t localid, const char* stdCode, bool isBuy, double leftover, double price, bool isCanceled, uint64_t ordTime) override;
+	void handle_entrust(uint32_t localid, const char* stdCode, bool bSuccess, const char* message, uint64_t ordTime) override;
 
 	//////////////////////////////////////////////////////////////////////////
 	//IDataSink
-	virtual void handle_tick(const char* stdCode, WTSTickData* curTick, uint32_t pxType) override;
-	virtual void handle_schedule(uint32_t uDate, uint32_t uTime) override;
-	virtual void handle_init() override;
+	void handle_tick(const char* stdCode, WTSTickData* curTick, uint32_t pxType) override;
+	void handle_schedule(uint32_t uDate, uint32_t uTime) override;
+	void handle_init() override;
 
-	virtual void handle_bar_close(const char* stdCode, const char* period, uint32_t times, WTSBarStruct* newBar) override;
+	void handle_bar_close(const char* stdCode, const char* period, uint32_t times, WTSBarStruct* newBar) override;
 
-	virtual void handle_session_begin(uint32_t curTDate) override;
+	void handle_session_begin(uint32_t curTDate) override;
 
-	virtual void handle_session_end(uint32_t curTDate) override;
+	void handle_session_end(uint32_t curTDate) override;
 
-	virtual void handle_replay_done() override;
+	void handle_replay_done() override;
 
 	//////////////////////////////////////////////////////////////////////////
 	//ExecuteContext
-	virtual WTSTickSlice* getTicks(const char* stdCode, uint32_t count, uint64_t etime = 0) override;
+	WTSTickSlice* getTicks(const char* stdCode, uint32_t count, uint64_t etime = 0) override;
 
-	virtual WTSTickData* grabLastTick(const char* stdCode) override;
+	WTSTickData* grabLastTick(const char* stdCode) override;
 
-	virtual double getPosition(const char* stdCode, bool validOnly, int32_t flag) override;
+	double getPosition(const char* stdCode, bool validOnly, int32_t flag) override;
 
-	virtual OrderMap* getOrders(const char* stdCode) override;
+	OrderMap* getOrders(const char* stdCode) override;
 
-	virtual double getUndoneQty(const char* stdCode) override;
+	double getUndoneQty(const char* stdCode) override;
 
-	virtual OrderIDs buy(const char* stdCode, double price, double qty, bool bForceClose = false) override;
+	OrderIDs buy(const char* stdCode, double price, double qty, bool bForceClose = false) override;
 
-	virtual OrderIDs sell(const char* stdCode, double price, double qty, bool bForceClose = false) override;
+	OrderIDs sell(const char* stdCode, double price, double qty, bool bForceClose = false) override;
 
-	virtual bool cancel(uint32_t localid) override;
+	bool cancel(uint32_t localid) override;
 
-	virtual OrderIDs cancel(const char* stdCode, bool isBuy, double qty = 0) override;
+	OrderIDs cancel(const char* stdCode, bool isBuy, double qty = 0) override;
 
-	virtual void writeLog(const char* message) override;
+	void writeLog(const char* message) override;
 
-	virtual WTSCommodityInfo* getCommodityInfo(const char* stdCode) override;
-	virtual WTSSessionInfo* getSessionInfo(const char* stdCode) override;
+	WTSCommodityInfo* getCommodityInfo(const char* stdCode) override;
+	WTSSessionInfo* getSessionInfo(const char* stdCode) override;
 
-	virtual uint64_t getCurTime() override;
+	uint64_t getCurTime() override;
 
 public:
 	bool	init(WTSVariant* cfg);
@@ -78,21 +78,21 @@ public:
 private:
 	HisDataReplayer*	_replayer;
 
-	typedef struct _ExecFactInfo
+	typedef struct ExecFactInfo
 	{
 		std::string		_module_path;
 		DllHandle		_module_inst;
 		IExecuterFactory*	_fact;
-		FuncCreateExeFactory	_creator;
-		FuncDeleteExeFactory	_remover;
+		FuncCreateExeFactory	_creator{};
+		FuncDeleteExeFactory	_remover{};
 
-		_ExecFactInfo()
+		ExecFactInfo()
 		{
-			_module_inst = NULL;
-			_fact = NULL;
+			_module_inst = nullptr;
+			_fact = nullptr;
 		}
 
-		~_ExecFactInfo()
+		~ExecFactInfo()
 		{
 			if (_fact)
 				_remover(_fact);
@@ -100,19 +100,19 @@ private:
 	} ExecFactInfo;
 	ExecFactInfo	_factory;
 
-	ExecuteUnit*	_exec_unit;
+	ExecuteUnit*	_exec_unit{};
 	std::string		_code;
 	std::string		_period;
-	double			_volunit;
-	int32_t			_volmode;
+	double			_volunit{};
+	int32_t			_volmode{};
 
-	double			_target;
+	double			_target{};
 
 	double			_position;
 	double			_undone;
 	WTSTickData*	_last_tick;
 	double			_sig_px;
-	uint64_t		_sig_time;
+	uint64_t		_sig_time{};
 
 	std::stringstream	_trade_logs;
 	uint32_t	_ord_cnt;

@@ -42,10 +42,10 @@ public:
 private:
 	std::string		m_strURL;
 	uint32_t		_mq_sid;
-	FuncCreateMQServer	_creator;
-	FuncDestroyMQServer	_remover;
-	FundPublishMessage	_publisher;
-	FuncRegCallbacks	_register;
+	FuncCreateMQServer	_creator{};
+	FuncDestroyMQServer	_remover{};
+	FundPublishMessage	_publisher{};
+	FuncRegCallbacks	_register{};
 };
 
 NS_WTP_END

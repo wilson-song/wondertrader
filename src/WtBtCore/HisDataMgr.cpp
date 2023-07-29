@@ -20,8 +20,8 @@ bool HisDataMgr::init(WTSVariant* cfg)
 	DllHandle libParser = DLLHelper::load_library(module.c_str());
 	if (libParser)
 	{
-		FuncCreateBtDtReader pFuncCreator = (FuncCreateBtDtReader)DLLHelper::get_symbol(libParser, "createBtDtReader");
-		if (pFuncCreator == NULL)
+		auto pFuncCreator = (FuncCreateBtDtReader)DLLHelper::get_symbol(libParser, "createBtDtReader");
+		if (pFuncCreator == nullptr)
 		{
 			WTSLogger::error("Initializing of backtest data reader failed: function createBtDtReader not found...");
 		}
@@ -44,9 +44,9 @@ bool HisDataMgr::init(WTSVariant* cfg)
 	return true;
 }
 
-bool HisDataMgr::load_raw_bars(const char* exchg, const char* code, WTSKlinePeriod period, FuncLoadDataCallback cb)
+bool HisDataMgr::load_raw_bars(const char* exchg, const char* code, WTSKlinePeriod period, const FuncLoadDataCallback& cb)
 {
-	if(_reader == NULL)
+	if(_reader == nullptr)
 	{
 		WTSLogger::log_raw(LL_ERROR, "Backtest Data Reader not initialized");
 		return false;
@@ -59,9 +59,9 @@ bool HisDataMgr::load_raw_bars(const char* exchg, const char* code, WTSKlinePeri
 	return bSucc;
 }
 
-bool HisDataMgr::load_raw_ticks(const char* exchg, const char* code, uint32_t uDate, FuncLoadDataCallback cb)
+bool HisDataMgr::load_raw_ticks(const char* exchg, const char* code, uint32_t uDate, const FuncLoadDataCallback& cb)
 {
-	if (_reader == NULL)
+	if (_reader == nullptr)
 	{
 		WTSLogger::log_raw(LL_ERROR, "Backtest Data Reader not initialized");
 		return false;

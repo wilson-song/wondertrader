@@ -14,7 +14,7 @@ extern uint32_t makeLocalOrderID();
 
 void MatchEngine::init(WTSVariant* cfg)
 {
-	if (cfg == NULL)
+	if (cfg == nullptr)
 		return;
 
 	_cancelrate = cfg->getDouble("cancelrate");
@@ -30,7 +30,7 @@ void MatchEngine::fire_orders(const char* stdCode, OrderIDs& to_erase)
 	for (auto& v : _orders)
 	{
 		uint32_t localid = v.first;
-		OrderInfo& ordInfo = (OrderInfo&)v.second;
+		auto& ordInfo = (OrderInfo&)v.second;
 
 		if (ordInfo._state == 0)	//需要激活
 		{
@@ -49,7 +49,7 @@ void MatchEngine::match_orders(WTSTickData* curTick, OrderIDs& to_erase)
 	for (auto& v : _orders)
 	{
 		uint32_t localid = v.first;
-		OrderInfo& ordInfo = (OrderInfo&)v.second;
+		auto& ordInfo = (OrderInfo&)v.second;
 
 		if (ordInfo._state == 9)//要撤单
 		{
@@ -229,8 +229,8 @@ void MatchEngine::update_lob(WTSTickData* curTick)
 OrderIDs MatchEngine::buy(const char* stdCode, double price, double qty, uint64_t curTime)
 {
 	WTSTickData* lastTick = grab_last_tick(stdCode);
-	if (lastTick == NULL)
-		return OrderIDs();
+	if (lastTick == nullptr)
+		return {};
 
 	uint32_t localid = makeLocalOrderID();
 	OrderInfo& ordInfo = _orders[localid];
@@ -264,8 +264,8 @@ OrderIDs MatchEngine::buy(const char* stdCode, double price, double qty, uint64_
 OrderIDs MatchEngine::sell(const char* stdCode, double price, double qty, uint64_t curTime)
 {
 	WTSTickData* lastTick = grab_last_tick(stdCode);
-	if (lastTick == NULL)
-		return OrderIDs();
+	if (lastTick == nullptr)
+		return {};
 
 	uint32_t localid = makeLocalOrderID();
 	OrderInfo& ordInfo = _orders[localid];
@@ -300,7 +300,7 @@ OrderIDs MatchEngine::cancel(const char* stdCode, bool isBuy, double qty, FuncCa
 	OrderIDs ret;
 	for (auto& v : _orders)
 	{
-		OrderInfo& ordInfo = (OrderInfo&)v.second;
+		auto& ordInfo = (OrderInfo&)v.second;
 		if (ordInfo._state != 1)
 			continue;
 
@@ -331,7 +331,7 @@ double MatchEngine::cancel(uint32_t localid)
 	if (it == _orders.end())
 		return 0.0;
 
-	OrderInfo& ordInfo = (OrderInfo&)it->second;
+	auto& ordInfo = (OrderInfo&)it->second;
 	ordInfo._state = 9;
 
 	return ordInfo._left*(ordInfo._buy ? 1 : -1);
@@ -339,10 +339,10 @@ double MatchEngine::cancel(uint32_t localid)
 
 void MatchEngine::handle_tick(const char* stdCode, WTSTickData* curTick)
 {
-	if (NULL == curTick)
+	if (nullptr == curTick)
 		return;
 
-	if (NULL == _tick_cache)
+	if (nullptr == _tick_cache)
 		_tick_cache = WTSTickCache::create();
 
 	_tick_cache->add(stdCode, curTick, true);
@@ -366,8 +366,8 @@ void MatchEngine::handle_tick(const char* stdCode, WTSTickData* curTick)
 
 WTSTickData* MatchEngine::grab_last_tick(const char* stdCode)
 {
-	if (NULL == _tick_cache)
-		return NULL;
+	if (nullptr == _tick_cache)
+		return nullptr;
 
 	return (WTSTickData*)_tick_cache->grab(stdCode);
 }

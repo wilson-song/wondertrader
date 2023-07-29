@@ -33,7 +33,7 @@ ExecMocker::ExecMocker(HisDataReplayer* replayer)
 	, _cacl_qty(0)
 	, _sig_cnt(0)
 	, _sig_px(DBL_MAX)
-	, _last_tick(NULL)
+	, _last_tick(nullptr)
 {
 }
 
@@ -56,11 +56,11 @@ bool ExecMocker::init(WTSVariant* cfg)
 	_matcher.init(cfg->get("matcher"));
 
 	DllHandle hInst = DLLHelper::load_library(module);
-	if (hInst == NULL)
+	if (hInst == nullptr)
 		return false;
 
-	FuncCreateExeFactory creator = (FuncCreateExeFactory)DLLHelper::get_symbol(hInst, "createExecFact");
-	if (creator == NULL)
+	auto creator = (FuncCreateExeFactory)DLLHelper::get_symbol(hInst, "createExecFact");
+	if (creator == nullptr)
 	{
 		DLLHelper::free_library(hInst);
 		return false;
@@ -122,7 +122,7 @@ void ExecMocker::handle_tick(const char* stdCode, WTSTickData* curTick, uint32_t
  	if (_last_tick)
 	{
 		_last_tick->release();
-		_last_tick = NULL;
+		_last_tick = nullptr;
 	}
 
 	_last_tick = curTick;
@@ -140,7 +140,7 @@ void ExecMocker::handle_init()
 	basePeriod[0] = _period[0];
 	uint32_t times = 1;
 	if (_period.size() > 1)
-		times = strtoul(_period.c_str() + 1, NULL, 10);
+		times = strtoul(_period.c_str() + 1, nullptr, 10);
 
 	WTSKlineSlice* kline = _replayer->get_kline_slice(_code.c_str(), basePeriod,  10, times, true);
 	if (kline)
@@ -206,7 +206,7 @@ double ExecMocker::getPosition(const char* stdCode, bool validOnly, int32_t flag
 
 OrderMap* ExecMocker::getOrders(const char* stdCode)
 {
-	return NULL;
+	return nullptr;
 }
 
 double ExecMocker::getUndoneQty(const char* stdCode)
