@@ -64,9 +64,9 @@ void WtHftEngine::init(WTSVariant* cfg, IBaseDataMgr* bdMgr, WtDtMgr* dataMgr, I
 
 void WtHftEngine::run(bool bAsync /*= false*/)
 {
-	for (auto it = _ctx_map.begin(); it != _ctx_map.end(); it++)
+	for (const auto & it : _ctx_map)
 	{
-		HftContextPtr& ctx = (HftContextPtr&)it->second;
+		auto& ctx = (HftContextPtr&)it.second;
 		ctx->on_init();
 	}
 

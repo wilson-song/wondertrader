@@ -30,9 +30,9 @@ public:
 	void on_tick(const char* stdCode, WTSTickData* newTick) override;
 
 private:
-	WTSVariant*			_config;
+	WTSVariant*			_config{};
 
-	uint32_t			_scale;
+	uint32_t			_scale{};
 
 	faster_hashmap<std::string, double> _target_pos;
 };

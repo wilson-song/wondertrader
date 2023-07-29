@@ -17,14 +17,10 @@
 #include <boost/filesystem.hpp>
 
 
-SelStrategyMgr::SelStrategyMgr()
-{
-}
+SelStrategyMgr::SelStrategyMgr() = default;
 
 
-SelStrategyMgr::~SelStrategyMgr()
-{
-}
+SelStrategyMgr::~SelStrategyMgr() = default;
 
 bool SelStrategyMgr::loadFactories(const char* path)
 {
@@ -54,7 +50,7 @@ bool SelStrategyMgr::loadFactories(const char* path)
 		if (hInst == nullptr)
 			continue;
 
-		FuncCreateSelStraFact creator = (FuncCreateSelStraFact)DLLHelper::get_symbol(hInst, "createMfStrategyFact");
+		auto creator = (FuncCreateSelStraFact)DLLHelper::get_symbol(hInst, "createMfStrategyFact");
 		if (creator == nullptr)
 		{
 			DLLHelper::free_library(hInst);
@@ -92,9 +88,9 @@ SelStrategyPtr SelStrategyMgr::createStrategy(const char* factname, const char* 
 {
 	auto it = _factories.find(factname);
 	if (it == _factories.end())
-		return SelStrategyPtr();
+		return {};
 
-	StraFactInfo& fInfo = (StraFactInfo&)it->second;
+	auto& fInfo = (StraFactInfo&)it->second;
 	SelStrategyPtr ret(new SelStraWrapper(fInfo._fact->createStrategy(unitname, id), fInfo._fact));
 	_strategies[id] = ret;
 	return ret;
@@ -104,16 +100,16 @@ SelStrategyPtr SelStrategyMgr::createStrategy(const char* name, const char* id)
 {
 	StringVector ay = StrUtil::split(name, ".");
 	if (ay.size() < 2)
-		return SelStrategyPtr();
+		return {};
 
 	const char* factname = ay[0].c_str();
 	const char* unitname = ay[1].c_str();
 
 	auto it = _factories.find(factname);
 	if (it == _factories.end())
-		return SelStrategyPtr();
+		return {};
 
-	StraFactInfo& fInfo = (StraFactInfo&)it->second;
+	auto& fInfo = (StraFactInfo&)it->second;
 	SelStrategyPtr ret(new SelStraWrapper(fInfo._fact->createStrategy(unitname, id), fInfo._fact));
 	_strategies[id] = ret;
 	return ret;
@@ -123,7 +119,7 @@ SelStrategyPtr SelStrategyMgr::getStrategy(const char* id)
 {
 	auto it = _strategies.find(id);
 	if (it == _strategies.end())
-		return SelStrategyPtr();
+		return {};
 
 	return it->second;
 }

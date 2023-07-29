@@ -130,7 +130,7 @@ private:
 
 	SpinMutex			_mtx_units;
 
-	typedef struct _CodeGroup
+	typedef struct CodeGroup
 	{
 		char	_name[32] = { 0 };
 		faster_hashmap<LongKey, double>	_items;

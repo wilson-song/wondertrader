@@ -72,8 +72,7 @@ inline const char* formatAction(WTSDirectionType dType, WTSOffsetType oType)
 }
 
 TraderAdapter::TraderAdapter(EventNotifier* caster /* = nullptr */)
-	: _id("")
-	, _cfg(nullptr)
+	: _cfg(nullptr)
 	, _state(AS_NOTLOGIN)
 	, _trader_api(nullptr)
 	, _orders(nullptr)
@@ -430,7 +429,7 @@ double TraderAdapter::getPosition(const char* stdCode, bool bValidOnly, int32_t 
 
 	double ret = 0;
 	const PosItem& pItem = it->second;
-	if(flag & POSITION_LONG)
+	if(flag & PT_Long)
 	{
 		if(bValidOnly)
 			ret += (pItem.l_newavail + pItem.l_preavail);
@@ -438,7 +437,7 @@ double TraderAdapter::getPosition(const char* stdCode, bool bValidOnly, int32_t 
 			ret += (pItem.l_newvol + pItem.l_prevol);
 	}
 
-	if (flag & POSITION_SHORT)
+	if (flag & PT_Short)
 	{
 		if (bValidOnly)
 			ret -= (pItem.s_newavail + pItem.s_preavail);
@@ -575,7 +574,7 @@ bool TraderAdapter::checkCancelLimits(const char* stdCode)
 				return false;
 			}
 
-			//这里必须要清理一下, 没有特别好的办法
+			//这里需要清理一下, 没有特别好的办法
 			//不然随着时间推移, vector长度会越来越长
 			if(tit != cache.begin())
 			{
@@ -640,7 +639,7 @@ bool TraderAdapter::checkOrderLimits(const char* stdCode)
 				return false;
 			}
 
-			//这里必须要清理一下, 没有特别好的办法
+			//这里需要清理一下, 没有特别好的办法
 			//不然随着时间推移, vector长度会越来越长
 			if (tit != cache.begin())
 			{
@@ -2078,9 +2077,9 @@ void TraderAdapter::onPushOrder(WTSOrderInfo* orderInfo)
 			bool isToday = (orderInfo->getOffsetType() == WOT_CLOSETODAY);
 			double qty = orderInfo->getVolume() - orderInfo->getVolTraded();
 
-			bool isBuy = (isLong&&isOpen) || (!isLong && !isOpen);
-
-			updateUndone(stdCode.c_str(), qty*(isBuy ? -1 : 1), true);
+			updateUndone(stdCode.c_str(),
+                         qty*((isLong&&isOpen) || (!isLong && !isOpen) ? -1 : 1),
+                         true);
 
 			WTSLogger::log_dyn("trader", _id.c_str(), LL_INFO, "[{}] Order {} of {} canceled:{}, action: {}, leftqty: {}",
 				_id.c_str(), orderInfo->getUserTag(), stdCode.c_str(), orderInfo->getStateMsg(),

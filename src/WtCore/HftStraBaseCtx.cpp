@@ -43,9 +43,7 @@ HftStraBaseCtx::HftStraBaseCtx(WtHftEngine* engine, const char* name, bool bAgen
 }
 
 
-HftStraBaseCtx::~HftStraBaseCtx()
-{
-}
+HftStraBaseCtx::~HftStraBaseCtx() = default;
 
 uint32_t HftStraBaseCtx::id()
 {
@@ -189,7 +187,7 @@ OrderIDs HftStraBaseCtx::stra_cancel(const char* stdCode, bool isBuy, double qty
 {
 	//³·µ¥ÆµÂÊ¼ì²é
 	if (!_trader->checkCancelLimits(stdCode))
-		return OrderIDs();
+		return {};
 
 	return _trader->cancel(stdCode, isBuy, qty);
 }
@@ -223,7 +221,7 @@ OrderIDs HftStraBaseCtx::stra_buy(const char* stdCode, double price, double qty,
 		if (_trader && !_trader->checkOrderLimits(realCode.c_str()))
 		{
 			log_info("{} is forbidden to trade", realCode.c_str());
-			return OrderIDs();
+			return {};
 		}
 
 		auto ids = _trader->buy(realCode.c_str(), price, qty, flag, bForceClose, ct);
@@ -238,13 +236,13 @@ OrderIDs HftStraBaseCtx::stra_buy(const char* stdCode, double price, double qty,
 		if (ct == nullptr)
 		{
 			log_error("Cannot find corresponding contract info of {}", stdCode);
-			return OrderIDs();
+			return {};
 		}
 
 		if (!_trader->checkOrderLimits(stdCode))
 		{
 			log_info("{} is forbidden to trade", stdCode);
-			return OrderIDs();
+			return {};
 		}
 
 		auto ids = _trader->buy(stdCode, price, qty, flag, bForceClose, ct);
@@ -266,7 +264,7 @@ OrderIDs HftStraBaseCtx::stra_sell(const char* stdCode, double price, double qty
 		if (decimal::gt(qty, curPos))
 		{
 			log_error("No enough position of {} to sell", stdCode);
-			return OrderIDs();
+			return {};
 		}
 	}
 
@@ -287,7 +285,7 @@ OrderIDs HftStraBaseCtx::stra_sell(const char* stdCode, double price, double qty
 		if (_trader && !_trader->checkOrderLimits(realCode.c_str()))
 		{
 			log_info("{} is forbidden to trade", realCode.c_str());
-			return OrderIDs();
+			return {};
 		}
 
 		auto ids = _trader->sell(realCode.c_str(), price, qty, flag, bForceClose, ct);
@@ -301,13 +299,13 @@ OrderIDs HftStraBaseCtx::stra_sell(const char* stdCode, double price, double qty
 		if (ct == nullptr)
 		{
 			log_error("Cannot find corresponding contract info of {}", stdCode);
-			return OrderIDs();
+			return {};
 		}
 
 		if (_trader && !_trader->checkOrderLimits(stdCode))
 		{
 			log_info("{} is forbidden to trade", stdCode);
-			return OrderIDs();
+			return {};
 		}
 
 		auto ids = _trader->sell(stdCode, price, qty, flag, bForceClose, ct);
@@ -614,10 +612,9 @@ double HftStraBaseCtx::stra_get_position_avgpx(const char* stdCode)
 		return 0.0;
 
 	double amount = 0.0;
-	for (auto dit = pInfo._details.begin(); dit != pInfo._details.end(); dit++)
+	for (const auto & dInfo : pInfo._details)
 	{
-		const DetailInfo& dInfo = *dit;
-		amount += dInfo._price*dInfo._volume;
+			amount += dInfo._price*dInfo._volume;
 	}
 
 	return amount / pInfo._volume;
@@ -723,9 +720,9 @@ void HftStraBaseCtx::save_userdata()
 	//ini.save(filename.c_str());
 	rj::Document root(rj::kObjectType);
 	rj::Document::AllocatorType &allocator = root.GetAllocator();
-	for (auto it = _user_datas.begin(); it != _user_datas.end(); it++)
+	for (const auto & _user_data : _user_datas)
 	{
-		root.AddMember(rj::Value(it->first.c_str(), allocator), rj::Value(it->second.c_str(), allocator), allocator);
+		root.AddMember(rj::Value(_user_data.first.c_str(), allocator), rj::Value(_user_data.second.c_str(), allocator), allocator);
 	}
 
 	{
@@ -903,7 +900,7 @@ void HftStraBaseCtx::update_dyn_profit(const char* stdCode, WTSTickData* newTick
 	auto it = _pos_map.find(stdCode);
 	if (it != _pos_map.end())
 	{
-		PosInfo& pInfo = (PosInfo&)it->second;
+		auto& pInfo = (PosInfo&)it->second;
 		if (pInfo._volume == 0)
 		{
 			pInfo._dynprofit = 0;
@@ -915,11 +912,10 @@ void HftStraBaseCtx::update_dyn_profit(const char* stdCode, WTSTickData* newTick
 
 			WTSCommodityInfo* commInfo = _engine->get_commodity_info(stdCode);
 			double dynprofit = 0;
-			for (auto pit = pInfo._details.begin(); pit != pInfo._details.end(); pit++)
+			for (auto & dInfo : pInfo._details)
 			{
 
-				DetailInfo& dInfo = *pit;
-				dInfo._profit = dInfo._volume*(price - dInfo._price)*commInfo->getVolScale()*(dInfo._long ? 1 : -1);
+					dInfo._profit = dInfo._volume*(price - dInfo._price)*commInfo->getVolScale()*(dInfo._long ? 1 : -1);
 				if (dInfo._profit > 0)
 					dInfo._max_profit = std::max(dInfo._profit, dInfo._max_profit);
 				else if (dInfo._profit < 0)
@@ -945,10 +941,10 @@ void HftStraBaseCtx::on_session_end(uint32_t uTDate)
 	double total_profit = 0;
 	double total_dynprofit = 0;
 
-	for (auto it = _pos_map.begin(); it != _pos_map.end(); it++)
+	for (const auto & it : _pos_map)
 	{
-		const char* stdCode = it->first.c_str();
-		const PosInfo& pInfo = it->second;
+		const char* stdCode = it.first.c_str();
+		const PosInfo& pInfo = it.second;
 		total_profit += pInfo._closeprofit;
 		total_dynprofit += pInfo._dynprofit;
 	}

@@ -8,7 +8,7 @@
  * \brief 
  */
 #pragma once
-#include <stdint.h>
+#include <cstdint>
 #include "../Includes/WTSMarcos.h"
 
 NS_WTP_BEGIN

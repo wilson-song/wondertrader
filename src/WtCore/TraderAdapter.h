@@ -30,7 +30,7 @@ typedef std::function<void(const char*, bool, double, double, double, double)> F
 class TraderAdapter : public ITraderSpi
 {
 public:
-	TraderAdapter(EventNotifier* caster = nullptr);
+	explicit TraderAdapter(EventNotifier* caster = nullptr);
 	~TraderAdapter();
 
 	typedef enum tagAdapterState
@@ -45,23 +45,23 @@ public:
 		AS_ALLREADY			//全部就绪
 	} AdapterState;
 
-	typedef struct _PosItem
+	typedef struct PosItem
 	{
 		//多仓数据
-		double	l_newvol;
-		double	l_newavail;
-		double	l_prevol;
-		double	l_preavail;
+		double	l_newvol{};
+		double	l_newavail{};
+		double	l_prevol{};
+		double	l_preavail{};
 
 		//空仓数据
-		double	s_newvol;
-		double	s_newavail;
-		double	s_prevol;
-		double	s_preavail;
+		double	s_newvol{};
+		double	s_newavail{};
+		double	s_prevol{};
+		double	s_preavail{};
 
-		_PosItem()
+		PosItem()
 		{
-			memset(this, 0, sizeof(_PosItem));
+			memset(this, 0, sizeof(PosItem));
 		}
 
 		double total_pos(bool isLong = true) const
@@ -82,19 +82,19 @@ public:
 
 	} PosItem;
 
-	typedef struct _RiskParams
+	typedef struct RiskParams
 	{
-		uint32_t	_order_times_boundary;
-		uint32_t	_order_stat_timespan;
-		uint32_t	_order_total_limits;
+		uint32_t	_order_times_boundary{};
+		uint32_t	_order_stat_timespan{};
+		uint32_t	_order_total_limits{};
 
-		uint32_t	_cancel_times_boundary;
-		uint32_t	_cancel_stat_timespan;
-		uint32_t	_cancel_total_limits;
+		uint32_t	_cancel_times_boundary{};
+		uint32_t	_cancel_stat_timespan{};
+		uint32_t	_cancel_total_limits{};
 
-		_RiskParams()
+		RiskParams()
 		{
-			memset(this, 0, sizeof(_RiskParams));
+			memset(this, 0, sizeof(RiskParams));
 		}
 	} RiskParams;
 
@@ -183,31 +183,31 @@ public:
 public:
 	//////////////////////////////////////////////////////////////////////////
 	//ITraderSpi接口
-	virtual void handleEvent(WTSTraderEvent e, int32_t ec) override;
+	void handleEvent(WTSTraderEvent e, int32_t ec) override;
 
-	virtual void onLoginResult(bool bSucc, const char* msg, uint32_t tradingdate) override;
+	void onLoginResult(bool bSucc, const char* msg, uint32_t tradingdate) override;
 
-	virtual void onLogout() override;
+	void onLogout() override;
 
-	virtual void onRspEntrust(WTSEntrust* entrust, WTSError *err) override;
+	void onRspEntrust(WTSEntrust* entrust, WTSError *err) override;
 
-	virtual void onRspAccount(WTSArray* ayAccounts) override;
+	void onRspAccount(WTSArray* ayAccounts) override;
 
-	virtual void onRspPosition(const WTSArray* ayPositions) override;
+	void onRspPosition(const WTSArray* ayPositions) override;
 
-	virtual void onRspOrders(const WTSArray* ayOrders) override;
+	void onRspOrders(const WTSArray* ayOrders) override;
 
-	virtual void onRspTrades(const WTSArray* ayTrades) override;
+	void onRspTrades(const WTSArray* ayTrades) override;
 
-	virtual void onPushOrder(WTSOrderInfo* orderInfo) override;
+	void onPushOrder(WTSOrderInfo* orderInfo) override;
 
-	virtual void onPushTrade(WTSTradeInfo* tradeRecord) override;
+	void onPushTrade(WTSTradeInfo* tradeRecord) override;
 
-	virtual void onTraderError(WTSError* err) override;
+	void onTraderError(WTSError* err) override;
 
-	virtual IBaseDataMgr* getBaseDataMgr() override;
+	IBaseDataMgr* getBaseDataMgr() override;
 
-	virtual void handleTraderLog(WTSLogLevel ll, const char* message) override;
+	void handleTraderLog(WTSLogLevel ll, const char* message) override;
 
 private:
 	WTSVariant*			_cfg;

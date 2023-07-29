@@ -36,8 +36,8 @@ public:
 
 
 private:
-	void	tradeToJson(const char* trader, uint32_t localID, const char* stdCode, WTSTradeInfo* trdInfo, std::string& output);
-	void	orderToJson(const char* trader, uint32_t localID, const char* stdCode, WTSOrderInfo* ordInfo, std::string& output);
+	static void	tradeToJson(const char* trader, uint32_t localID, const char* stdCode, WTSTradeInfo* trdInfo, std::string& output);
+	static void	orderToJson(const char* trader, uint32_t localID, const char* stdCode, WTSOrderInfo* ordInfo, std::string& output);
 
 public:
 	bool	init(WTSVariant* cfg);
@@ -57,10 +57,10 @@ public:
 private:
 	std::string		_url;
 	uint32_t		_mq_sid;
-	FuncCreateMQServer	_creator;
-	FuncDestroyMQServer	_remover;
+	FuncCreateMQServer	_creator{};
+	FuncDestroyMQServer	_remover{};
 	FundPublishMessage	_publisher;
-	FuncRegCallbacks	_register;
+	FuncRegCallbacks	_register{};
 
 	bool			_stopped;
 	boost::asio::io_service		_asyncio;

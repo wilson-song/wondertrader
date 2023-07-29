@@ -14,7 +14,7 @@ public:
 
 	inline void set_filter_mgr(WtFilterMgr* mgr) { _filter_mgr = mgr; }
 
-	inline void	add_executer(ExecCmdPtr executer)
+	inline void	add_executer(const ExecCmdPtr& executer)
 	{
 		_executers[executer->name()] = executer;
 	}

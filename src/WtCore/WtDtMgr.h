@@ -82,14 +82,14 @@ private:
 	//因为前复权和不复权，都不需要缓存
 	DataCacheMap*	_ticks_adjusted;	//复权tick缓存
 
-	typedef struct _NotifyItem
+	typedef struct NotifyItem
 	{
-		char		_code[MAX_INSTRUMENT_LENGTH];
+		char		_code[MAX_INSTRUMENT_LENGTH]{};
 		char		_period[2] = { 0 };
 		uint32_t	_times;
 		WTSBarStruct* _newBar;
 
-		_NotifyItem(const char* code, char period, uint32_t times, WTSBarStruct* newBar)
+		NotifyItem(const char* code, char period, uint32_t times, WTSBarStruct* newBar)
 			: _times(times), _newBar(newBar)
 		{
 			wt_strcpy(_code, code);

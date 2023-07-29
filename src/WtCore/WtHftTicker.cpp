@@ -34,9 +34,7 @@ WtHftRtTicker::WtHftRtTicker(WtHftEngine* engine)
 }
 
 
-WtHftRtTicker::~WtHftRtTicker()
-{
-}
+WtHftRtTicker::~WtHftRtTicker() = default;
 
 void WtHftRtTicker::init(IDataReader* store, const char* sessionID)
 {

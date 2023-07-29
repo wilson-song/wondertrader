@@ -61,7 +61,7 @@ private:
 		FA_None = 99
 	} FilterAction;
 
-	typedef struct _FilterItem
+	typedef struct FilterItem
 	{
 		std::string		_key;		//¹Ø¼ü×Ö
 		FilterAction	_action;	//¹ıÂË²Ù×÷

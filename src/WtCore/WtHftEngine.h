@@ -29,22 +29,22 @@ public:
 public:
 	//////////////////////////////////////////////////////////////////////////
 	//WtEngine ½Ó¿Ú
-	virtual void init(WTSVariant* cfg, IBaseDataMgr* bdMgr, WtDtMgr* dataMgr, IHotMgr* hotMgr, EventNotifier* notifier) override;
+	void init(WTSVariant* cfg, IBaseDataMgr* bdMgr, WtDtMgr* dataMgr, IHotMgr* hotMgr, EventNotifier* notifier) override;
 
-	virtual void run(bool bAsync = false) override;
+	void run(bool bAsync = false) override;
 
-	virtual void handle_push_quote(WTSTickData* newTick, uint32_t hotFlag) override;
-	virtual void handle_push_order_detail(WTSOrdDtlData* curOrdDtl) override;
-	virtual void handle_push_order_queue(WTSOrdQueData* curOrdQue) override;
-	virtual void handle_push_transaction(WTSTransData* curTrans) override;
+	void handle_push_quote(WTSTickData* newTick, uint32_t hotFlag) override;
+	void handle_push_order_detail(WTSOrdDtlData* curOrdDtl) override;
+	void handle_push_order_queue(WTSOrdQueData* curOrdQue) override;
+	void handle_push_transaction(WTSTransData* curTrans) override;
 
-	virtual void on_tick(const char* stdCode, WTSTickData* curTick) override;
+	void on_tick(const char* stdCode, WTSTickData* curTick) override;
 
-	virtual void on_bar(const char* stdCode, const char* period, uint32_t times, WTSBarStruct* newBar) override;
+	void on_bar(const char* stdCode, const char* period, uint32_t times, WTSBarStruct* newBar) override;
 
-	virtual void on_session_begin() override;
+	void on_session_begin() override;
 
-	virtual void on_session_end() override;
+	void on_session_end() override;
 
 public:
 	WTSOrdQueSlice* get_order_queue_slice(uint32_t sid, const char* stdCode, uint32_t count);

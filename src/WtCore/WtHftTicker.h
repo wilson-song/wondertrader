@@ -9,7 +9,7 @@
  */
 #pragma once
 
-#include <stdint.h>
+#include <cstdint>
 #include <atomic>
 
 #include "../Includes/WTSMarcos.h"
@@ -25,7 +25,7 @@ class WtHftEngine;
 class WtHftRtTicker
 {
 public:
-	WtHftRtTicker(WtHftEngine* engine);
+	explicit WtHftRtTicker(WtHftEngine* engine);
 	~WtHftRtTicker();
 
 public:
@@ -39,9 +39,9 @@ private:
 	void	trigger_price(WTSTickData* curTick, uint32_t hotFlag = 0);
 
 private:
-	WTSSessionInfo*	_s_info;
+	WTSSessionInfo*	_s_info{};
 	WtHftEngine*	_engine;
-	IDataReader*		_store;
+	IDataReader*		_store{};
 
 	uint32_t	_date;
 	uint32_t	_time;

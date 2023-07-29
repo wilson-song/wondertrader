@@ -50,7 +50,7 @@ public:
 	WTSCommodityInfo* get_comm_info(const char* stdCode) override;
 	WTSSessionInfo* get_sess_info(const char* stdCode) override;
 	IHotMgr* get_hot_mon() override { return _hot_mgr; }
-	virtual uint32_t get_trading_day() { return _cur_tdate; }
+	uint32_t get_trading_day() override { return _cur_tdate; }
 
 
 public:

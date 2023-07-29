@@ -5,6 +5,7 @@
 #include "../WTSTools/WTSLogger.h"
 
 #include <boost/filesystem.hpp>
+#include <memory>
 
 
 USING_NS_WTP;
@@ -42,7 +43,7 @@ bool WtExecuterFactory::loadFactories(const char* path)
 			continue;
 		}
 
-		FuncCreateExeFactory creator = (FuncCreateExeFactory)DLLHelper::get_symbol(hInst, "createExecFact");
+		auto creator = (FuncCreateExeFactory)DLLHelper::get_symbol(hInst, "createExecFact");
 		if (creator == nullptr)
 		{
 			DLLHelper::free_library(hInst);
@@ -68,76 +69,76 @@ ExecuteUnitPtr WtExecuterFactory::createExeUnit(const char* factname, const char
 {
 	auto it = _factories.find(factname);
 	if (it == _factories.end())
-		return ExecuteUnitPtr();
+		return {};
 
-	ExeFactInfo& fInfo = (ExeFactInfo&)it->second;
+	auto& fInfo = (ExeFactInfo&)it->second;
 	ExecuteUnit* unit = fInfo._fact->createExeUnit(unitname);
 	if (unit == nullptr)
 	{
 		WTSLogger::error("Createing execution unit failed: {}.{}", factname, unitname);
-		return ExecuteUnitPtr();
+		return {};
 	}
-	return ExecuteUnitPtr(new ExeUnitWrapper(unit, fInfo._fact));
+	return std::make_shared<ExeUnitWrapper>(unit, fInfo._fact);
 }
 
 ExecuteUnitPtr WtExecuterFactory::createDiffExeUnit(const char* factname, const char* unitname)
 {
 	auto it = _factories.find(factname);
 	if (it == _factories.end())
-		return ExecuteUnitPtr();
+		return {};
 
-	ExeFactInfo& fInfo = (ExeFactInfo&)it->second;
+	auto& fInfo = (ExeFactInfo&)it->second;
 	ExecuteUnit* unit = fInfo._fact->createDiffExeUnit(unitname);
 	if (unit == nullptr)
 	{
 		WTSLogger::error("Createing execution unit failed: {}.{}", factname, unitname);
-		return ExecuteUnitPtr();
+		return {};
 	}
-	return ExecuteUnitPtr(new ExeUnitWrapper(unit, fInfo._fact));
+	return std::make_shared<ExeUnitWrapper>(unit, fInfo._fact);
 }
 
 ExecuteUnitPtr WtExecuterFactory::createExeUnit(const char* name)
 {
 	StringVector ay = StrUtil::split(name, ".");
 	if (ay.size() < 2)
-		return ExecuteUnitPtr();
+		return {};
 
 	const char* factname = ay[0].c_str();
 	const char* unitname = ay[1].c_str();
 
 	auto it = _factories.find(factname);
 	if (it == _factories.end())
-		return ExecuteUnitPtr();
+		return {};
 
-	ExeFactInfo& fInfo = (ExeFactInfo&)it->second;
+	auto& fInfo = (ExeFactInfo&)it->second;
 	ExecuteUnit* unit = fInfo._fact->createExeUnit(unitname);
 	if (unit == nullptr)
 	{
 		WTSLogger::error("Createing execution unit failed: {}", name);
-		return ExecuteUnitPtr();
+		return {};
 	}
-	return ExecuteUnitPtr(new ExeUnitWrapper(unit, fInfo._fact));
+	return std::make_shared<ExeUnitWrapper>(unit, fInfo._fact);
 }
 
 ExecuteUnitPtr WtExecuterFactory::createDiffExeUnit(const char* name)
 {
 	StringVector ay = StrUtil::split(name, ".");
 	if (ay.size() < 2)
-		return ExecuteUnitPtr();
+		return {};
 
 	const char* factname = ay[0].c_str();
 	const char* unitname = ay[1].c_str();
 
 	auto it = _factories.find(factname);
 	if (it == _factories.end())
-		return ExecuteUnitPtr();
+		return {};
 
-	ExeFactInfo& fInfo = (ExeFactInfo&)it->second;
+	auto& fInfo = (ExeFactInfo&)it->second;
 	ExecuteUnit* unit = fInfo._fact->createDiffExeUnit(unitname);
 	if (unit == nullptr)
 	{
 		WTSLogger::error("Createing execution unit failed: {}", name);
-		return ExecuteUnitPtr();
+		return {};
 	}
-	return ExecuteUnitPtr(new ExeUnitWrapper(unit, fInfo._fact));
+	return std::make_shared<ExeUnitWrapper>(unit, fInfo._fact);
 }

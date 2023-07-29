@@ -13,10 +13,7 @@ WtDistExecuter::WtDistExecuter(const char* name)
 
 }
 
-WtDistExecuter::~WtDistExecuter()
-{
-
-}
+WtDistExecuter::~WtDistExecuter() = default;
 
 bool WtDistExecuter::init(WTSVariant* params)
 {
@@ -33,10 +30,10 @@ bool WtDistExecuter::init(WTSVariant* params)
 
 void WtDistExecuter::set_position(const faster_hashmap<LongKey, double>& targets)
 {
-	for (auto it = targets.begin(); it != targets.end(); it++)
+	for (const auto & target : targets)
 	{
-		const char* stdCode = it->first.c_str();
-		double newVol = it->second;
+		const char* stdCode = target.first.c_str();
+		double newVol = target.second;
 
 		newVol *= _scale;
 		double oldVol = _target_pos[stdCode];

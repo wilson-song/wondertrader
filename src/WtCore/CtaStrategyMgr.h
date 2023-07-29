@@ -52,7 +52,7 @@ public:
 
 	CtaStrategyPtr getStrategy(const char* id);
 private:
-	typedef struct _StraFactInfo
+	typedef struct StraFactInfo
 	{
 		std::string		_module_path;
 		DllHandle		_module_inst;
