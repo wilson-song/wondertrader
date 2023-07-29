@@ -86,7 +86,7 @@ void WtTWapExeUnit::on_order(uint32_t localid, const char* stdCode, bool isBuy, 
 	//如果全部订单已撤销,这个时候一般是遇到要超时撤单
 	if (isCanceled && _cancel_cnt == 0)
 	{
-		double realPos = _ctx->getPosition(stdCode, true, POSITION_LONG_SHORT);
+		double realPos = _ctx->getPosition(stdCode, true, PT_Long_Short);
 		if (!decimal::eq(realPos, _this_target))
 		{
 			//撤单以后重发,一般是加点重发
@@ -148,7 +148,7 @@ void WtTWapExeUnit::on_tick(WTSTickData* newTick)
 		double newVol = _target_pos;
 		const char* stdCode = _code.c_str();
 		double undone = _ctx->getUndoneQty(stdCode);
-		double realPos = _ctx->getPosition(stdCode, true, POSITION_LONG_SHORT);
+		double realPos = _ctx->getPosition(stdCode, true, PT_Long_Short);
 		if (!decimal::eq(newVol, undone + realPos)) //仓位变化要交易
 		{
 			do_calc();
@@ -265,7 +265,7 @@ void WtTWapExeUnit::do_calc()
 		return;
 	}
 
-	double realPos = _ctx->getPosition(code, true, POSITION_LONG_SHORT);
+	double realPos = _ctx->getPosition(code, true, PT_Long_Short);
 	double diffQty = _target_pos - realPos;
 
 	if (decimal::eq(diffQty, 0))

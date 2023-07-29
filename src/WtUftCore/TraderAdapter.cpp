@@ -264,7 +264,7 @@ double TraderAdapter::getPosition(const char* stdCode, bool bValidOnly, int32_t 
 
 	double ret = 0;
 	const PosItem& pItem = it->second;
-	if(flag & POSITION_LONG)
+	if (flag & PT_Long)
 	{
 		if(bValidOnly)
 			ret += (pItem.l_newavail + pItem.l_preavail);
@@ -272,7 +272,7 @@ double TraderAdapter::getPosition(const char* stdCode, bool bValidOnly, int32_t 
 			ret += (pItem.l_newvol + pItem.l_prevol);
 	}
 
-	if (flag & POSITION_SHORT)
+	if (flag & PT_Short)
 	{
 		if (bValidOnly)
 			ret -= (pItem.s_newavail + pItem.s_preavail);

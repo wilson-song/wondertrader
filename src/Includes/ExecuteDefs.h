@@ -10,7 +10,6 @@
 #pragma once
 #include "../Includes/WTSDataDef.hpp"
 #include "../Includes/WTSCollection.hpp"
-#include "../Includes/ConstDefs.h"
 
 NS_WTP_BEGIN
 class WTSTickData;

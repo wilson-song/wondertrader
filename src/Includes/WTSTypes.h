@@ -9,7 +9,7 @@
  */
 #pragma once
 #include "WTSMarcos.h"
-#include <stdint.h>
+#include <cstdint>
 
 NS_WTP_BEGIN
 
@@ -46,6 +46,16 @@ typedef enum tagOptionType
 	OT_Call = '1',		//看涨期权
 	OT_Put	= '2'		//看跌期权
 } OptionType;
+
+/*
+ * 查询仓位类型
+ */
+typedef enum tagPositionType
+{
+    PT_Long = 1,
+    PT_Short = 1 << 1,
+    PT_Long_Short = PT_Long | PT_Short,
+} PositionType;
 
 /*
  *	平仓类型

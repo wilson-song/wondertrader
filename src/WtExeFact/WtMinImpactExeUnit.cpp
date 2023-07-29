@@ -261,7 +261,7 @@ void WtMinImpactExeUnit::do_calc()
 	const char* stdCode = _code.c_str();
 
 	double undone = _ctx->getUndoneQty(stdCode);
-	double realPos = _ctx->getPosition(stdCode, true, POSITION_LONG_SHORT);
+	double realPos = _ctx->getPosition(stdCode, true, PT_Long_Short);
 	double diffPos = newVol - realPos;
 
 	//有未完成订单，与实际仓位变动方向相反
@@ -304,7 +304,7 @@ void WtMinImpactExeUnit::do_calc()
 
 		//如果是清仓的需求，还要再进行对比
 		//如果多头为0，说明已经全部清理掉了，则直接退出
-		double lPos = _ctx->getPosition(stdCode, true , POSITION_LONG);
+		double lPos = _ctx->getPosition(stdCode, true , PT_Long);
 		if (decimal::eq(lPos, 0))
 			return;
 

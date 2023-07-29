@@ -320,9 +320,9 @@ void WtStockMinImpactExeUnit::do_calc()
 
 	double undone = _ctx->getUndoneQty(stdCode);
 	// 可用仓位，即昨仓的
-	double vailyPos = _ctx->getPosition(stdCode, true, POSITION_LONG);
+	double vailyPos = _ctx->getPosition(stdCode, true, PT_Long);
 	// 总仓位，等于昨仓 + 今仓买入的
-	double curPos = _ctx->getPosition(stdCode, false, POSITION_LONG_SHORT);
+	double curPos = _ctx->getPosition(stdCode, false, PT_Long_Short);
 
 	double target_pos = max(curPos - vailyPos, _target_pos);
 
