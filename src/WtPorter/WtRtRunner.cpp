@@ -49,47 +49,47 @@ const char* getModuleName()
 #endif
 
 WtRtRunner::WtRtRunner()
-	: _data_store(NULL)
-	, _cb_cta_init(NULL)
-	, _cb_cta_tick(NULL)
-	, _cb_cta_calc(NULL)
-	, _cb_cta_bar(NULL)
-	, _cb_cta_cond_trigger(NULL)
-	, _cb_cta_sessevt(NULL)
+	: _data_store(nullptr)
+	, _cb_cta_init(nullptr)
+	, _cb_cta_tick(nullptr)
+	, _cb_cta_calc(nullptr)
+	, _cb_cta_bar(nullptr)
+	, _cb_cta_cond_trigger(nullptr)
+	, _cb_cta_sessevt(nullptr)
 
-	, _cb_sel_init(NULL)
-	, _cb_sel_tick(NULL)
-	, _cb_sel_calc(NULL)
-	, _cb_sel_bar(NULL)
-	, _cb_sel_sessevt(NULL)
+	, _cb_sel_init(nullptr)
+	, _cb_sel_tick(nullptr)
+	, _cb_sel_calc(nullptr)
+	, _cb_sel_bar(nullptr)
+	, _cb_sel_sessevt(nullptr)
 
-	, _cb_hft_init(NULL)
-	, _cb_hft_tick(NULL)
-	, _cb_hft_bar(NULL)
-	, _cb_hft_ord(NULL)
-	, _cb_hft_trd(NULL)
-	, _cb_hft_entrust(NULL)
-	, _cb_hft_chnl(NULL)
+	, _cb_hft_init(nullptr)
+	, _cb_hft_tick(nullptr)
+	, _cb_hft_bar(nullptr)
+	, _cb_hft_ord(nullptr)
+	, _cb_hft_trd(nullptr)
+	, _cb_hft_entrust(nullptr)
+	, _cb_hft_chnl(nullptr)
 
-	, _cb_hft_orddtl(NULL)
-	, _cb_hft_ordque(NULL)
-	, _cb_hft_trans(NULL)
-	, _cb_hft_position(NULL)
-	, _cb_hft_sessevt(NULL)
+	, _cb_hft_orddtl(nullptr)
+	, _cb_hft_ordque(nullptr)
+	, _cb_hft_trans(nullptr)
+	, _cb_hft_position(nullptr)
+	, _cb_hft_sessevt(nullptr)
 
-	, _cb_exec_cmd(NULL)
-	, _cb_exec_init(NULL)
+	, _cb_exec_cmd(nullptr)
+	, _cb_exec_init(nullptr)
 
-	, _cb_parser_evt(NULL)
-	, _cb_parser_sub(NULL)
+	, _cb_parser_evt(nullptr)
+	, _cb_parser_sub(nullptr)
 
-	, _cb_evt(NULL)
+	, _cb_evt(nullptr)
 	, _is_hft(false)
 	, _is_sel(false)
 
-	, _ext_fnl_bar_loader(NULL)
-	, _ext_raw_bar_loader(NULL)
-	, _ext_adj_fct_loader(NULL)
+	, _ext_fnl_bar_loader(nullptr)
+	, _ext_raw_bar_loader(nullptr)
+	, _ext_adj_fct_loader(nullptr)
 {
 #if _WIN32
 #pragma message("Signal hooks disabled in WIN32")
@@ -103,8 +103,7 @@ WtRtRunner::WtRtRunner()
 
 
 WtRtRunner::~WtRtRunner()
-{
-}
+= default;
 
 bool WtRtRunner::init(const char* logCfg /* = "logcfg.prop" */, bool isFile /* = true */, const char* genDir)
 {
@@ -205,7 +204,7 @@ void WtRtRunner::registerHftCallbacks(FuncStraInitCallback cbInit, FuncStraTickC
 bool WtRtRunner::loadFinalHisBars(void* obj, const char* stdCode, WTSKlinePeriod period, FuncReadBars cb)
 {
 	StdUniqueLock lock(_feed_mtx);
-	if (_ext_fnl_bar_loader == NULL)
+	if (_ext_fnl_bar_loader == nullptr)
 		return false;
 
 	_feed_obj = obj;
@@ -230,7 +229,7 @@ bool WtRtRunner::loadFinalHisBars(void* obj, const char* stdCode, WTSKlinePeriod
 bool WtRtRunner::loadRawHisBars(void* obj, const char* stdCode, WTSKlinePeriod period, FuncReadBars cb)
 {
 	StdUniqueLock lock(_feed_mtx);
-	if (_ext_raw_bar_loader == NULL)
+	if (_ext_raw_bar_loader == nullptr)
 		return false;
 
 	_feed_obj = obj;
@@ -255,7 +254,7 @@ bool WtRtRunner::loadRawHisBars(void* obj, const char* stdCode, WTSKlinePeriod p
 bool WtRtRunner::loadAllAdjFactors(void* obj, FuncReadFactors cb)
 {
 	StdUniqueLock lock(_feed_mtx);
-	if (_ext_adj_fct_loader == NULL)
+	if (_ext_adj_fct_loader == nullptr)
 		return false;
 
 	_feed_obj = obj;
@@ -267,7 +266,7 @@ bool WtRtRunner::loadAllAdjFactors(void* obj, FuncReadFactors cb)
 bool WtRtRunner::loadAdjFactors(void* obj, const char* stdCode, FuncReadFactors cb)
 {
 	StdUniqueLock lock(_feed_mtx);
-	if (_ext_adj_fct_loader == NULL)
+	if (_ext_adj_fct_loader == nullptr)
 		return false;
 
 	_feed_obj = obj;
@@ -284,7 +283,7 @@ void WtRtRunner::feedAdjFactors(const char* stdCode, uint32_t* dates, double* fa
 
 void WtRtRunner::feedRawBars(WTSBarStruct* bars, uint32_t count)
 {
-	if (_ext_fnl_bar_loader == NULL)
+	if (_ext_fnl_bar_loader == nullptr)
 	{
 		WTSLogger::error("Cannot feed bars because of no extented bar loader registered.");
 		return;
@@ -297,7 +296,7 @@ void WtRtRunner::feedRawBars(WTSBarStruct* bars, uint32_t count)
 bool WtRtRunner::createExtParser(const char* id)
 {
 	ParserAdapterPtr adapter(new ParserAdapter);
-	ExpParser* parser = new ExpParser(id);
+	auto* parser = new ExpParser(id);
 	adapter->initExt(id, parser, _engine, _engine->get_basedata_mgr(), _engine->get_hot_mgr());
 	_parsers.addAdapter(id, adapter);
 	WTSLogger::info("Extended parser created");
@@ -306,7 +305,7 @@ bool WtRtRunner::createExtParser(const char* id)
 
 bool WtRtRunner::createExtExecuter(const char* id)
 {
-	ExpExecuter* executer = new ExpExecuter(id);
+	auto* executer = new ExpExecuter(id);
 	executer->init();
     _cta_engine.addExecutor(ExecCmdPtr(executer));
 	WTSLogger::info("Extended Executer created");
@@ -315,14 +314,14 @@ bool WtRtRunner::createExtExecuter(const char* id)
 
 uint32_t WtRtRunner::createCtaContext(const char* name, int32_t slippage /* = 0 */)
 {
-	ExpCtaContext* ctx = new ExpCtaContext(&_cta_engine, name, slippage);
+	auto* ctx = new ExpCtaContext(&_cta_engine, name, slippage);
 	_cta_engine.addContext(CtaContextPtr(ctx));
 	return ctx->id();
 }
 
 uint32_t WtRtRunner::createHftContext(const char* name, const char* trader, bool bAgent, int32_t slippage /* = 0 */)
 {
-	ExpHftContext* ctx = new ExpHftContext(&_hft_engine, name, bAgent, slippage);
+	auto* ctx = new ExpHftContext(&_hft_engine, name, bAgent, slippage);
 	_hft_engine.addContext(HftContextPtr(ctx));
 	TraderAdapterPtr trdPtr = _traders.getAdapter(trader);
 	if(trdPtr)
@@ -353,7 +352,7 @@ uint32_t WtRtRunner::createSelContext(const char* name, uint32_t date, uint32_t 
 	else
 		ptype = TPT_None;
 
-	ExpSelContext* ctx = new ExpSelContext(&_sel_engine, name, slippage);
+	auto* ctx = new ExpSelContext(&_sel_engine, name, slippage);
 
 	_sel_engine.addContext(SelContextPtr(ctx), date, time, ptype, true, trdtpl, session);
 
@@ -644,7 +643,7 @@ bool WtRtRunner::config(const char* cfgFile, bool isFile /* = true */)
 	if (!_is_hft)
 	{
 		WTSVariant* cfgExec = _config->get("executers");
-		if(cfgExec != NULL)
+		if(cfgExec != nullptr)
 		{
 			if(cfgExec->type() == WTSVariant::VT_String)
 			{
@@ -659,7 +658,7 @@ bool WtRtRunner::config(const char* cfgFile, bool isFile /* = true */)
 							WTSLogger::error("Loading executers failed");
 
 						WTSVariant* c = var->get("routers");
-						if (c != NULL)
+						if (c != nullptr)
 							_cta_engine.loadRouterRules(c);
 
 						var->release();
@@ -681,7 +680,7 @@ bool WtRtRunner::config(const char* cfgFile, bool isFile /* = true */)
 		}
 
 		WTSVariant* cfgRouter = _config->get("routers");
-		if (cfgRouter != NULL)
+		if (cfgRouter != nullptr)
 			_cta_engine.loadRouterRules(cfgRouter);
 		
 	}
@@ -913,7 +912,7 @@ bool WtRtRunner::initParsers(WTSVariant* cfgParsers)
 
 bool WtRtRunner::initExecutors(WTSVariant* cfgExecutor)
 {
-	if (cfgExecutor == NULL || cfgExecutor->type() != WTSVariant::VT_Array)
+	if (cfgExecutor == nullptr || cfgExecutor->type() != WTSVariant::VT_Array)
 		return false;
 
 	//先加载自带的执行器工厂
@@ -934,7 +933,7 @@ bool WtRtRunner::initExecutors(WTSVariant* cfgExecutor)
 
 		if(name == "local")
 		{
-			WtLocalExecuter* executer = new WtLocalExecuter(&_exe_factory, id, &_data_mgr);
+			auto* executer = new WtLocalExecuter(&_exe_factory, id, &_data_mgr);
 			if (!executer->init(cfgItem))
 				return false;
 
@@ -961,7 +960,7 @@ bool WtRtRunner::initExecutors(WTSVariant* cfgExecutor)
 		}
 		else if (name == "diff")
 		{
-			WtDiffExecuter* executer = new WtDiffExecuter(&_exe_factory, id, &_data_mgr, &_bd_mgr);
+			auto* executer = new WtDiffExecuter(&_exe_factory, id, &_data_mgr, &_bd_mgr);
 			if (!executer->init(cfgItem))
 				return false;
 
@@ -988,7 +987,7 @@ bool WtRtRunner::initExecutors(WTSVariant* cfgExecutor)
 		}
 		else
 		{
-			WtDistExecuter* executer = new WtDistExecuter(id);
+			auto* executer = new WtDistExecuter(id);
 			if (!executer->init(cfgItem))
 				return false;
 
@@ -1008,7 +1007,7 @@ bool WtRtRunner::initExecutors(WTSVariant* cfgExecutor)
 bool WtRtRunner::initEvtNotifier()
 {
 	WTSVariant* cfg = _config->get("notifier");
-	if (cfg == NULL || cfg->type() != WTSVariant::VT_Object)
+	if (cfg == nullptr || cfg->type() != WTSVariant::VT_Object)
 		return false;
 
 	_notifier.init(cfg);
@@ -1018,7 +1017,7 @@ bool WtRtRunner::initEvtNotifier()
 
 bool WtRtRunner::initTraders(WTSVariant* cfgTraders)
 {
-	if (cfgTraders == NULL || cfgTraders->type() != WTSVariant::VT_Array)
+	if (cfgTraders == nullptr || cfgTraders->type() != WTSVariant::VT_Array)
 		return false;
 	
 	uint32_t count = 0;

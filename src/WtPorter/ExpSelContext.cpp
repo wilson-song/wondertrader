@@ -10,9 +10,7 @@ ExpSelContext::ExpSelContext(WtSelEngine* env, const char* name, int32_t slippag
 }
 
 
-ExpSelContext::~ExpSelContext()
-{
-}
+ExpSelContext::~ExpSelContext() = default;
 
 void ExpSelContext::on_init()
 {

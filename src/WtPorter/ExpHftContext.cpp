@@ -6,7 +6,7 @@ extern WtRtRunner& getRunner();
 
 void ExpHftContext::on_bar(const char* code, const char* period, uint32_t times, WTSBarStruct* newBar)
 {
-	if (newBar == NULL)
+	if (newBar == nullptr)
 		return;
 
 	thread_local static char realPeriod[8] = { 0 };

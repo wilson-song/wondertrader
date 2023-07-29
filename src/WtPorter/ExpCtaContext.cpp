@@ -20,9 +20,7 @@ ExpCtaContext::ExpCtaContext(WtCtaEngine* env, const char* name, int32_t slippag
 }
 
 
-ExpCtaContext::~ExpCtaContext()
-{
-}
+ExpCtaContext::~ExpCtaContext() = default;
 
 void ExpCtaContext::on_init()
 {

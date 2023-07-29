@@ -56,13 +56,13 @@ public:
 public:
 	//////////////////////////////////////////////////////////////////////////
 	//IBtDataLoader
-	virtual bool loadFinalHisBars(void* obj, const char* stdCode, WTSKlinePeriod period, FuncReadBars cb) override;
+	bool loadFinalHisBars(void* obj, const char* stdCode, WTSKlinePeriod period, FuncReadBars cb) override;
 
-	virtual bool loadRawHisBars(void* obj, const char* stdCode, WTSKlinePeriod period, FuncReadBars cb) override;
+	bool loadRawHisBars(void* obj, const char* stdCode, WTSKlinePeriod period, FuncReadBars cb) override;
 
-	virtual bool loadAllAdjFactors(void* obj, FuncReadFactors cb) override;
+	bool loadAllAdjFactors(void* obj, FuncReadFactors cb) override;
 
-	virtual bool loadAdjFactors(void* obj, const char* stdCode, FuncReadFactors cb) override;
+	bool loadAdjFactors(void* obj, const char* stdCode, FuncReadFactors cb) override;
 
 	void feedRawBars(WTSBarStruct* bars, uint32_t count);
 
@@ -78,9 +78,9 @@ public:
 
 	void run(bool bAsync = false);
 
-	void release();
+	static void release();
 
-	void registerCtaCallbacks(FuncStraInitCallback cbInit, FuncStraTickCallback cbTick, FuncStraCalcCallback cbCalc, FuncStraBarCallback cbBar, FuncSessionEvtCallback cbSessEvt, FuncStraCondTriggerCallback cbCondTrigger = NULL);
+	void registerCtaCallbacks(FuncStraInitCallback cbInit, FuncStraTickCallback cbTick, FuncStraCalcCallback cbCalc, FuncStraBarCallback cbBar, FuncSessionEvtCallback cbSessEvt, FuncStraCondTriggerCallback cbCondTrigger = nullptr);
 	void registerSelCallbacks(FuncStraInitCallback cbInit, FuncStraTickCallback cbTick, FuncStraCalcCallback cbCalc, FuncStraBarCallback cbBar, FuncSessionEvtCallback cbSessEvt);
 	void registerHftCallbacks(FuncStraInitCallback cbInit, FuncStraTickCallback cbTick, FuncStraBarCallback cbBar,
 		FuncHftChannelCallback cbChnl, FuncHftOrdCallback cbOrd, FuncHftTrdCallback cbTrd, FuncHftEntrustCallback cbEntrust,
@@ -92,7 +92,7 @@ public:
 
 	void registerExecuterPorter(FuncExecInitCallback cbInit, FuncExecCmdCallback cbExec);
 
-	void		registerExtDataLoader(FuncLoadFnlBars fnlBarLoader, FuncLoadRawBars rawBarLoader, FuncLoadAdjFactors fctLoader, FuncLoadRawTicks tickLoader = NULL)
+	void		registerExtDataLoader(FuncLoadFnlBars fnlBarLoader, FuncLoadRawBars rawBarLoader, FuncLoadAdjFactors fctLoader, FuncLoadRawTicks tickLoader = nullptr)
 	{
 		_ext_fnl_bar_loader = fnlBarLoader;
 		_ext_raw_bar_loader = rawBarLoader;
@@ -116,7 +116,7 @@ public:
 //////////////////////////////////////////////////////////////////////////
 //ILogHandler
 public:
-	virtual void handleLogAppend(WTSLogLevel ll, const char* msg) override;
+	void handleLogAppend(WTSLogLevel ll, const char* msg) override;
 
 //////////////////////////////////////////////////////////////////////////
 //À©Õ¹Parser
@@ -140,19 +140,19 @@ public:
 //////////////////////////////////////////////////////////////////////////
 //ICtaEventListener
 public:
-	virtual void on_initialize_event() override
+	void on_initialize_event() override
 	{
 		if (_cb_evt)
 			_cb_evt(EVENT_ENGINE_INIT, 0, 0);
 	}
 
-	virtual void on_schedule_event(uint32_t uDate, uint32_t uTime) override
+	void on_schedule_event(uint32_t uDate, uint32_t uTime) override
 	{
 		if (_cb_evt)
 			_cb_evt(EVENT_ENGINE_SCHDL, uDate, uTime);
 	}
 
-	virtual void on_session_event(uint32_t uDate, bool isBegin = true) override
+	void on_session_event(uint32_t uDate, bool isBegin = true) override
 	{
 		if (_cb_evt)
 			_cb_evt(isBegin ? EVENT_SESSION_BEGIN : EVENT_SESSION_END, uDate, 0);
@@ -231,7 +231,7 @@ private:
 	FuncExecCmdCallback		_cb_exec_cmd;
 	FuncExecInitCallback	_cb_exec_init;
 
-	WTSVariant*			_config;
+	WTSVariant*			_config{};
 	TraderAdapterMgr	_traders;
 	ParserAdapterMgr	_parsers;
 	WtExecuterFactory	_exe_factory;
@@ -239,7 +239,7 @@ private:
 	WtCtaEngine			_cta_engine;
 	WtHftEngine			_hft_engine;
 	WtSelEngine			_sel_engine;
-	WtEngine*			_engine;
+	WtEngine*			_engine{};
 
 	WtDataStorage*		_data_store;
 
@@ -261,9 +261,9 @@ private:
 	FuncLoadRawBars		_ext_raw_bar_loader;
 	FuncLoadAdjFactors	_ext_adj_fct_loader;
 
-	void*			_feed_obj;
-	FuncReadBars	_feeder_bars;
-	FuncReadFactors	_feeder_fcts;
+	void*			_feed_obj{};
+	FuncReadBars	_feeder_bars{};
+	FuncReadFactors	_feeder_fcts{};
 	StdUniqueMutex	_feed_mtx;
 };
 

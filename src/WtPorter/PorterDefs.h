@@ -9,7 +9,7 @@
  */
 #pragma once
 
-#include <stdint.h>
+#include <cstdint>
 #include "../Includes/WTSTypes.h"
 
 NS_WTP_BEGIN

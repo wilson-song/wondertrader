@@ -188,7 +188,7 @@ CtxHandler create_cta_context(const char* name, int slippage)
 void cta_enter_long(CtxHandler cHandle, const char* stdCode, double qty, const char* userTag, double limitprice, double stopprice)
 {
 	CtaContextPtr ctx = getRunner().getCtaContext(cHandle);
-	if (ctx == NULL)
+	if (ctx == nullptr)
 		return;
 
 	ctx->stra_enter_long(stdCode, qty, userTag, limitprice, stopprice);
@@ -197,7 +197,7 @@ void cta_enter_long(CtxHandler cHandle, const char* stdCode, double qty, const c
 void cta_exit_long(CtxHandler cHandle, const char* stdCode, double qty, const char* userTag, double limitprice, double stopprice)
 {
 	CtaContextPtr ctx = getRunner().getCtaContext(cHandle);
-	if (ctx == NULL)
+	if (ctx == nullptr)
 		return;
 
 	ctx->stra_exit_long(stdCode, qty, userTag, limitprice, stopprice);
@@ -206,7 +206,7 @@ void cta_exit_long(CtxHandler cHandle, const char* stdCode, double qty, const ch
 void cta_enter_short(CtxHandler cHandle, const char* stdCode, double qty, const char* userTag, double limitprice, double stopprice)
 {
 	CtaContextPtr ctx = getRunner().getCtaContext(cHandle);
-	if (ctx == NULL)
+	if (ctx == nullptr)
 		return;
 
 	ctx->stra_enter_short(stdCode, qty, userTag, limitprice, stopprice);
@@ -215,7 +215,7 @@ void cta_enter_short(CtxHandler cHandle, const char* stdCode, double qty, const 
 void cta_exit_short(CtxHandler cHandle, const char* stdCode, double qty, const char* userTag, double limitprice, double stopprice)
 {
 	CtaContextPtr ctx = getRunner().getCtaContext(cHandle);
-	if (ctx == NULL)
+	if (ctx == nullptr)
 		return;
 
 	ctx->stra_exit_short(stdCode, qty, userTag, limitprice, stopprice);
@@ -224,19 +224,19 @@ void cta_exit_short(CtxHandler cHandle, const char* stdCode, double qty, const c
 WtUInt32 cta_get_bars(CtxHandler cHandle, const char* stdCode, const char* period, WtUInt32 barCnt, bool isMain, FuncGetBarsCallback cb)
 {
 	CtaContextPtr ctx = getRunner().getCtaContext(cHandle);
-	if (ctx == NULL)
+	if (ctx == nullptr)
 		return 0;
 	try
 	{
 		WTSKlineSlice* kData = ctx->stra_get_bars(stdCode, period, barCnt, isMain);
 		if (kData)
 		{
-			WtUInt32 reaCnt = (WtUInt32)kData->size();
+			auto reaCnt = (WtUInt32)kData->size();
 
 			uint32_t blkCnt = kData->get_block_counts();
 			for (uint32_t i = 0; i < blkCnt; i++)
 			{
-				if(kData->get_block_addr(i) != NULL)
+				if(kData->get_block_addr(i) != nullptr)
 					cb(cHandle, stdCode, period, kData->get_block_addr(i), kData->get_block_size(i), i == blkCnt - 1);
 			}
 
@@ -257,7 +257,7 @@ WtUInt32 cta_get_bars(CtxHandler cHandle, const char* stdCode, const char* perio
 WtUInt32	cta_get_ticks(CtxHandler cHandle, const char* stdCode, WtUInt32 tickCnt, FuncGetTicksCallback cb)
 {
 	CtaContextPtr ctx = getRunner().getCtaContext(cHandle);
-	if (ctx == NULL)
+	if (ctx == nullptr)
 		return 0;
 	try
 	{
@@ -283,7 +283,7 @@ WtUInt32	cta_get_ticks(CtxHandler cHandle, const char* stdCode, WtUInt32 tickCnt
 double cta_get_position_profit(CtxHandler cHandle, const char* stdCode)
 {
 	CtaContextPtr ctx = getRunner().getCtaContext(cHandle);
-	if (ctx == NULL)
+	if (ctx == nullptr)
 		return 0;
 
 	return ctx->stra_get_position_profit(stdCode);
@@ -292,7 +292,7 @@ double cta_get_position_profit(CtxHandler cHandle, const char* stdCode)
 WtUInt64 cta_get_detail_entertime(CtxHandler cHandle, const char* stdCode, const char* openTag)
 {
 	CtaContextPtr ctx = getRunner().getCtaContext(cHandle);
-	if (ctx == NULL)
+	if (ctx == nullptr)
 		return 0;
 
 	return ctx->stra_get_detail_entertime(stdCode, openTag);
@@ -301,7 +301,7 @@ WtUInt64 cta_get_detail_entertime(CtxHandler cHandle, const char* stdCode, const
 double cta_get_detail_cost(CtxHandler cHandle, const char* stdCode, const char* openTag)
 {
 	CtaContextPtr ctx = getRunner().getCtaContext(cHandle);
-	if (ctx == NULL)
+	if (ctx == nullptr)
 		return 0;
 
 	return ctx->stra_get_detail_cost(stdCode, openTag);
@@ -310,7 +310,7 @@ double cta_get_detail_cost(CtxHandler cHandle, const char* stdCode, const char* 
 double cta_get_detail_profit(CtxHandler cHandle, const char* stdCode, const char* openTag, int flag)
 {
 	CtaContextPtr ctx = getRunner().getCtaContext(cHandle);
-	if (ctx == NULL)
+	if (ctx == nullptr)
 		return 0;
 
 	return ctx->stra_get_detail_profit(stdCode, openTag, flag);
@@ -319,7 +319,7 @@ double cta_get_detail_profit(CtxHandler cHandle, const char* stdCode, const char
 double cta_get_position_avgpx(CtxHandler cHandle, const char* stdCode)
 {
 	CtaContextPtr ctx = getRunner().getCtaContext(cHandle);
-	if (ctx == NULL)
+	if (ctx == nullptr)
 		return 0;
 
 	return ctx->stra_get_position_avgpx(stdCode);
@@ -328,7 +328,7 @@ double cta_get_position_avgpx(CtxHandler cHandle, const char* stdCode)
 void cta_get_all_position(CtxHandler cHandle, FuncGetPositionCallback cb)
 {
 	CtaContextPtr ctx = getRunner().getCtaContext(cHandle);
-	if (ctx == NULL)
+	if (ctx == nullptr)
 	{
 		cb(cHandle, "", 0, true);
 		return;
@@ -336,7 +336,7 @@ void cta_get_all_position(CtxHandler cHandle, FuncGetPositionCallback cb)
 
 	ctx->enum_position([cb, cHandle](const char* stdCode, double qty) {
 		cb(cHandle, stdCode, qty, false);
-	});
+	}, false);
 
 	cb(cHandle, "", 0, true);
 }
@@ -344,7 +344,7 @@ void cta_get_all_position(CtxHandler cHandle, FuncGetPositionCallback cb)
 double cta_get_position(CtxHandler cHandle, const char* stdCode, bool bOnlyValid, const char* openTag)
 {
 	CtaContextPtr ctx = getRunner().getCtaContext(cHandle);
-	if (ctx == NULL)
+	if (ctx == nullptr)
 		return 0;
 
 	return ctx->stra_get_position(stdCode, bOnlyValid, openTag);
@@ -353,7 +353,7 @@ double cta_get_position(CtxHandler cHandle, const char* stdCode, bool bOnlyValid
 double cta_get_fund_data(CtxHandler cHandle, int flag)
 {
 	CtaContextPtr ctx = getRunner().getCtaContext(cHandle);
-	if (ctx == NULL)
+	if (ctx == nullptr)
 		return 0;
 
 	return ctx->stra_get_fund_data(flag);
@@ -363,7 +363,7 @@ double cta_get_fund_data(CtxHandler cHandle, int flag)
 void cta_set_position(CtxHandler cHandle, const char* stdCode, double qty, const char* userTag, double limitprice, double stopprice)
 {
 	CtaContextPtr ctx = getRunner().getCtaContext(cHandle);
-	if (ctx == NULL)
+	if (ctx == nullptr)
 		return;
 
 	ctx->stra_set_position(stdCode, qty, userTag, limitprice, stopprice);
@@ -373,7 +373,7 @@ void cta_set_position(CtxHandler cHandle, const char* stdCode, double qty, const
 WtUInt64 cta_get_first_entertime(CtxHandler cHandle, const char* stdCode)
 {
 	CtaContextPtr ctx = getRunner().getCtaContext(cHandle);
-	if (ctx == NULL)
+	if (ctx == nullptr)
 		return 0;
 
 	return ctx->stra_get_first_entertime(stdCode);
@@ -382,7 +382,7 @@ WtUInt64 cta_get_first_entertime(CtxHandler cHandle, const char* stdCode)
 WtUInt64 cta_get_last_entertime(CtxHandler cHandle, const char* stdCode)
 {
 	CtaContextPtr ctx = getRunner().getCtaContext(cHandle);
-	if (ctx == NULL)
+	if (ctx == nullptr)
 		return 0;
 
 	return ctx->stra_get_last_entertime(stdCode);
@@ -391,7 +391,7 @@ WtUInt64 cta_get_last_entertime(CtxHandler cHandle, const char* stdCode)
 WtUInt64 cta_get_last_exittime(CtxHandler cHandle, const char* stdCode)
 {
 	CtaContextPtr ctx = getRunner().getCtaContext(cHandle);
-	if (ctx == NULL)
+	if (ctx == nullptr)
 		return 0;
 
 	return ctx->stra_get_last_exittime(stdCode);
@@ -400,7 +400,7 @@ WtUInt64 cta_get_last_exittime(CtxHandler cHandle, const char* stdCode)
 double cta_get_last_enterprice(CtxHandler cHandle, const char* stdCode)
 {
 	CtaContextPtr ctx = getRunner().getCtaContext(cHandle);
-	if (ctx == NULL)
+	if (ctx == nullptr)
 		return 0;
 
 	return ctx->stra_get_last_enterprice(stdCode);
@@ -409,8 +409,8 @@ double cta_get_last_enterprice(CtxHandler cHandle, const char* stdCode)
 WtString cta_get_last_entertag(CtxHandler cHandle, const char* stdCode)
 {
 	CtaContextPtr ctx = getRunner().getCtaContext(cHandle);
-	if (ctx == NULL)
-		return 0;
+	if (ctx == nullptr)
+		return nullptr;
 
 	return ctx->stra_get_last_entertag(stdCode);
 }
@@ -443,7 +443,7 @@ WtUInt32 cta_get_time()
 void cta_log_text(CtxHandler cHandle, WtUInt32 level, const char* message)
 {
 	CtaContextPtr ctx = getRunner().getCtaContext(cHandle);
-	if (ctx == NULL)
+	if (ctx == nullptr)
 		return;
 
 	switch (level)
@@ -468,7 +468,7 @@ void cta_log_text(CtxHandler cHandle, WtUInt32 level, const char* message)
 void cta_save_userdata(CtxHandler cHandle, const char* key, const char* val)
 {
 	CtaContextPtr ctx = getRunner().getCtaContext(cHandle);
-	if (ctx == NULL)
+	if (ctx == nullptr)
 		return;
 
 	ctx->stra_save_user_data(key, val);
@@ -477,7 +477,7 @@ void cta_save_userdata(CtxHandler cHandle, const char* key, const char* val)
 WtString cta_load_userdata(CtxHandler cHandle, const char* key, const char* defVal)
 {
 	CtaContextPtr ctx = getRunner().getCtaContext(cHandle);
-	if (ctx == NULL)
+	if (ctx == nullptr)
 		return defVal;
 
 	return ctx->stra_load_user_data(key, defVal);
@@ -486,7 +486,7 @@ WtString cta_load_userdata(CtxHandler cHandle, const char* key, const char* defV
 void cta_sub_ticks(CtxHandler cHandle, const char* stdCode)
 {
 	CtaContextPtr ctx = getRunner().getCtaContext(cHandle);
-	if (ctx == NULL)
+	if (ctx == nullptr)
 		return;
 
 	ctx->stra_sub_ticks(stdCode);
@@ -495,7 +495,7 @@ void cta_sub_ticks(CtxHandler cHandle, const char* stdCode)
 void cta_set_chart_kline(CtxHandler cHandle, const char* stdCode, const char* period)
 {
 	CtaContextPtr ctx = getRunner().getCtaContext(cHandle);
-	if (ctx == NULL)
+	if (ctx == nullptr)
 		return;
 
 	ctx->set_chart_kline(stdCode, period);
@@ -504,7 +504,7 @@ void cta_set_chart_kline(CtxHandler cHandle, const char* stdCode, const char* pe
 void cta_add_chart_mark(CtxHandler cHandle, double price, const char* icon, const char* tag)
 {
 	CtaContextPtr ctx = getRunner().getCtaContext(cHandle);
-	if (ctx == NULL)
+	if (ctx == nullptr)
 		return;
 
 	ctx->add_chart_mark(price, icon, tag);
@@ -513,7 +513,7 @@ void cta_add_chart_mark(CtxHandler cHandle, double price, const char* icon, cons
 void cta_register_index(CtxHandler cHandle, const char* idxName, WtUInt32 indexType)
 {
 	CtaContextPtr ctx = getRunner().getCtaContext(cHandle);
-	if (ctx == NULL)
+	if (ctx == nullptr)
 		return;
 
 	ctx->register_index(idxName, indexType);
@@ -522,7 +522,7 @@ void cta_register_index(CtxHandler cHandle, const char* idxName, WtUInt32 indexT
 bool cta_register_index_line(CtxHandler cHandle, const char* idxName, const char* lineName, WtUInt32 lineType)
 {
 	CtaContextPtr ctx = getRunner().getCtaContext(cHandle);
-	if (ctx == NULL)
+	if (ctx == nullptr)
 		return false;
 
 	return ctx->register_index_line(idxName, lineName, lineType);
@@ -530,7 +530,7 @@ bool cta_register_index_line(CtxHandler cHandle, const char* idxName, const char
 bool cta_add_index_baseline(CtxHandler cHandle, const char* idxName, const char* lineName, double val)
 {
 	CtaContextPtr ctx = getRunner().getCtaContext(cHandle);
-	if (ctx == NULL)
+	if (ctx == nullptr)
 		return false;
 
 	return ctx->add_index_baseline(idxName, lineName, val);
@@ -539,7 +539,7 @@ bool cta_add_index_baseline(CtxHandler cHandle, const char* idxName, const char*
 bool cta_set_index_value(CtxHandler cHandle, const char* idxName, const char* lineName, double val)
 {
 	CtaContextPtr ctx = getRunner().getCtaContext(cHandle);
-	if (ctx == NULL)
+	if (ctx == nullptr)
 		return false;
 
 	return ctx->set_index_value(idxName, lineName, val);
@@ -558,7 +558,7 @@ CtxHandler create_sel_context(const char* name, uint32_t date, uint32_t time, co
 void sel_save_userdata(CtxHandler cHandle, const char* key, const char* val)
 {
 	SelContextPtr ctx = getRunner().getSelContext(cHandle);
-	if (ctx == NULL)
+	if (ctx == nullptr)
 		return;
 
 	ctx->stra_save_user_data(key, val);
@@ -567,7 +567,7 @@ void sel_save_userdata(CtxHandler cHandle, const char* key, const char* val)
 WtString sel_load_userdata(CtxHandler cHandle, const char* key, const char* defVal)
 {
 	SelContextPtr ctx = getRunner().getSelContext(cHandle);
-	if (ctx == NULL)
+	if (ctx == nullptr)
 		return defVal;
 
 	return ctx->stra_load_user_data(key, defVal);
@@ -576,7 +576,7 @@ WtString sel_load_userdata(CtxHandler cHandle, const char* key, const char* defV
 void sel_log_text(CtxHandler cHandle, WtUInt32 level, const char* message)
 {
 	SelContextPtr ctx = getRunner().getSelContext(cHandle);
-	if (ctx == NULL)
+	if (ctx == nullptr)
 		return;
 
 	switch (level)
@@ -616,7 +616,7 @@ WtUInt32 sel_get_time()
 void sel_get_all_position(CtxHandler cHandle, FuncGetPositionCallback cb)
 {
 	SelContextPtr ctx = getRunner().getSelContext(cHandle);
-	if (ctx == NULL)
+	if (ctx == nullptr)
 	{
 		cb(cHandle, "", 0, true);
 		return;
@@ -632,7 +632,7 @@ void sel_get_all_position(CtxHandler cHandle, FuncGetPositionCallback cb)
 double sel_get_position(CtxHandler cHandle, const char* stdCode, bool bOnlyValid, const char* openTag)
 {
 	SelContextPtr ctx = getRunner().getSelContext(cHandle);
-	if (ctx == NULL)
+	if (ctx == nullptr)
 		return 0;
 
 	return ctx->stra_get_position(stdCode, bOnlyValid, openTag);
@@ -641,14 +641,14 @@ double sel_get_position(CtxHandler cHandle, const char* stdCode, bool bOnlyValid
 WtUInt32 sel_get_bars(CtxHandler cHandle, const char* stdCode, const char* period, WtUInt32 barCnt, FuncGetBarsCallback cb)
 {
 	SelContextPtr ctx = getRunner().getSelContext(cHandle);
-	if (ctx == NULL)
+	if (ctx == nullptr)
 		return 0;
 	try
 	{
 		WTSKlineSlice* kData = ctx->stra_get_bars(stdCode, period, barCnt);
 		if (kData)
 		{
-			WtUInt32 reaCnt = (WtUInt32)kData->size();
+			auto reaCnt = (WtUInt32)kData->size();
 
 			for (uint32_t i = 0; i < kData->get_block_counts(); i++)
 				cb(cHandle, stdCode, period, kData->get_block_addr(i), kData->get_block_size(i), i == kData->get_block_counts() - 1);
@@ -670,7 +670,7 @@ WtUInt32 sel_get_bars(CtxHandler cHandle, const char* stdCode, const char* perio
 void sel_set_position(CtxHandler cHandle, const char* stdCode, double qty, const char* userTag)
 {
 	SelContextPtr ctx = getRunner().getSelContext(cHandle);
-	if (ctx == NULL)
+	if (ctx == nullptr)
 		return;
 
 	//多因子引擎,限价和止价都无效
@@ -680,7 +680,7 @@ void sel_set_position(CtxHandler cHandle, const char* stdCode, double qty, const
 WtUInt32	sel_get_ticks(CtxHandler cHandle, const char* stdCode, WtUInt32 tickCnt, FuncGetTicksCallback cb)
 {
 	SelContextPtr ctx = getRunner().getSelContext(cHandle);
-	if (ctx == NULL)
+	if (ctx == nullptr)
 		return 0;
 	try
 	{
@@ -691,7 +691,7 @@ WtUInt32	sel_get_ticks(CtxHandler cHandle, const char* stdCode, WtUInt32 tickCnt
 			if (thisCnt != 0)
 				cb(cHandle, stdCode, (WTSTickStruct*)tData->at(0), thisCnt, true);
 			else
-				cb(cHandle, stdCode, NULL, 0, true);
+				cb(cHandle, stdCode, nullptr, 0, true);
 			tData->release();
 			return thisCnt;
 		}
@@ -709,7 +709,7 @@ WtUInt32	sel_get_ticks(CtxHandler cHandle, const char* stdCode, WtUInt32 tickCnt
 void sel_sub_ticks(CtxHandler cHandle, const char* stdCode)
 {
 	SelContextPtr ctx = getRunner().getSelContext(cHandle);
-	if (ctx == NULL)
+	if (ctx == nullptr)
 		return;
 
 	ctx->stra_sub_ticks(stdCode);
@@ -725,7 +725,7 @@ CtxHandler create_hft_context(const char* name, const char* trader, bool agent, 
 double hft_get_position(CtxHandler cHandle, const char* stdCode, bool bOnlyValid)
 {
 	HftContextPtr ctx = getRunner().getHftContext(cHandle);
-	if (ctx == NULL)
+	if (ctx == nullptr)
 		return 0;
 
 	return ctx->stra_get_position(stdCode, bOnlyValid);
@@ -734,7 +734,7 @@ double hft_get_position(CtxHandler cHandle, const char* stdCode, bool bOnlyValid
 double hft_get_position_profit(CtxHandler cHandle, const char* stdCode)
 {
 	HftContextPtr ctx = getRunner().getHftContext(cHandle);
-	if (ctx == NULL)
+	if (ctx == nullptr)
 		return 0;
 
 	return ctx->stra_get_position_profit(stdCode);
@@ -743,7 +743,7 @@ double hft_get_position_profit(CtxHandler cHandle, const char* stdCode)
 double hft_get_position_avgpx(CtxHandler cHandle, const char* stdCode)
 {
 	HftContextPtr ctx = getRunner().getHftContext(cHandle);
-	if (ctx == NULL)
+	if (ctx == nullptr)
 		return 0;
 
 	return ctx->stra_get_position_avgpx(stdCode);
@@ -752,7 +752,7 @@ double hft_get_position_avgpx(CtxHandler cHandle, const char* stdCode)
 double hft_get_undone(CtxHandler cHandle, const char* stdCode)
 {
 	HftContextPtr ctx = getRunner().getHftContext(cHandle);
-	if (ctx == NULL)
+	if (ctx == nullptr)
 		return 0;
 
 	return ctx->stra_get_undone(stdCode);
@@ -781,7 +781,7 @@ WtUInt32 hft_get_secs()
 WtUInt32 hft_get_bars(CtxHandler cHandle, const char* stdCode, const char* period, WtUInt32 barCnt, FuncGetBarsCallback cb)
 {
 	HftContextPtr ctx = getRunner().getHftContext(cHandle);
-	if (ctx == NULL)
+	if (ctx == nullptr)
 		return 0;
 
 	try
@@ -789,7 +789,7 @@ WtUInt32 hft_get_bars(CtxHandler cHandle, const char* stdCode, const char* perio
 		WTSKlineSlice* kData = ctx->stra_get_bars(stdCode, period, barCnt);
 		if (kData)
 		{
-			WtUInt32 reaCnt = (WtUInt32)kData->size();
+			auto reaCnt = (WtUInt32)kData->size();
 
 			for (uint32_t i = 0; i < kData->get_block_counts(); i++)
 				cb(cHandle, stdCode, period, kData->get_block_addr(i), kData->get_block_size(i), i == kData->get_block_counts() - 1);
@@ -811,7 +811,7 @@ WtUInt32 hft_get_bars(CtxHandler cHandle, const char* stdCode, const char* perio
 WtUInt32 hft_get_ticks(CtxHandler cHandle, const char* stdCode, WtUInt32 tickCnt, FuncGetTicksCallback cb)
 {
 	HftContextPtr ctx = getRunner().getHftContext(cHandle);
-	if (ctx == NULL)
+	if (ctx == nullptr)
 		return 0;
 	try
 	{
@@ -822,7 +822,7 @@ WtUInt32 hft_get_ticks(CtxHandler cHandle, const char* stdCode, WtUInt32 tickCnt
 			if (thisCnt != 0)
 				cb(cHandle, stdCode, (WTSTickStruct*)tData->at(0), thisCnt, true);
 			else
-				cb(cHandle, stdCode, NULL, 0, true);
+				cb(cHandle, stdCode, nullptr, 0, true);
 			tData->release();
 			return thisCnt;
 		}
@@ -840,7 +840,7 @@ WtUInt32 hft_get_ticks(CtxHandler cHandle, const char* stdCode, WtUInt32 tickCnt
 WtUInt32 hft_get_ordque(CtxHandler cHandle, const char* stdCode, WtUInt32 itemCnt, FuncGetOrdQueCallback cb)
 {
 	HftContextPtr ctx = getRunner().getHftContext(cHandle);
-	if (ctx == NULL)
+	if (ctx == nullptr)
 		return 0;
 	try
 	{
@@ -866,7 +866,7 @@ WtUInt32 hft_get_ordque(CtxHandler cHandle, const char* stdCode, WtUInt32 itemCn
 WtUInt32 hft_get_orddtl(CtxHandler cHandle, const char* stdCode, WtUInt32 itemCnt, FuncGetOrdDtlCallback cb)
 {
 	HftContextPtr ctx = getRunner().getHftContext(cHandle);
-	if (ctx == NULL)
+	if (ctx == nullptr)
 		return 0;
 	try
 	{
@@ -892,7 +892,7 @@ WtUInt32 hft_get_orddtl(CtxHandler cHandle, const char* stdCode, WtUInt32 itemCn
 WtUInt32 hft_get_trans(CtxHandler cHandle, const char* stdCode, WtUInt32 itemCnt, FuncGetTransCallback cb)
 {
 	HftContextPtr ctx = getRunner().getHftContext(cHandle);
-	if (ctx == NULL)
+	if (ctx == nullptr)
 		return 0;
 	try
 	{
@@ -918,7 +918,7 @@ WtUInt32 hft_get_trans(CtxHandler cHandle, const char* stdCode, WtUInt32 itemCnt
 void hft_log_text(CtxHandler cHandle, WtUInt32 level, const char* message)
 {
 	HftContextPtr ctx = getRunner().getHftContext(cHandle);
-	if (ctx == NULL)
+	if (ctx == nullptr)
 		return;
 
 	switch (level)
@@ -943,7 +943,7 @@ void hft_log_text(CtxHandler cHandle, WtUInt32 level, const char* message)
 void hft_sub_ticks(CtxHandler cHandle, const char* stdCode)
 {
 	HftContextPtr ctx = getRunner().getHftContext(cHandle);
-	if (ctx == NULL)
+	if (ctx == nullptr)
 		return;
 
 	ctx->stra_sub_ticks(stdCode);
@@ -952,7 +952,7 @@ void hft_sub_ticks(CtxHandler cHandle, const char* stdCode)
 void hft_sub_order_detail(CtxHandler cHandle, const char* stdCode)
 {
 	HftContextPtr ctx = getRunner().getHftContext(cHandle);
-	if (ctx == NULL)
+	if (ctx == nullptr)
 		return;
 
 	ctx->stra_sub_order_details(stdCode);
@@ -961,7 +961,7 @@ void hft_sub_order_detail(CtxHandler cHandle, const char* stdCode)
 void hft_sub_order_queue(CtxHandler cHandle, const char* stdCode)
 {
 	HftContextPtr ctx = getRunner().getHftContext(cHandle);
-	if (ctx == NULL)
+	if (ctx == nullptr)
 		return;
 
 	ctx->stra_sub_order_queues(stdCode);
@@ -970,7 +970,7 @@ void hft_sub_order_queue(CtxHandler cHandle, const char* stdCode)
 void hft_sub_transaction(CtxHandler cHandle, const char* stdCode)
 {
 	HftContextPtr ctx = getRunner().getHftContext(cHandle);
-	if (ctx == NULL)
+	if (ctx == nullptr)
 		return;
 
 	ctx->stra_sub_transactions(stdCode);
@@ -979,7 +979,7 @@ void hft_sub_transaction(CtxHandler cHandle, const char* stdCode)
 bool hft_cancel(CtxHandler cHandle, WtUInt32 localid)
 {
 	HftContextPtr ctx = getRunner().getHftContext(cHandle);
-	if (ctx == NULL)
+	if (ctx == nullptr)
 		return false;
 
 	return ctx->stra_cancel(localid);
@@ -988,7 +988,7 @@ bool hft_cancel(CtxHandler cHandle, WtUInt32 localid)
 WtString hft_cancel_all(CtxHandler cHandle, const char* stdCode, bool isBuy)
 {
 	HftContextPtr ctx = getRunner().getHftContext(cHandle);
-	if (ctx == NULL)
+	if (ctx == nullptr)
 		return "";
 
 	static thread_local std::string ret;
@@ -1001,7 +1001,7 @@ WtString hft_cancel_all(CtxHandler cHandle, const char* stdCode, bool isBuy)
 	}
 
 	ret = ss.str();
-	if (ret.size() > 0)
+	if (!ret.empty())
 		ret = ret.substr(0, ret.size() - 1);
 	return ret.c_str();
 }
@@ -1009,7 +1009,7 @@ WtString hft_cancel_all(CtxHandler cHandle, const char* stdCode, bool isBuy)
 WtString hft_buy(CtxHandler cHandle, const char* stdCode, double price, double qty, const char* userTag, int flag)
 {
 	HftContextPtr ctx = getRunner().getHftContext(cHandle);
-	if (ctx == NULL)
+	if (ctx == nullptr)
 		return "";
 
 	static std::string ret;
@@ -1022,7 +1022,7 @@ WtString hft_buy(CtxHandler cHandle, const char* stdCode, double price, double q
 	}
 
 	ret = ss.str();
-	if(ret.size() > 0)
+	if(!ret.empty())
 		ret = ret.substr(0, ret.size() - 1);
 	return ret.c_str();
 }
@@ -1030,7 +1030,7 @@ WtString hft_buy(CtxHandler cHandle, const char* stdCode, double price, double q
 WtString hft_sell(CtxHandler cHandle, const char* stdCode, double price, double qty, const char* userTag, int flag)
 {
 	HftContextPtr ctx = getRunner().getHftContext(cHandle);
-	if (ctx == NULL)
+	if (ctx == nullptr)
 		return "";
 
 	static std::string ret;
@@ -1043,7 +1043,7 @@ WtString hft_sell(CtxHandler cHandle, const char* stdCode, double price, double 
 	}
 
 	ret = ss.str();
-	if (ret.size() > 0)
+	if (!ret.empty())
 		ret = ret.substr(0, ret.size() - 1);
 	return ret.c_str();
 }
@@ -1051,7 +1051,7 @@ WtString hft_sell(CtxHandler cHandle, const char* stdCode, double price, double 
 void hft_save_userdata(CtxHandler cHandle, const char* key, const char* val)
 {
 	HftContextPtr ctx = getRunner().getHftContext(cHandle);
-	if (ctx == NULL)
+	if (ctx == nullptr)
 		return;
 
 	ctx->stra_save_user_data(key, val);
@@ -1060,7 +1060,7 @@ void hft_save_userdata(CtxHandler cHandle, const char* key, const char* val)
 WtString hft_load_userdata(CtxHandler cHandle, const char* key, const char* defVal)
 {
 	HftContextPtr ctx = getRunner().getHftContext(cHandle);
-	if (ctx == NULL)
+	if (ctx == nullptr)
 		return defVal;
 
 	return ctx->stra_load_user_data(key, defVal);
