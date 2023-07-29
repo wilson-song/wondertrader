@@ -8,7 +8,7 @@
  * \brief Wt»ù´¡Object¶¨Òå
  */
 #pragma once
-#include <stdint.h>
+#include <cstdint>
 #include <atomic>
 #include <boost/smart_ptr/detail/spinlock.hpp>
 
@@ -21,7 +21,7 @@ class WTSObject
 {
 public:
 	WTSObject() :m_uRefs(1){}
-	virtual ~WTSObject(){}
+	virtual ~WTSObject() = default;
 
 public:
 	inline uint32_t		retain(){ return m_uRefs.fetch_add(1) + 1; }
@@ -59,11 +59,11 @@ class WTSPoolObject : public WTSObject
 private:
 	typedef ObjectPool<T> MyPool;
 	MyPool*			_pool;
-	SpinMutex*	_mutex;
+	SpinMutex*	_mutex{};
 
 public:
 	WTSPoolObject():_pool(NULL){}
-	virtual ~WTSPoolObject() {}
+	~WTSPoolObject() override = default;
 
 public:
 	static T*	allocate()

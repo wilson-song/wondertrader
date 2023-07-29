@@ -11,16 +11,16 @@
 #include "WTSMarcos.h"
 #include <vector>
 #include <string>
-#include <stdint.h>
+#include <cstdint>
 
-typedef struct _HotSection
+typedef struct HotSection
 {
 	std::string	_code;
 	uint32_t	_s_date;
 	uint32_t	_e_date;
 	double		_factor;
 
-	_HotSection(const char* code, uint32_t sdate, uint32_t edate, double factor)
+	HotSection(const char* code, uint32_t sdate, uint32_t edate, double factor)
 		: _s_date(sdate), _e_date(edate), _code(code),_factor(factor)
 	{
 	

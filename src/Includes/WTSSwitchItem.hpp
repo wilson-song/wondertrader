@@ -15,12 +15,12 @@ class WTSSwitchItem : public WTSObject
 {
 protected:
 	WTSSwitchItem():_factor(1.0){}
-	virtual ~WTSSwitchItem(){}
+	~WTSSwitchItem() override = default;
 
 public:
 	static WTSSwitchItem* create(const char* exchg, const char* product, const char* from, const char* to, uint32_t dt)
 	{
-		WTSSwitchItem* pRet = new WTSSwitchItem();
+		auto* pRet = new WTSSwitchItem();
 		pRet->_exchg = exchg;
 		pRet->_product = product;
 		pRet->_from = from;
@@ -43,7 +43,7 @@ private:
 	std::string		_product;
 	std::string		_from;
 	std::string		_to;
-	uint32_t		_dt;
+	uint32_t		_dt{};
 	double			_factor;
 };
 NS_WTP_END

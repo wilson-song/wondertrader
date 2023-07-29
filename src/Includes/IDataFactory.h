@@ -8,7 +8,7 @@
  * \brief 数据拼接工厂接口定义
  */
 #pragma once
-#include <stdint.h>
+#include <cstdint>
 #include "../Includes/WTSTypes.h"
 
 //USING_NS_WTP;

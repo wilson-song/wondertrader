@@ -9,7 +9,7 @@
  */
 #pragma once
 #include <string>
-#include <stdint.h>
+#include <cstdint>
 
 #include "../Includes/WTSMarcos.h"
 
@@ -26,8 +26,8 @@ USING_NS_WTP;
 class CtaStrategy
 {
 public:
-	CtaStrategy(const char* id) :_id(id){}
-	virtual ~CtaStrategy(){}
+	explicit CtaStrategy(const char* id) :_id(id){}
+	virtual ~CtaStrategy() = default;
 
 public:
 	/*

@@ -36,8 +36,8 @@ public:
 class IBtDtReader
 {
 public:
-	IBtDtReader() :_sink(NULL) {}
-	virtual ~IBtDtReader(){}
+	IBtDtReader() :_sink(nullptr) {}
+	virtual ~IBtDtReader() = default;
 
 public:
 	virtual void init(WTSVariant* cfg, IBtDtReaderSink* sink) { _sink = sink; }

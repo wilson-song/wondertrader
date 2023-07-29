@@ -23,12 +23,12 @@ class WTSSessionInfo;
 class WTSCommodityInfo;
 
 typedef faster_hashset<uint32_t> HolidaySet;
-typedef struct _TradingDayTpl
+typedef struct TradingDayTpl
 {
 	uint32_t	_cur_tdate;
 	HolidaySet	_holidays;
 
-	_TradingDayTpl() :_cur_tdate(0){}
+	TradingDayTpl() :_cur_tdate(0){}
 } TradingDayTpl;
 
 class IBaseDataMgr

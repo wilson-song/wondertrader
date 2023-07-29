@@ -8,7 +8,7 @@
  * \brief 数据落地接口定义
  */
 #pragma once
-#include <stdint.h>
+#include <cstdint>
 #include "WTSTypes.h"
 #include "FasterDefs.h"
 
@@ -72,7 +72,7 @@ typedef faster_hashmap<ShortKey, IHisDataDumper*> ExtDumpers;
 class IDataWriter
 {
 public:
-	IDataWriter():_sink(NULL){}
+	IDataWriter():_sink(nullptr){}
 
 	virtual bool init(WTSVariant* params, IDataWriterSink* sink) { _sink = sink; return true; }
 

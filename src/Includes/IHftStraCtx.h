@@ -8,7 +8,7 @@
  * \brief 
  */
 #pragma once
-#include <stdint.h>
+#include <cstdint>
 #include <string>
 #include "ExecuteDefs.h"
 
@@ -31,8 +31,8 @@ static const int HFT_OrderFlag_FOK = 2;
 class IHftStraCtx
 {
 public:
-	IHftStraCtx(const char* name) :_name(name) {}
-	virtual ~IHftStraCtx() {}
+	explicit IHftStraCtx(const char* name) :_name(name) {}
+	virtual ~IHftStraCtx() = default;
 
 	const char* name() const { return _name.c_str(); }
 

@@ -14,7 +14,7 @@
 #include "WTSCollection.hpp"
 
 #include <string>
-#include <string.h>
+#include <cstring>
 #include <vector>
 #include <map>
 
@@ -62,7 +62,7 @@ protected:
 private:
 	static inline WTSVariant* create(int32_t i32)
 	{
-		WTSVariant* ret = new WTSVariant();
+		auto* ret = new WTSVariant();
 		ret->_type = VT_Int32;
 		char s[32] = { 0 };
 		sprintf(s, "%d", i32);
@@ -72,7 +72,7 @@ private:
 
 	static inline WTSVariant* create(uint32_t u32)
 	{
-		WTSVariant* ret = new WTSVariant();
+		auto* ret = new WTSVariant();
 		ret->_type = VT_Uint32;
 		char s[32] = { 0 };
 		sprintf(s, "%u", u32);
@@ -82,7 +82,7 @@ private:
 
 	static inline WTSVariant* create(int64_t i64)
 	{
-		WTSVariant* ret = new WTSVariant();
+		auto* ret = new WTSVariant();
 		ret->_type = VT_Int64;
 		char s[32] = { 0 };
 		sprintf(s, INT64_FMT, i64);
@@ -92,7 +92,7 @@ private:
 
 	static inline WTSVariant* create(uint64_t u64)
 	{
-		WTSVariant* ret = new WTSVariant();
+		auto* ret = new WTSVariant();
 		ret->_type = VT_Uint64;
 		char s[32] = { 0 };
 		sprintf(s, UINT64_FMT, u64);
@@ -102,7 +102,7 @@ private:
 
 	static inline WTSVariant* create(double _real)
 	{
-		WTSVariant* ret = new WTSVariant();
+		auto* ret = new WTSVariant();
 		ret->_type = VT_Real;
 		char s[32] = { 0 };
 		sprintf(s, "%.10f", _real);
@@ -112,7 +112,7 @@ private:
 
 	static inline WTSVariant* create(const char* _string)
 	{
-		WTSVariant* ret = new WTSVariant();
+		auto* ret = new WTSVariant();
 		ret->_type = VT_String;
 		ret->_value._string = new std::string(_string);
 		return ret;
@@ -120,7 +120,7 @@ private:
 
 	static inline WTSVariant* create(bool _bool)
 	{
-		WTSVariant* ret = new WTSVariant();
+		auto* ret = new WTSVariant();
 		ret->_type = VT_Boolean;
 		ret->_value._string = new std::string(_bool ? "true" : "false");
 		return ret;
@@ -129,7 +129,7 @@ private:
 public:
 	static inline WTSVariant* createObject()
 	{
-		WTSVariant* ret = new WTSVariant();
+		auto* ret = new WTSVariant();
 		ret->_type = VT_Object;
 		ret->_value._map = ChildrenMap::create();
 		return ret;
@@ -137,7 +137,7 @@ public:
 
 	static inline WTSVariant* createArray()
 	{
-		WTSVariant* ret = new WTSVariant();
+		auto* ret = new WTSVariant();
 		ret->_type = VT_Array;
 		ret->_value._array = ChildrenArray::create();
 		return ret;
@@ -203,7 +203,7 @@ public:
 		case VT_Uint64:
 		case VT_Real:
 		case VT_String:
-			return _value._string ? strtoll(_value._string->c_str(), NULL, 10) : 0;
+			return _value._string ? strtoll(_value._string->c_str(), nullptr, 10) : 0;
 		default:
 			return 0;
 		}
@@ -221,7 +221,7 @@ public:
 		case VT_Uint64:
 		case VT_Real:
 		case VT_String:
-			return _value._string ? strtoull(_value._string->c_str(), NULL, 10) : 0;
+			return _value._string ? strtoull(_value._string->c_str(), nullptr, 10) : 0;
 		default:
 			return 0;
 		}
@@ -239,7 +239,7 @@ public:
 		case VT_Uint64:
 		case VT_Real:
 		case VT_String:
-			return _value._string ? strtod(_value._string->c_str(), NULL) : 0.0;
+			return _value._string ? strtod(_value._string->c_str(), nullptr) : 0.0;
 		default:
 			return 0.0;
 		}
@@ -266,7 +266,7 @@ public:
 
 	inline const char* asCString() const
 	{
-		if (_type != VT_Object && _type != VT_Array && _value._string != NULL)
+		if (_type != VT_Object && _type != VT_Array && _value._string != nullptr)
 			return _value._string->c_str();
 
 		return "";
@@ -357,36 +357,36 @@ public:
 	inline WTSVariant* get(const char* name) const
 	{
 		if (_type != VT_Object)
-			return NULL;
+			return nullptr;
 
-		if (_value._map == NULL)
-			return NULL;
+		if (_value._map == nullptr)
+			return nullptr;
 
-		WTSVariant* ret = static_cast<WTSVariant*>(_value._map->get(name));
+		WTSVariant* ret = dynamic_cast<WTSVariant*>(_value._map->get(name));
 		return ret;
 	}
 
 	inline WTSVariant* get(const std::string& name) const
 	{
 		if (_type != VT_Object)
-			return NULL;
+			return nullptr;
 
-		if (_value._map == NULL)
-			return NULL;
+		if (_value._map == nullptr)
+			return nullptr;
 
-		WTSVariant* ret = static_cast<WTSVariant*>(_value._map->get(name));
+		auto* ret = dynamic_cast<WTSVariant*>(_value._map->get(name));
 		return ret;
 	}
 
 	inline WTSVariant* get(uint32_t idx) const
 	{
 		if (_type != VT_Array)
-			return NULL;
+			return nullptr;
 
-		if (_value._array == NULL)
-			return NULL;
+		if (_value._array == nullptr)
+			return nullptr;
 
-		WTSVariant* ret = static_cast<WTSVariant*>(_value._array->at(idx));
+		auto* ret = dynamic_cast<WTSVariant*>(_value._array->at(idx));
 		return ret;
 	}
 
@@ -395,7 +395,7 @@ public:
 		if (_type != VT_Object)
 			return false;
 
-		if (_value._map == NULL)
+		if (_value._map == nullptr)
 		{
 			_value._map = ChildrenMap::create();
 		}
@@ -412,7 +412,7 @@ public:
 		if (_type != VT_Object)
 			return false;
 
-		if (_value._map == NULL)
+		if (_value._map == nullptr)
 		{
 			_value._map = ChildrenMap::create();
 		}
@@ -429,7 +429,7 @@ public:
 		if (_type != VT_Object)
 			return false;
 
-		if (_value._map == NULL)
+		if (_value._map == nullptr)
 		{
 			_value._map = ChildrenMap::create();
 		}
@@ -446,7 +446,7 @@ public:
 		if (_type != VT_Object)
 			return false;
 
-		if (_value._map == NULL)
+		if (_value._map == nullptr)
 		{
 			_value._map = ChildrenMap::create();
 		}
@@ -463,7 +463,7 @@ public:
 		if (_type != VT_Object)
 			return false;
 
-		if (_value._map == NULL)
+		if (_value._map == nullptr)
 		{
 			_value._map = ChildrenMap::create();
 		}
@@ -480,7 +480,7 @@ public:
 		if (_type != VT_Object)
 			return false;
 
-		if (_value._map == NULL)
+		if (_value._map == nullptr)
 		{
 			_value._map = ChildrenMap::create();
 		}
@@ -497,7 +497,7 @@ public:
 		if (_type != VT_Object)
 			return false;
 
-		if (_value._map == NULL)
+		if (_value._map == nullptr)
 		{
 			_value._map = ChildrenMap::create();
 		}
@@ -511,10 +511,10 @@ public:
 
 	inline bool append(const char* _name, WTSVariant *item, bool bAutoRetain = true)
 	{
-		if (_type != VT_Object || NULL == item)
+		if (_type != VT_Object || nullptr == item)
 			return false;
 
-		if (_value._map == NULL)
+		if (_value._map == nullptr)
 		{
 			_value._map = ChildrenMap::create();
 		}
@@ -529,7 +529,7 @@ public:
 		if (_type != VT_Array)
 			return false;
 
-		if (_value._array == NULL)
+		if (_value._array == nullptr)
 		{
 			_value._array = ChildrenArray::create();
 		}
@@ -546,7 +546,7 @@ public:
 		if (_type != VT_Array)
 			return false;
 
-		if (_value._array == NULL)
+		if (_value._array == nullptr)
 		{
 			_value._array = ChildrenArray::create();
 		}
@@ -563,7 +563,7 @@ public:
 		if (_type != VT_Array)
 			return false;
 
-		if (_value._array == NULL)
+		if (_value._array == nullptr)
 		{
 			_value._array = ChildrenArray::create();
 		}
@@ -580,7 +580,7 @@ public:
 		if (_type != VT_Array)
 			return false;
 
-		if (_value._array == NULL)
+		if (_value._array == nullptr)
 		{
 			_value._array = ChildrenArray::create();
 		}
@@ -597,7 +597,7 @@ public:
 		if (_type != VT_Array)
 			return false;
 
-		if (_value._array == NULL)
+		if (_value._array == nullptr)
 		{
 			_value._array = ChildrenArray::create();
 		}
@@ -614,7 +614,7 @@ public:
 		if (_type != VT_Array)
 			return false;
 
-		if (_value._array == NULL)
+		if (_value._array == nullptr)
 		{
 			_value._array = ChildrenArray::create();
 		}
@@ -631,7 +631,7 @@ public:
 		if (_type != VT_Array)
 			return false;
 
-		if (_value._array == NULL)
+		if (_value._array == nullptr)
 		{
 			_value._array = ChildrenArray::create();
 		}
@@ -645,10 +645,10 @@ public:
 
 	inline bool append(WTSVariant *item, bool bAutoRetain = true)
 	{
-		if (_type != VT_Array || NULL == item)
+		if (_type != VT_Array || nullptr == item)
 			return false;
 
-		if (_value._array == NULL)
+		if (_value._array == nullptr)
 		{
 			_value._array = ChildrenArray::create();
 		}
@@ -665,18 +665,18 @@ public:
 
 		else if (_type == VT_Array)
 		{
-			return (_value._array == NULL) ? 0 : _value._array->size();
+			return (_value._array == nullptr) ? 0 : _value._array->size();
 		}
 		else
 		{
-			return (_value._map == NULL) ? 0 : _value._map->size();
+			return (_value._map == nullptr) ? 0 : _value._map->size();
 		}
 	}
 
 	inline MemberNames memberNames() const
 	{
 		MemberNames names;
-		if (_type == VT_Object && _value._map != NULL)
+		if (_type == VT_Object && _value._map != nullptr)
 		{
 			auto it = _value._map->begin();
 			for (; it != _value._map->end(); it++)
@@ -688,29 +688,29 @@ public:
 		return std::move(names);
 	}
 
-	virtual void release()
+	void release() override
 	{
 		if (isSingleRefs())
 		{
 			switch (_type)
 			{
 			case VT_Array:
-				if (NULL != _value._array)
+				if (nullptr != _value._array)
 				{
 					_value._array->release();
 				}
 				break;
 			case VT_Object:
-				if (NULL != _value._map)
+				if (nullptr != _value._map)
 				{
 					_value._map->release();
 				}
 				break;
 			default:
-				if (NULL != _value._string)
-				{
+
+
 					delete _value._string;
-				}
+
 				break;
 			}
 		}
@@ -730,7 +730,7 @@ private:
 		ChildrenMap*	_map;
 		ChildrenArray*	_array;
 	};
-	ValueHolder	_value;
+	ValueHolder	_value{};
 	ValueType	_type;
 };
 

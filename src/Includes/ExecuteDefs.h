@@ -26,8 +26,8 @@ typedef WTSMap<uint32_t> OrderMap;
 class ExecuteContext
 {
 public:
-	ExecuteContext()= default;
-	virtual ~ExecuteContext()= default;
+	ExecuteContext() = default;
+	virtual ~ExecuteContext() = default;
 
 public:
 	/*
@@ -148,8 +148,8 @@ public:
 class ExecuteUnit
 {
 public:
-	ExecuteUnit(bool bDiffMode = false) :_ctx(nullptr), _code("") {}
-	virtual ~ExecuteUnit()= default;
+	explicit ExecuteUnit(bool bDiffMode = false) :_ctx(nullptr) {}
+	virtual ~ExecuteUnit() = default;
 
 public:
 	/*
@@ -241,8 +241,8 @@ typedef void(*FuncEnumUnitCallback)(const char* factName, const char* unitName, 
 class IExecuterFactory
 {
 public:
-	IExecuterFactory()= default;
-	virtual ~IExecuterFactory()= default;
+	IExecuterFactory() = default;
+	virtual ~IExecuterFactory() = default;
 
 public:
 	/*

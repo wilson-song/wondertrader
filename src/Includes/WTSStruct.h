@@ -9,8 +9,8 @@
  */
 #pragma once
 #include <memory>
-#include <stdint.h>
-#include <string.h>
+#include <cstdint>
+#include <cstring>
 #include "WTSTypes.h"
 
 #ifdef _MSC_VER
@@ -29,53 +29,53 @@ public:
 		memset(this, 0, sizeof(WTSBarStructOld));
 	}
 
-	uint32_t	date;
-	uint32_t	time;
-	double		open;		//开
-	double		high;		//高
-	double		low;		//低
-	double		close;		//收
-	double		settle;		//结算
-	double		money;		//成交金额
+	uint32_t	date{};
+	uint32_t	time{};
+	double		open{};		//开
+	double		high{};		//高
+	double		low{};		//低
+	double		close{};		//收
+	double		settle{};		//结算
+	double		money{};		//成交金额
 
-	uint32_t	vol;	//成交量
-	uint32_t	hold;	//总持
-	int32_t		add;	//增仓
+	uint32_t	vol{};	//成交量
+	uint32_t	hold{};	//总持
+	int32_t		add{};	//增仓
 };
 
 struct WTSTickStructOld
 {
-	char		exchg[10];
-	char		code[MAX_INSTRUMENT_LENGTH];
+	char		exchg[10]{};
+	char		code[MAX_INSTRUMENT_LENGTH]{};
 
-	double		price;				//最新价
-	double		open;				//开盘价
-	double		high;				//最高价
-	double		low;				//最低价
-	double		settle_price;		//结算价
+	double		price{};				//最新价
+	double		open{};				//开盘价
+	double		high{};				//最高价
+	double		low{};				//最低价
+	double		settle_price{};		//结算价
 
-	double		upper_limit;		//涨停价
-	double		lower_limit;		//跌停价
+	double		upper_limit{};		//涨停价
+	double		lower_limit{};		//跌停价
 
-	uint32_t	total_volume;		//总成交量
-	uint32_t	volume;				//成交量
-	double		total_turnover;		//总成交额
-	double		turn_over;			//成交额
-	uint32_t	open_interest;		//总持
-	int32_t		diff_interest;		//增仓
+	uint32_t	total_volume{};		//总成交量
+	uint32_t	volume{};				//成交量
+	double		total_turnover{};		//总成交额
+	double		turn_over{};			//成交额
+	uint32_t	open_interest{};		//总持
+	int32_t		diff_interest{};		//增仓
 
-	uint32_t	trading_date;		//交易日,如20140327
-	uint32_t	action_date;		//自然日期,如20140327
-	uint32_t	action_time;		//发生时间,精确到毫秒,如105932000
+	uint32_t	trading_date{};		//交易日,如20140327
+	uint32_t	action_date{};		//自然日期,如20140327
+	uint32_t	action_time{};		//发生时间,精确到毫秒,如105932000
 
-	double		pre_close;			//昨收价
-	double		pre_settle;			//昨结算
-	int32_t		pre_interest;		//上日总持
+	double		pre_close{};			//昨收价
+	double		pre_settle{};			//昨结算
+	int32_t		pre_interest{};		//上日总持
 
-	double		bid_prices[10];		//委买价格
-	double		ask_prices[10];		//委卖价格
-	uint32_t	bid_qty[10];		//委买量
-	uint32_t	ask_qty[10];		//委卖量
+	double		bid_prices[10]{};		//委买价格
+	double		ask_prices[10]{};		//委卖价格
+	uint32_t	bid_qty[10]{};		//委买量
+	uint32_t	ask_qty[10]{};		//委卖量
 	WTSTickStructOld()
 	{
 		memset(this, 0, sizeof(WTSTickStructOld));
@@ -97,19 +97,19 @@ public:
 		memset(this, 0, sizeof(WTSBarStruct));
 	}
 
-	uint32_t	date;		//日期
-	uint32_t	reserve_;	//占位符
-	uint64_t	time;		//时间
-	double		open;		//开
-	double		high;		//高
-	double		low;		//低
-	double		close;		//收
-	double		settle;		//结算
-	double		money;		//成交金额
+	uint32_t	date{};		//日期
+	uint32_t	reserve_{};	//占位符
+	uint64_t	time{};		//时间
+	double		open{};		//开
+	double		high{};		//高
+	double		low{};		//低
+	double		close{};		//收
+	double		settle{};		//结算
+	double		money{};		//成交金额
 
-	double		vol;	//成交量
-	double		hold;	//总持
-	double		add;	//增仓
+	double		vol{};	//成交量
+	double		hold{};	//总持
+	double		add{};	//增仓
 
 	//By Wesley @ 2021.12.30
 	//直接复制老结构体
@@ -135,38 +135,38 @@ public:
 
 struct WTSTickStruct
 {
-	char		exchg[MAX_EXCHANGE_LENGTH];
-	char		code[MAX_INSTRUMENT_LENGTH];
+	char		exchg[MAX_EXCHANGE_LENGTH]{};
+	char		code[MAX_INSTRUMENT_LENGTH]{};
 
-	double		price;				//最新价
-	double		open;				//开盘价
-	double		high;				//最高价
-	double		low;				//最低价
-	double		settle_price;		//结算价
+	double		price{};				//最新价
+	double		open{};				//开盘价
+	double		high{};				//最高价
+	double		low{};				//最低价
+	double		settle_price{};		//结算价
 
-	double		upper_limit;		//涨停价
-	double		lower_limit;		//跌停价
+	double		upper_limit{};		//涨停价
+	double		lower_limit{};		//跌停价
 
-	double		total_volume;		//总成交量
-	double		volume;				//成交量
-	double		total_turnover;		//总成交额
-	double		turn_over;			//成交额
-	double		open_interest;		//总持
-	double		diff_interest;		//增仓
+	double		total_volume{};		//总成交量
+	double		volume{};				//成交量
+	double		total_turnover{};		//总成交额
+	double		turn_over{};			//成交额
+	double		open_interest{};		//总持
+	double		diff_interest{};		//增仓
 
-	uint32_t	trading_date;		//交易日,如20140327
-	uint32_t	action_date;		//自然日期,如20140327
-	uint32_t	action_time;		//发生时间,精确到毫秒,如105932000
-	uint32_t	reserve_;			//占位符
+	uint32_t	trading_date{};		//交易日,如20140327
+	uint32_t	action_date{};		//自然日期,如20140327
+	uint32_t	action_time{};		//发生时间,精确到毫秒,如105932000
+	uint32_t	reserve_{};			//占位符
 
-	double		pre_close;			//昨收价
-	double		pre_settle;			//昨结算
-	double		pre_interest;		//上日总持
+	double		pre_close{};			//昨收价
+	double		pre_settle{};			//昨结算
+	double		pre_interest{};		//上日总持
 
-	double		bid_prices[10];		//委买价格
-	double		ask_prices[10];		//委卖价格
-	double		bid_qty[10];		//委买量
-	double		ask_qty[10];		//委卖量
+	double		bid_prices[10]{};		//委买价格
+	double		ask_prices[10]{};		//委卖价格
+	double		bid_qty[10]{};		//委买量
+	double		ask_qty[10]{};		//委卖量
 	WTSTickStruct()
 	{
 		memset(this, 0, sizeof(WTSTickStruct));
@@ -215,18 +215,18 @@ struct WTSTickStruct
 
 struct WTSOrdQueStruct
 {
-	char		exchg[MAX_EXCHANGE_LENGTH];
-	char		code[MAX_INSTRUMENT_LENGTH];
+	char		exchg[MAX_EXCHANGE_LENGTH]{};
+	char		code[MAX_INSTRUMENT_LENGTH]{};
 
-	uint32_t	trading_date;		//交易日,如20140327
-	uint32_t	action_date;		//自然日期,如20140327
-	uint32_t	action_time;		//发生时间,精确到毫秒,如105932000
-	WTSBSDirectType	side;			//委托方向
+	uint32_t	trading_date{};		//交易日,如20140327
+	uint32_t	action_date{};		//自然日期,如20140327
+	uint32_t	action_time{};		//发生时间,精确到毫秒,如105932000
+	WTSBSDirectType	side{};			//委托方向
 
-	double		price;			//委托价格
-	uint32_t	order_items;	//订单个数
-	uint32_t	qsize;			//队列长度
-	uint32_t	volumes[50];	//委托明细
+	double		price{};			//委托价格
+	uint32_t	order_items{};	//订单个数
+	uint32_t	qsize{};			//队列长度
+	uint32_t	volumes[50]{};	//委托明细
 
 	WTSOrdQueStruct()
 	{
@@ -236,18 +236,18 @@ struct WTSOrdQueStruct
 
 struct WTSOrdDtlStruct
 {
-	char		exchg[MAX_EXCHANGE_LENGTH];
-	char		code[MAX_INSTRUMENT_LENGTH];
+	char		exchg[MAX_EXCHANGE_LENGTH]{};
+	char		code[MAX_INSTRUMENT_LENGTH]{};
 
-	uint32_t		trading_date;		//交易日,如20140327
-	uint32_t		action_date;		//自然日期,如20140327
-	uint32_t		action_time;		//发生时间,精确到毫秒,如105932000
+	uint32_t		trading_date{};		//交易日,如20140327
+	uint32_t		action_date{};		//自然日期,如20140327
+	uint32_t		action_time{};		//发生时间,精确到毫秒,如105932000
 
-	uint64_t			index;			//委托编号(从1开始,递增1)
-	double				price;			//委托价格
-	uint32_t			volume;			//委托数量
-	WTSBSDirectType		side;		//委托方向
-	WTSOrdDetailType	otype;		//委托类型
+	uint64_t			index{};			//委托编号(从1开始,递增1)
+	double				price{};			//委托价格
+	uint32_t			volume{};			//委托数量
+	WTSBSDirectType		side{};		//委托方向
+	WTSOrdDetailType	otype{};		//委托类型
 
 	WTSOrdDtlStruct()
 	{
@@ -257,21 +257,21 @@ struct WTSOrdDtlStruct
 
 struct WTSTransStruct
 {
-	char		exchg[MAX_EXCHANGE_LENGTH];
-	char		code[MAX_INSTRUMENT_LENGTH];
+	char		exchg[MAX_EXCHANGE_LENGTH]{};
+	char		code[MAX_INSTRUMENT_LENGTH]{};
 
-	uint32_t	trading_date;		//交易日,如20140327
-	uint32_t	action_date;		//自然日期,如20140327
-	uint32_t	action_time;		//发生时间,精确到毫秒,如105932000
-	int64_t		index;			//成交编号(从1开始,递增1)
+	uint32_t	trading_date{};		//交易日,如20140327
+	uint32_t	action_date{};		//自然日期,如20140327
+	uint32_t	action_time{};		//发生时间,精确到毫秒,如105932000
+	int64_t		index{};			//成交编号(从1开始,递增1)
 
-	WTSTransType	ttype;			//成交类型: 'C', 0
-	WTSBSDirectType	side;			//BS标志
+	WTSTransType	ttype{};			//成交类型: 'C', 0
+	WTSBSDirectType	side{};			//BS标志
 
-	double			price;			//成交价格
-	uint32_t		volume;			//成交数量
-	int64_t			askorder;		//叫卖序号
-	int64_t			bidorder;		//叫买序号
+	double			price{};			//成交价格
+	uint32_t		volume{};			//成交数量
+	int64_t			askorder{};		//叫卖序号
+	int64_t			bidorder{};		//叫买序号
 
 	WTSTransStruct()
 	{

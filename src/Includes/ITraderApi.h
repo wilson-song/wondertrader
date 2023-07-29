@@ -111,12 +111,12 @@ public:
 	/*
 	 *	获取股票交易接口Spi
 	 */
-	virtual IStkTraderSpi* getStkSpi(){ return NULL; }
+	virtual IStkTraderSpi* getStkSpi(){ return nullptr; }
 
 	/*
 	 *	获取期权交易接口Spi
 	 */
-	virtual IOptTraderSpi* getOptSpi(){ return NULL; }
+	virtual IOptTraderSpi* getOptSpi(){ return nullptr; }
 
 public:
 	/*
@@ -189,10 +189,10 @@ public:
 class ITraderApi
 {
 public:
-	virtual ~ITraderApi(){}
+	virtual ~ITraderApi() = default;
 
-	virtual IStkTraderApi* getStkTrader() { return NULL; }
-	virtual IOptTraderApi* getOptTrader() { return NULL; }
+	virtual IStkTraderApi* getStkTrader() { return nullptr; }
+	virtual IOptTraderApi* getOptTrader() { return nullptr; }
 
 public:
 	/*

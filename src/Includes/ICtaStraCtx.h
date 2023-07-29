@@ -9,7 +9,7 @@
  */
 #pragma once
 #include<string>
-#include <stdint.h>
+#include <cstdint>
 #include <functional>
 #include "../Includes/WTSMarcos.h"
 

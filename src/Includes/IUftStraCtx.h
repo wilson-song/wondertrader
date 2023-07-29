@@ -8,7 +8,7 @@
  * \brief 
  */
 #pragma once
-#include <stdint.h>
+#include <cstdint>
 #include <string>
 #include "ExecuteDefs.h"
 
@@ -31,8 +31,8 @@ static const int UFT_OrderFlag_FOK = 2;
 class IUftStraCtx
 {
 public:
-	IUftStraCtx(const char* name) :_name(name) {}
-	virtual ~IUftStraCtx() {}
+	explicit IUftStraCtx(const char* name) :_name(name) {}
+	virtual ~IUftStraCtx() = default;
 
 	const char* name() const { return _name.c_str(); }
 
@@ -86,7 +86,7 @@ public:
 	 *	@qty		下单数量
 	 *	@flag		下单标志: 0-normal，1-fak，2-fok，默认0
 	 */
-	virtual OrderIDs	stra_buy(const char* stdCode, double price, double qty, int flag = 0) { return OrderIDs(); }
+	virtual OrderIDs	stra_buy(const char* stdCode, double price, double qty, int flag = 0) { return {}; }
 
 	/*
 	 *	下单接口: 卖出
@@ -96,7 +96,7 @@ public:
 	 *	@qty		下单数量
 	 *	@flag		下单标志: 0-normal，1-fak，2-fok，默认0
 	 */
-	virtual OrderIDs	stra_sell(const char* stdCode, double price, double qty, int flag = 0) { return OrderIDs(); }
+	virtual OrderIDs	stra_sell(const char* stdCode, double price, double qty, int flag = 0) { return {}; }
 
 	/*
 	 *	开多

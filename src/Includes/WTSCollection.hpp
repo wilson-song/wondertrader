@@ -9,6 +9,7 @@
  */
 #pragma once
 #include "WTSObject.hpp"
+#include <utility>
 #include <vector>
 #include <map>
 #include <functional>
@@ -48,7 +49,7 @@ public:
 	 */
 	static WTSArray* create()
 	{
-		WTSArray* pRet = new WTSArray();
+		auto* pRet = new WTSArray();
 		return pRet;
 	}
 
@@ -67,7 +68,7 @@ public:
 		if(!_vec.empty())
 			clear();
 
-		_vec.resize(_size, NULL);
+		_vec.resize(_size, nullptr);
 	}
 
 	/*
@@ -79,7 +80,7 @@ public:
 	WTSObject* at(uint32_t idx)
 	{
 		if(idx <0 || idx >= _vec.size())
-			return NULL;
+			return nullptr;
 
 		WTSObject* pRet = _vec.at(idx);
 		return pRet;
@@ -87,7 +88,7 @@ public:
 
 	uint32_t idxOf(WTSObject* obj)
 	{
-		if (obj == NULL)
+		if (obj == nullptr)
 			return -1;
 
 		uint32_t idx = 0;
@@ -118,7 +119,7 @@ public:
 	WTSObject* operator [](uint32_t idx)
 	{
 		if(idx <0 || idx >= _vec.size())
-			return NULL;
+			return nullptr;
 
 		WTSObject* pRet = _vec.at(idx);
 		return pRet;
@@ -131,7 +132,7 @@ public:
 	WTSObject*	grab(uint32_t idx)
 	{
 		if(idx <0 || idx >= _vec.size())
-			return NULL;
+			return nullptr;
 
 		WTSObject* pRet = _vec.at(idx);
 		if (pRet)
@@ -159,7 +160,7 @@ public:
 	 */
 	void set(uint32_t idx, WTSObject* obj, bool bAutoRetain = true)
 	{
-		if(idx >= _vec.size() || obj == NULL)
+		if(idx >= _vec.size() || obj == nullptr)
 			return;
 
 		if(bAutoRetain)
@@ -174,7 +175,7 @@ public:
 
 	void append(WTSArray* ay)
 	{
-		if(ay == NULL)
+		if(ay == nullptr)
 			return;
 
 		_vec.insert(_vec.end(), ay->_vec.begin(), ay->_vec.end());
@@ -188,7 +189,7 @@ public:
 	void clear()
 	{
 		{
-			std::vector<WTSObject*>::iterator it = _vec.begin();
+			auto it = _vec.begin();
 			for (; it != _vec.end(); it++)
 			{
 				WTSObject* obj = (*it);
@@ -205,7 +206,7 @@ public:
 	 *	不同的是,如果引用计数为1时
 	 *	释放所有数据
 	 */
-	virtual void release()
+	void release() override
 	{
 		if (m_uRefs == 0)
 			return;
@@ -273,12 +274,12 @@ public:
 
 	void	sort(SortFunc func)
 	{
-		std::sort(_vec.begin(), _vec.end(), func);
+		std::sort(_vec.begin(), _vec.end(), std::move(func));
 	}
 
 protected:
 	WTSArray():_holding(false){}
-	virtual ~WTSArray(){}
+	~WTSArray() override = default;
 
 	std::vector<WTSObject*>	_vec;
 	std::atomic<bool>		_holding;
@@ -310,7 +311,7 @@ public:
 	 */
 	static WTSMap<T>*	create()
 	{
-		WTSMap<T>* pRet = new WTSMap<T>();
+		auto* pRet = new WTSMap<T>();
 		return pRet;
 	}
 
@@ -328,7 +329,7 @@ public:
 	{
 		Iterator it = _map.find(_key);
 		if(it == _map.end())
-			return NULL;
+			return nullptr;
 
 		WTSObject* pRet = it->second;
 		return pRet;
@@ -342,7 +343,7 @@ public:
 	{
 		Iterator it = _map.find(_key);
 		if(it == _map.end())
-			return NULL;
+			return nullptr;
 
 		WTSObject* pRet = it->second;
 		return pRet;
@@ -357,7 +358,7 @@ public:
 	{
 		Iterator it = _map.find(_key);
 		if(it == _map.end())
-			return NULL;
+			return nullptr;
 
 		WTSObject* pRet = it->second;
 		if (pRet)
@@ -375,7 +376,7 @@ public:
 		if(bAutoRetain && obj)
 			obj->retain();
 
-		WTSObject* pOldObj = NULL;
+		WTSObject* pOldObj = nullptr;
 		Iterator it = _map.find(_key);
 		if(it != _map.end())
 		{
@@ -492,7 +493,7 @@ public:
 	WTSObject* last() 
 	{
 		if(_map.empty())
-			return NULL;
+			return nullptr;
 		
 		return _map.rbegin()->second;
 	}
@@ -516,7 +517,7 @@ public:
 	 *	释放容器对象
 	 *	如果容器引用计数为1,则清空所有数据
 	 */
-	virtual void release()
+	void release() override
 	{
 		if (m_uRefs == 0)
 			return;
@@ -538,7 +539,7 @@ public:
 
 protected:
 	WTSMap(){}
-	~WTSMap(){}
+	~WTSMap() override = default;
 
 	std::map<T, WTSObject*>	_map;
 };
@@ -565,7 +566,7 @@ public:
 	 */
 	static WTSHashMap<T>*	create()
 	{
-		WTSHashMap<T>* pRet = new WTSHashMap<T>();
+		auto* pRet = new WTSHashMap<T>();
 		return pRet;
 	}
 
@@ -583,7 +584,7 @@ public:
 	{
 		auto it = _map.find(_key);
 		if(it == _map.end())
-			return NULL;
+			return nullptr;
 
 		WTSObject* pRet = it->second;
 		return pRet;
@@ -598,7 +599,7 @@ public:
 	{
 		auto it = _map.find(_key);
 		if(it == _map.end())
-			return NULL;
+			return nullptr;
 
 		WTSObject* pRet = it->second;
 		pRet->retain();
@@ -614,7 +615,7 @@ public:
 		if (bAutoRetain && obj)
 			obj->retain();
 
-		WTSObject* pOldObj = NULL;
+		WTSObject* pOldObj = nullptr;
 		auto it = _map.find(_key);
 		if (it != _map.end())
 		{
@@ -679,7 +680,7 @@ public:
 	 *	释放容器对象
 	 *	如果容器引用计数为1,则清空所有数据
 	 */
-	virtual void release()
+	void release() override
 	{
 		if (m_uRefs == 0)
 			return;
@@ -701,7 +702,7 @@ public:
 
 protected:
 	WTSHashMap(){}
-	virtual ~WTSHashMap(){}
+	~WTSHashMap() override = default;
 
 	//std::unordered_map<T, WTSObject*>	_map;
 	tsl::robin_map<T, WTSObject*>	_map;
@@ -717,7 +718,7 @@ public:
 
 	static WTSQueue* create()
 	{
-		WTSQueue* pRet = new WTSQueue();
+		auto* pRet = new WTSQueue();
 		return pRet;
 	}
 
@@ -737,7 +738,7 @@ public:
 	WTSObject* front(bool bRetain = true)
 	{
 		if(_queue.empty())
-			return NULL;
+			return nullptr;
 
 		WTSObject* obj = _queue.front();
 		if(bRetain)
@@ -749,7 +750,7 @@ public:
 	WTSObject* back(bool bRetain = true)
 	{
 		if(_queue.empty())
-			return NULL;
+			return nullptr;
 
 		WTSObject* obj = _queue.back();
 		if(bRetain)
@@ -762,7 +763,7 @@ public:
 
 	bool	empty() const{return _queue.empty();}
 
-	void release()
+	void release() override
 	{
 		if (m_uRefs == 0)
 			return;
@@ -784,7 +785,7 @@ public:
 
 	void clear()
 	{
-		Iterator it = begin();
+		auto it = begin();
 		for(; it != end(); it++)
 		{
 			(*it)->release();
@@ -825,7 +826,7 @@ public:
 
 protected:
 	WTSQueue(){}
-	virtual ~WTSQueue(){}
+	~WTSQueue() override = default;
 
 	std::deque<WTSObject*>	_queue;
 };

@@ -9,7 +9,7 @@
  */
 #pragma once
 #include <string>
-#include <stdint.h>
+#include <cstdint>
 
 #include "../Includes/WTSMarcos.h"
 
@@ -28,8 +28,8 @@ USING_NS_WTP;
 class HftStrategy
 {
 public:
-	HftStrategy(const char* id) :_id(id){}
-	virtual ~HftStrategy(){}
+	explicit HftStrategy(const char* id) :_id(id){}
+	virtual ~HftStrategy() = default;
 
 public:
 	/*
@@ -78,8 +78,8 @@ typedef void(*FuncEnumHftStrategyCallback)(const char* factName, const char* str
 class IHftStrategyFact
 {
 public:
-	IHftStrategyFact(){}
-	virtual ~IHftStrategyFact(){}
+	IHftStrategyFact() = default;
+	virtual ~IHftStrategyFact() = default;
 
 public:
 	/*

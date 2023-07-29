@@ -8,7 +8,7 @@
  * \brief 
  */
 #pragma once
-#include <stdint.h>
+#include <cstdint>
 
 #include "../Includes/WTSMarcos.h"
 #include "../Includes/WTSTypes.h"
@@ -55,8 +55,8 @@ public:
 class IRdmDtReader
 {
 public:
-	IRdmDtReader() :_sink(NULL) {}
-	virtual ~IRdmDtReader(){}
+	IRdmDtReader() :_sink(nullptr) {}
+	virtual ~IRdmDtReader() = default;
 
 public:
 	virtual void init(WTSVariant* cfg, IRdmDtReaderSink* sink) { _sink = sink; }

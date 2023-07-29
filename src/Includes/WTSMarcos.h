@@ -8,8 +8,8 @@
  * \brief WonderTrader基础宏定义文件
  */
 #pragma once
-#include <limits.h>
-#include <string.h>
+#include <climits>
+#include <cstring>
 
 #ifndef NOMINMAX
 #define NOMINMAX

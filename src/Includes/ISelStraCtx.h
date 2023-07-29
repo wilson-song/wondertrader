@@ -8,7 +8,7 @@
 * \brief
 */
 #pragma once
-#include <stdint.h>
+#include <cstdint>
 #include <functional>
 #include "../Includes/WTSMarcos.h"
 
@@ -26,8 +26,8 @@ typedef std::function<void(const char*, double)> FuncEnumSelPositionCallBack;
 class ISelStraCtx
 {
 public:
-	ISelStraCtx(const char* name) :_name(name){}
-	virtual ~ISelStraCtx(){}
+	explicit ISelStraCtx(const char* name) :_name(name){}
+	virtual ~ISelStraCtx() = default;
 
 	inline const char* name() const{ return _name.c_str(); }
 

@@ -12,7 +12,7 @@
 #include "WTSTypes.h"
 #include "WTSMarcos.h"
 
-#include <time.h>
+#include <ctime>
 #include <string>
 #include <map>
 #include<chrono>
@@ -35,11 +35,11 @@ public:
 		, m_offsetType(WOT_OPEN)
 		, m_bIsNet(false)
 		, m_bIsBuy(true)
-		, m_pContract(NULL)
+		, m_pContract(nullptr)
 	{
 	}
 
-	virtual ~WTSEntrust(){}
+	~WTSEntrust() override = default;
 
 public:
 	static inline WTSEntrust* create(const char* code, double vol, double price, const char* exchg = "", WTSBusinessType bType = BT_CASH)
@@ -64,7 +64,7 @@ public:
 			return pRet;
 		}
 
-		return NULL;
+		return nullptr;
 	}
 
 public:
@@ -115,8 +115,8 @@ public:
 	inline WTSContractInfo* getContractInfo() const { return m_pContract; }
 
 protected:
-	char			m_strExchg[MAX_EXCHANGE_LENGTH];
-	char			m_strCode[MAX_INSTRUMENT_LENGTH];
+	char			m_strExchg[MAX_EXCHANGE_LENGTH]{};
+	char			m_strCode[MAX_INSTRUMENT_LENGTH]{};
 	double			m_dVolume;
 	double			m_iPrice;
 
@@ -151,7 +151,7 @@ public:
 
 	}
 
-	virtual ~WTSEntrustAction(){}
+	~WTSEntrustAction() override= default;
 
 public:
 	static inline WTSEntrustAction* create(const char* code, const char* exchg = "", double vol = 0, double price = 0, WTSBusinessType bType = BT_CASH)
@@ -167,12 +167,12 @@ public:
 			return pRet;
 		}
 
-		return NULL;
+		return nullptr;
 	}
 
 	static inline WTSEntrustAction* createCancelAction(const char* eid, const char* oid)
 	{
-		WTSEntrustAction* pRet = new WTSEntrustAction;
+		auto* pRet = new WTSEntrustAction;
 		if(pRet)
 		{
 			wt_strcpy(pRet->m_strEnturstID, eid);
@@ -180,7 +180,7 @@ public:
 			return pRet;
 		}
 
-		return NULL;
+		return nullptr;
 	}
 
 public:
@@ -219,8 +219,8 @@ public:
 	inline WTSBusinessType	getBusinessType() const { return m_businessType; }
 
 protected:
-	char			m_strExchg[MAX_EXCHANGE_LENGTH];
-	char			m_strCode[MAX_INSTRUMENT_LENGTH];
+	char			m_strExchg[MAX_EXCHANGE_LENGTH]{};
+	char			m_strCode[MAX_INSTRUMENT_LENGTH]{};
 	double			m_dVolume;
 	double			m_iPrice;
 
@@ -249,14 +249,14 @@ public:
 
 	}
 
-	virtual ~WTSOrderInfo(){}
+	~WTSOrderInfo() override = default;
 
 public:
-	static inline WTSOrderInfo* create(WTSEntrust* entrust = NULL)
+	static inline WTSOrderInfo* create(WTSEntrust* entrust = nullptr)
 	{
 		WTSOrderInfo *pRet = WTSOrderInfo::allocate();
 
-		if(entrust != NULL)
+		if(entrust != nullptr)
 		{
 			wt_strcpy(pRet->m_strCode, entrust->getCode());
 			wt_strcpy(pRet->m_strExchg,entrust->getExchg());
@@ -369,13 +369,13 @@ public:
 
 private:
 	//这部分成员和WTSEntrust一致
-	char			m_strExchg[MAX_EXCHANGE_LENGTH];
-	char			m_strCode[MAX_INSTRUMENT_LENGTH];
-	double			m_dVolume;
-	double			m_iPrice;
+	char			m_strExchg[MAX_EXCHANGE_LENGTH]{};
+	char			m_strCode[MAX_INSTRUMENT_LENGTH]{};
+	double			m_dVolume{};
+	double			m_iPrice{};
 
-	bool			m_bIsNet;
-	bool			m_bIsBuy;
+	bool			m_bIsNet{};
+	bool			m_bIsBuy{};
 
 	WTSDirectionType	m_direction;
 	WTSPriceType		m_priceType;
@@ -386,7 +386,7 @@ private:
 	char				m_strUserTag[64] = { 0 };
 
 	WTSBusinessType		m_businessType;
-	WTSContractInfo*	m_pContract;
+	WTSContractInfo*	m_pContract{};
 
 	//这部分是Order专有的成员
 	uint32_t	m_uInsertDate;
@@ -411,9 +411,9 @@ public:
 		, m_uAmount(0)
 		, m_dPrice(0)
 		, m_businessType(BT_CASH)
-		, m_pContract(NULL)
+		, m_pContract(nullptr)
 	{}
-	virtual ~WTSTradeInfo(){}
+	~WTSTradeInfo() override = default;
 
 public:
 	static inline WTSTradeInfo* create(const char* code, const char* exchg = "", WTSBusinessType bType = BT_CASH)
@@ -477,19 +477,19 @@ public:
 	inline WTSContractInfo* getContractInfo() const { return m_pContract; }
 
 protected:
-	char	m_strExchg[MAX_EXCHANGE_LENGTH];	//市场
-	char	m_strCode[MAX_INSTRUMENT_LENGTH];	//代码
+	char	m_strExchg[MAX_EXCHANGE_LENGTH]{};	//市场
+	char	m_strCode[MAX_INSTRUMENT_LENGTH]{};	//代码
 	char	m_strTradeID[64] = { 0 };			//成交单号
 	char	m_strRefOrder[64] = { 0 };			//本地委托序列号
 	char	m_strUserTag[64] = { 0 };			//用户标签
 
-	uint32_t	m_uTradeDate;
-	uint64_t	m_uTradeTime;
-	double		m_dVolume;
+	uint32_t	m_uTradeDate{};
+	uint64_t	m_uTradeTime{};
+	double		m_dVolume{};
 	double		m_dPrice;
 
-	bool		m_bIsNet;
-	bool		m_bIsBuy;
+	bool		m_bIsNet{};
+	bool		m_bIsBuy{};
 
 	WTSDirectionType	m_direction;
 	WTSOffsetType		m_offsetType;
@@ -568,13 +568,13 @@ public:
 		, m_dDynProfit(0)
 		, m_dTotalPosCost(0)
 		, m_businessType(BT_CASH)
-		, m_pContract(NULL)
+		, m_pContract(nullptr)
 	{}
-	virtual ~WTSPositionItem(){}
+	~WTSPositionItem() override = default;
 
 protected:
-	char			m_strExchg[MAX_EXCHANGE_LENGTH];
-	char			m_strCode[MAX_INSTRUMENT_LENGTH];
+	char			m_strExchg[MAX_EXCHANGE_LENGTH]{};
+	char			m_strCode[MAX_INSTRUMENT_LENGTH]{};
 	char			m_strCurrency[8] = { 0 };
 
 	WTSDirectionType	m_direction;//多空方向
@@ -610,7 +610,7 @@ public:
 		, m_dAvailable(0)
 	{
 	}
-	virtual ~WTSAccountInfo(){}
+	~WTSAccountInfo() override = default;
 
 public:
 	static inline WTSAccountInfo* create(){return WTSAccountInfo::allocate();}
@@ -648,7 +648,7 @@ protected:
 
 	double		m_dBalance;
 	double		m_dPreBalance;
-	double		m_uMargin;
+	double		m_uMargin{};
 	double		m_dCommission;
 	double		m_dFrozenMargin;
 	double		m_dFrozenCommission;

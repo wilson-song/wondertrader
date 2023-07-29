@@ -22,7 +22,7 @@ class WTSCommodityInfo: public WTSObject
 public:
 	static WTSCommodityInfo* create(const char* pid, const char* name, const char* exchg, const char* session, const char* trdtpl, const char* currency = "CNY")
 	{
-		WTSCommodityInfo* ret = new WTSCommodityInfo;
+		auto* ret = new WTSCommodityInfo;
 		ret->m_strName = name;
 		ret->m_strExchg = exchg;
 		ret->m_strProduct = pid;
@@ -100,12 +100,12 @@ private:
 	std::string m_strTrdTpl;	//节假日模板
 	std::string m_strFullPid;	//全品种ID，如CFFEX.IF
 
-	uint32_t	m_uVolScale;	//合约放大倍数
-	double		m_dPriceTick;	//最小价格变动单位
+	uint32_t	m_uVolScale{};	//合约放大倍数
+	double		m_dPriceTick{};	//最小价格变动单位
 	//uint32_t	m_uPrecision;	//价格精度
 
-	double		m_dLotTick;		//数量精度
-	double		m_dMinLots;		//最小交易数量
+	double		m_dLotTick{};		//数量精度
+	double		m_dMinLots{};		//最小交易数量
 
 	ContractCategory	m_ccCategory;	//品种分类，期货、股票、期权等
 	CoverMode			m_coverMode;	//平仓类型
@@ -114,7 +114,7 @@ private:
 
 	CodeSet				m_setCodes;
 
-	WTSSessionInfo*		m_pSession;
+	WTSSessionInfo*		m_pSession{};
 };
 
 class WTSContractInfo :	public WTSObject
@@ -122,7 +122,7 @@ class WTSContractInfo :	public WTSObject
 public:
 	static WTSContractInfo* create(const char* code, const char* name, const char* exchg, const char* pid)
 	{
-		WTSContractInfo* ret = new WTSContractInfo;
+		auto* ret = new WTSContractInfo;
 		ret->m_strCode = code;
 		ret->m_strName = name;
 		ret->m_strProduct = pid;
@@ -166,8 +166,8 @@ public:
 	inline WTSCommodityInfo* getCommInfo() const { return m_commInfo; }
 
 protected:
-	WTSContractInfo():m_commInfo(NULL){}
-	virtual ~WTSContractInfo(){}
+	WTSContractInfo():m_commInfo(nullptr){}
+	~WTSContractInfo() override = default;
 
 private:
 	std::string	m_strCode;
@@ -178,10 +178,10 @@ private:
 	std::string m_strFullPid;
 	std::string m_strFullCode;
 
-	uint32_t	m_maxMktQty;
-	uint32_t	m_maxLmtQty;
-	uint32_t	m_minMktQty;
-	uint32_t	m_minLmtQty;
+	uint32_t	m_maxMktQty{};
+	uint32_t	m_maxLmtQty{};
+	uint32_t	m_minMktQty{};
+	uint32_t	m_minLmtQty{};
 
 	WTSCommodityInfo*	m_commInfo;
 };

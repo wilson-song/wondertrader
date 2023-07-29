@@ -11,32 +11,30 @@ NS_WTP_BEGIN
 #define faster_hashmap tsl::robin_map
 #define faster_hashset tsl::robin_set
 
-typedef struct _Longkey //char[32]
+typedef struct Longkey //char[32]
 {
 	uint64_t	_buf[4] = { 0 };
 
-	_Longkey()
-	{
-	}
+	Longkey() = default;
 
-	_Longkey(const char* s, std::size_t len = 0)
+	Longkey(const char* s, std::size_t len = 0)
 	{
 		if (len == 0)
 			len = strlen(s);
 		memcpy(_buf , s, len);
 	}
 
-	_Longkey(const std::string& s)
+	Longkey(const std::string& s)
 	{
 		memcpy(_buf, s.c_str(), s.size());
 	}
 
-	_Longkey(const _Longkey& rhs)
+	Longkey(const Longkey& rhs)
 	{
 		memcpy(_buf, rhs._buf, 32);
 	}
 
-	bool operator ==(const _Longkey& b) const
+	bool operator ==(const Longkey& b) const
 	{
 		return (_buf[0] == b._buf[0] && _buf[1] == b._buf[1] && _buf[2] == b._buf[2] && _buf[3] == b._buf[3]);
 	}
@@ -61,32 +59,30 @@ typedef struct _Longkey //char[32]
 
 typedef faster_hashset<LongKey> CodeSet;
 
-typedef struct _ShortKey //char[32]
+typedef struct ShortKey //char[32]
 {
 	uint64_t	_buf[2] = { 0 };
 
-	_ShortKey()
-	{
-	}
+	ShortKey() = default;
 
-	_ShortKey(const char* s, std::size_t len = 0)
+	ShortKey(const char* s, std::size_t len = 0)
 	{
 		if(len == 0)
 			len = strlen(s);
 		memcpy(_buf, s, len);
 	}
 
-	_ShortKey(const std::string& s)
+	ShortKey(const std::string& s)
 	{
 		memcpy(_buf, s.c_str(), s.size());
 	}
 
-	bool operator ==(const _ShortKey& b) const
+	bool operator ==(const ShortKey& b) const
 	{
 		return (_buf[0] == b._buf[0] && _buf[1] == b._buf[1]);
 	}
 
-	bool operator <(const _ShortKey& b) const
+	bool operator <(const ShortKey& b) const
 	{
 		return memcmp((void*)_buf, (void*)b._buf, 16);
 	}

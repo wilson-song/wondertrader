@@ -8,10 +8,10 @@
  * \brief Wt行情数据定义文件,包括tick、bar、orderqueue、orderdetail、transaction等数据
  */
 #pragma once
-#include <stdlib.h>
+#include <cstdlib>
 #include <vector>
 #include <deque>
-#include <string.h>
+#include <cstring>
 #include <chrono>
 
 #include "WTSObject.hpp"
@@ -46,7 +46,7 @@ public:
 	 */
 	static WTSValueArray* create()
 	{
-		WTSValueArray* pRet = new WTSValueArray;
+		auto* pRet = new WTSValueArray;
 		pRet->m_vecData.clear();
 		return pRet;
 	}
@@ -202,7 +202,7 @@ public:
 class WTSKlineSlice : public WTSObject
 {
 private:
-	char			_code[MAX_INSTRUMENT_LENGTH];
+	char			_code[MAX_INSTRUMENT_LENGTH]{};
 	WTSKlinePeriod	_period;
 	uint32_t		_times;
 	typedef std::pair<WTSBarStruct*, uint32_t> BarBlock;
@@ -231,14 +231,14 @@ protected:
 
 
 public:
-	static WTSKlineSlice* create(const char* code, WTSKlinePeriod period, uint32_t times, WTSBarStruct* bars = NULL, int32_t count = 0)
+	static WTSKlineSlice* create(const char* code, WTSKlinePeriod period, uint32_t times, WTSBarStruct* bars = nullptr, int32_t count = 0)
 	{
-		WTSKlineSlice *pRet = new WTSKlineSlice;
+		auto *pRet = new WTSKlineSlice;
 		wt_strcpy(pRet->_code, code);
 		pRet->_period = period;
 		pRet->_times = times;
 		if(bars)
-			pRet->_blocks.emplace_back(BarBlock(bars, count));
+			pRet->_blocks.emplace_back(bars, count);
 		pRet->_count = count;
 
 		return pRet;
@@ -246,11 +246,11 @@ public:
 
 	inline bool appendBlock(WTSBarStruct* bars, uint32_t count)
 	{
-		if (bars == NULL || count == 0)
+		if (bars == nullptr || count == 0)
 			return false;
 
 		_count += count;
-		_blocks.emplace_back(BarBlock(bars, count));
+		_blocks.emplace_back(bars, count);
 		return true;
 	}
 
@@ -262,7 +262,7 @@ public:
 	inline WTSBarStruct*	get_block_addr(std::size_t blkIdx)
 	{
 		if (blkIdx >= _blocks.size())
-			return NULL;
+			return nullptr;
 
 		return _blocks[blkIdx].first;
 	}
@@ -278,7 +278,7 @@ public:
 	inline WTSBarStruct*	at(int32_t idx)
 	{
 		if (_count == 0)
-			return NULL;
+			return nullptr;
 
 		idx = translateIdx(idx);
 		do
@@ -292,13 +292,13 @@ public:
 			}
 		} while (false);
 
-		return NULL;
+		return nullptr;
 	}
 
 	inline const WTSBarStruct*	at(int32_t idx) const
 	{
 		if (_count == 0)
-			return NULL;
+			return nullptr;
 
 		idx = translateIdx(idx);
 		do
@@ -311,7 +311,7 @@ public:
 					return item.first + idx;
 			}
 		} while (false);
-		return NULL;
+		return nullptr;
 	}
 
 
@@ -382,7 +382,7 @@ public:
 	WTSValueArray*	extractData(WTSKlineFieldType type, int32_t head = 0, int32_t tail = -1) const
 	{
 		if (_count == 0)
-			return NULL;
+			return nullptr;
 
 		head = translateIdx(head);
 		tail = translateIdx(tail);
@@ -390,7 +390,7 @@ public:
 		int32_t begin = max(0, min(head, tail));
 		int32_t end = min(max(head, tail), size() - 1);
 
-		WTSValueArray *vArray = NULL;
+		WTSValueArray *vArray = nullptr;
 
 		vArray = WTSValueArray::create();
 
@@ -445,7 +445,7 @@ public:
 	typedef std::vector<WTSBarStruct> WTSBarList;
 
 protected:
-	char			m_strCode[32];
+	char			m_strCode[32]{};
 	WTSKlinePeriod	m_kpPeriod;
 	uint32_t		m_uTimes;
 	bool			m_bUnixTime;	//是否是时间戳格式,目前只在秒线上有效
@@ -480,7 +480,7 @@ public:
 	 */
 	static WTSKlineData* create(const char* code, uint32_t size)
 	{
-		WTSKlineData *pRet = new WTSKlineData;
+		auto *pRet = new WTSKlineData;
 		pRet->m_vecBarData.resize(size);
 		wt_strcpy(pRet->m_strCode, code);
 
@@ -722,16 +722,15 @@ public:
 		uint32_t end = max(head, tail);
 
 		if(begin >= m_vecBarData.size() || end >= (int32_t)m_vecBarData.size())
-			return NULL;
+			return nullptr;
 
-		WTSValueArray *vArray = NULL;
+		WTSValueArray *vArray = nullptr;
 
 		vArray = WTSValueArray::create();
 
-		for(uint32_t i = 0; i < m_vecBarData.size(); i++)
+		for(const auto & day : m_vecBarData)
 		{
-			const WTSBarStruct& day = m_vecBarData.at(i);
-			switch(type)
+				switch(type)
 			{
 			case KFT_OPEN:
 				vArray->append(day.open);
@@ -776,7 +775,7 @@ public:
 		idx = translateIdx(idx);
 
 		if(idx < 0 || idx >= (int32_t)m_vecBarData.size())
-			return NULL;
+			return nullptr;
 		return &m_vecBarData[idx];
 	}
 
@@ -784,7 +783,7 @@ public:
 	 *	释放K线数据
 	 *	并delete所有的日线数据,清空vector
 	 */
-	virtual void release()
+	void release() override
 	{
 		if(isSingleRefs())
 		{
@@ -828,7 +827,7 @@ public:
 class WTSTickData : public WTSPoolObject<WTSTickData>
 {
 public:
-	WTSTickData() :m_pContract(NULL) {}
+	WTSTickData() :m_pContract(nullptr) {}
 
 	/*
 	 *	创建一个tick数据对象
@@ -994,14 +993,14 @@ class WTSOrdQueData : public WTSObject
 public:
 	static inline WTSOrdQueData* create(const char* code)
 	{
-		WTSOrdQueData* pRet = new WTSOrdQueData;
+		auto* pRet = new WTSOrdQueData;
 		wt_strcpy(pRet->m_oqStruct.code, code);
 		return pRet;
 	}
 
 	static inline WTSOrdQueData* create(WTSOrdQueStruct& ordQueData)
 	{
-		WTSOrdQueData* pRet = new WTSOrdQueData;
+		auto* pRet = new WTSOrdQueData;
 		memcpy(&pRet->m_oqStruct, &ordQueData, sizeof(WTSOrdQueStruct));
 
 		return pRet;
@@ -1022,7 +1021,7 @@ public:
 
 private:
 	WTSOrdQueStruct		m_oqStruct;
-	WTSContractInfo*	m_pContract;
+	WTSContractInfo*	m_pContract{};
 };
 
 class WTSOrdDtlData : public WTSObject
@@ -1030,14 +1029,14 @@ class WTSOrdDtlData : public WTSObject
 public:
 	static inline WTSOrdDtlData* create(const char* code)
 	{
-		WTSOrdDtlData* pRet = new WTSOrdDtlData;
+		auto* pRet = new WTSOrdDtlData;
 		wt_strcpy(pRet->m_odStruct.code, code);
 		return pRet;
 	}
 
 	static inline WTSOrdDtlData* create(WTSOrdDtlStruct& odData)
 	{
-		WTSOrdDtlData* pRet = new WTSOrdDtlData;
+		auto* pRet = new WTSOrdDtlData;
 		memcpy(&pRet->m_odStruct, &odData, sizeof(WTSOrdDtlStruct));
 
 		return pRet;
@@ -1059,7 +1058,7 @@ public:
 
 private:
 	WTSOrdDtlStruct		m_odStruct;
-	WTSContractInfo*	m_pContract;
+	WTSContractInfo*	m_pContract{};
 };
 
 class WTSTransData : public WTSObject
@@ -1067,14 +1066,14 @@ class WTSTransData : public WTSObject
 public:
 	static inline WTSTransData* create(const char* code)
 	{
-		WTSTransData* pRet = new WTSTransData;
+		auto* pRet = new WTSTransData;
 		wt_strcpy(pRet->m_tsStruct.code, code);
 		return pRet;
 	}
 
 	static inline WTSTransData* create(WTSTransStruct& transData)
 	{
-		WTSTransData* pRet = new WTSTransData;
+		auto* pRet = new WTSTransData;
 		memcpy(&pRet->m_tsStruct, &transData, sizeof(WTSTransStruct));
 
 		return pRet;
@@ -1095,7 +1094,7 @@ public:
 
 private:
 	WTSTransStruct		m_tsStruct;
-	WTSContractInfo*	m_pContract;
+	WTSContractInfo*	m_pContract{};
 };
 
 /*
@@ -1105,7 +1104,7 @@ private:
 class WTSHisTickData : public WTSObject
 {
 protected:
-	char						m_strCode[32];
+	char						m_strCode[32]{};
 	std::vector<WTSTickStruct>	m_ayTicks;
 	bool						m_bValidOnly;
 	double						m_dFactor;
@@ -1122,7 +1121,7 @@ public:
 	 */
 	static inline WTSHisTickData* create(const char* stdCode, unsigned int nSize = 0, bool bValidOnly = false, double factor = 1.0)
 	{
-		WTSHisTickData *pRet = new WTSHisTickData;
+		auto *pRet = new WTSHisTickData;
 		wt_strcpy(pRet->m_strCode, stdCode);
 		pRet->m_ayTicks.resize(nSize);
 		pRet->m_bValidOnly = bValidOnly;
@@ -1139,7 +1138,7 @@ public:
 	 */
 	static inline WTSHisTickData* create(const char* stdCode, bool bValidOnly = false, double factor = 1.0)
 	{
-		WTSHisTickData *pRet = new WTSHisTickData;
+		auto *pRet = new WTSHisTickData;
 		wt_strcpy(pRet->m_strCode, stdCode);
 		pRet->m_bValidOnly = bValidOnly;
 		pRet->m_dFactor = factor;
@@ -1161,7 +1160,7 @@ public:
 	inline WTSTickStruct*	at(uint32_t idx)
 	{
 		if (m_ayTicks.empty() || idx >= m_ayTicks.size())
-			return NULL;
+			return nullptr;
 
 		return &m_ayTicks[idx];
 	}
@@ -1193,10 +1192,10 @@ public:
 class WTSTickSlice : public WTSObject
 {
 private:
-	char			_code[MAX_INSTRUMENT_LENGTH];
+	char			_code[MAX_INSTRUMENT_LENGTH]{};
 	typedef std::pair<WTSTickStruct*, uint32_t> TickBlock;
 	std::vector<TickBlock> _blocks;
-	uint32_t		_count;
+	uint32_t		_count{};
 
 protected:
 	WTSTickSlice() { _blocks.clear(); }
@@ -1211,16 +1210,16 @@ protected:
 	}
 
 public:
-	static inline WTSTickSlice* create(const char* code, WTSTickStruct* ticks = NULL, uint32_t count = 0)
+	static inline WTSTickSlice* create(const char* code, WTSTickStruct* ticks = nullptr, uint32_t count = 0)
 	{
 		//if (ticks == NULL || count == 0)
 		//	return NULL;
 
-		WTSTickSlice* slice = new WTSTickSlice();
+		auto* slice = new WTSTickSlice();
 		wt_strcpy(slice->_code, code);
-		if(ticks != NULL)
+		if(ticks != nullptr)
 		{
-			slice->_blocks.emplace_back(TickBlock(ticks, count));
+			slice->_blocks.emplace_back(ticks, count);
 			slice->_count = count;
 		}
 
@@ -1229,17 +1228,17 @@ public:
 
 	inline bool appendBlock(WTSTickStruct* ticks, uint32_t count)
 	{
-		if (ticks == NULL || count == 0)
+		if (ticks == nullptr || count == 0)
 			return false;
 
 		_count += count;
-		_blocks.emplace_back(TickBlock(ticks, count));
+		_blocks.emplace_back(ticks, count);
 		return true;
 	}
 
 	inline bool insertBlock(std::size_t idx, WTSTickStruct* ticks, uint32_t count)
 	{
-		if (ticks == NULL || count == 0)
+		if (ticks == nullptr || count == 0)
 			return false;
 
 		_count += count;
@@ -1255,7 +1254,7 @@ public:
 	inline WTSTickStruct*	get_block_addr(std::size_t blkIdx)
 	{
 		if (blkIdx >= _blocks.size())
-			return NULL;
+			return nullptr;
 
 		return _blocks[blkIdx].first;
 	}
@@ -1275,7 +1274,7 @@ public:
 	inline const WTSTickStruct* at(int32_t idx)
 	{
 		if (_count == 0)
-			return NULL;
+			return nullptr;
 
 		idx = translateIdx(idx);
 		do 
@@ -1288,7 +1287,7 @@ public:
 					return item.first + idx;
 			}
 		} while (false);
-		return NULL;
+		return nullptr;
 	}
 };
 
@@ -1301,12 +1300,12 @@ public:
 class WTSOrdDtlSlice : public WTSObject
 {
 private:
-	char				m_strCode[MAX_INSTRUMENT_LENGTH];
+	char				m_strCode[MAX_INSTRUMENT_LENGTH]{};
 	WTSOrdDtlStruct*	m_ptrBegin;
 	uint32_t			m_uCount;
 
 protected:
-	WTSOrdDtlSlice() :m_ptrBegin(NULL), m_uCount(0) {}
+	WTSOrdDtlSlice() :m_ptrBegin(nullptr), m_uCount(0) {}
 	inline int32_t		translateIdx(int32_t idx) const
 	{
 		if (idx < 0)
@@ -1320,10 +1319,10 @@ protected:
 public:
 	static inline WTSOrdDtlSlice* create(const char* code, WTSOrdDtlStruct* firstItem, uint32_t count)
 	{
-		if (count == 0 || firstItem == NULL)
-			return NULL;
+		if (count == 0 || firstItem == nullptr)
+			return nullptr;
 
-		WTSOrdDtlSlice* slice = new WTSOrdDtlSlice();
+		auto* slice = new WTSOrdDtlSlice();
 		wt_strcpy(slice->m_strCode, code);
 		slice->m_ptrBegin = firstItem;
 		slice->m_uCount = count;
@@ -1333,12 +1332,12 @@ public:
 
 	inline uint32_t size() const { return m_uCount; }
 
-	inline bool empty() const { return (m_uCount == 0) || (m_ptrBegin == NULL); }
+	inline bool empty() const { return (m_uCount == 0) || (m_ptrBegin == nullptr); }
 
 	inline const WTSOrdDtlStruct* at(int32_t idx)
 	{
-		if (m_ptrBegin == NULL)
-			return NULL;
+		if (m_ptrBegin == nullptr)
+			return nullptr;
 		idx = translateIdx(idx);
 		return m_ptrBegin + idx;
 	}
@@ -1353,12 +1352,12 @@ public:
 class WTSOrdQueSlice : public WTSObject
 {
 private:
-	char				m_strCode[MAX_INSTRUMENT_LENGTH];
+	char				m_strCode[MAX_INSTRUMENT_LENGTH]{};
 	WTSOrdQueStruct*	m_ptrBegin;
 	uint32_t			m_uCount;
 
 protected:
-	WTSOrdQueSlice() :m_ptrBegin(NULL), m_uCount(0) {}
+	WTSOrdQueSlice() :m_ptrBegin(nullptr), m_uCount(0) {}
 	inline int32_t		translateIdx(int32_t idx) const
 	{
 		if (idx < 0)
@@ -1372,10 +1371,10 @@ protected:
 public:
 	static inline WTSOrdQueSlice* create(const char* code, WTSOrdQueStruct* firstItem, uint32_t count)
 	{
-		if (count == 0 || firstItem == NULL)
-			return NULL;
+		if (count == 0 || firstItem == nullptr)
+			return nullptr;
 
-		WTSOrdQueSlice* slice = new WTSOrdQueSlice();
+		auto* slice = new WTSOrdQueSlice();
 		wt_strcpy(slice->m_strCode, code);
 		slice->m_ptrBegin = firstItem;
 		slice->m_uCount = count;
@@ -1385,12 +1384,12 @@ public:
 
 	inline uint32_t size() const { return m_uCount; }
 
-	inline bool empty() const { return (m_uCount == 0) || (m_ptrBegin == NULL); }
+	inline bool empty() const { return (m_uCount == 0) || (m_ptrBegin == nullptr); }
 
 	inline const WTSOrdQueStruct* at(int32_t idx)
 	{
-		if (m_ptrBegin == NULL)
-			return NULL;
+		if (m_ptrBegin == nullptr)
+			return nullptr;
 		idx = translateIdx(idx);
 		return m_ptrBegin + idx;
 	}
@@ -1405,12 +1404,12 @@ public:
 class WTSTransSlice : public WTSObject
 {
 private:
-	char			m_strCode[MAX_INSTRUMENT_LENGTH];
+	char			m_strCode[MAX_INSTRUMENT_LENGTH]{};
 	WTSTransStruct*	m_ptrBegin;
 	uint32_t		m_uCount;
 
 protected:
-	WTSTransSlice() :m_ptrBegin(NULL), m_uCount(0) {}
+	WTSTransSlice() :m_ptrBegin(nullptr), m_uCount(0) {}
 	inline int32_t		translateIdx(int32_t idx) const
 	{
 		if (idx < 0)
@@ -1424,10 +1423,10 @@ protected:
 public:
 	static inline WTSTransSlice* create(const char* code, WTSTransStruct* firstItem, uint32_t count)
 	{
-		if (count == 0 || firstItem == NULL)
-			return NULL;
+		if (count == 0 || firstItem == nullptr)
+			return nullptr;
 
-		WTSTransSlice* slice = new WTSTransSlice();
+		auto* slice = new WTSTransSlice();
 		wt_strcpy(slice->m_strCode, code);
 		slice->m_ptrBegin = firstItem;
 		slice->m_uCount = count;
@@ -1437,12 +1436,12 @@ public:
 
 	inline uint32_t size() const { return m_uCount; }
 
-	inline bool empty() const { return (m_uCount == 0) || (m_ptrBegin == NULL); }
+	inline bool empty() const { return (m_uCount == 0) || (m_ptrBegin == nullptr); }
 
 	inline const WTSTransStruct* at(int32_t idx)
 	{
-		if (m_ptrBegin == NULL)
-			return NULL;
+		if (m_ptrBegin == nullptr)
+			return nullptr;
 		idx = translateIdx(idx);
 		return m_ptrBegin + idx;
 	}

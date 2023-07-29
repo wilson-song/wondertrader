@@ -33,11 +33,11 @@ protected:
 	std::string		m_strName;
 
 protected:
-	WTSSessionInfo(int32_t offset)
+	explicit WTSSessionInfo(int32_t offset)
 	{
 		m_uOffsetMins = offset;
 	}
-	virtual ~WTSSessionInfo(){}
+	~WTSSessionInfo() override = default;
 
 public:
 	const char* id() const{ return m_strID.c_str(); }
@@ -45,7 +45,7 @@ public:
 
 	static WTSSessionInfo* create(const char* sid, const char* name, int32_t offset = 0)
 	{
-		WTSSessionInfo* pRet = new WTSSessionInfo(offset);
+		auto* pRet = new WTSSessionInfo(offset);
 		pRet->m_strID = sid;
 		pRet->m_strName = name;
 		return pRet;
@@ -58,7 +58,7 @@ public:
 	{
 		sTime = offsetTime(sTime, true);
 		eTime = offsetTime(eTime, false);
-		m_tradingTimes.emplace_back(TradingSection(sTime, eTime));
+		m_tradingTimes.emplace_back(sTime, eTime);
 	}
 
 	void setAuctionTime(uint32_t sTime, uint32_t eTime)
@@ -81,7 +81,7 @@ public:
 	 *	主要用于各种日期比较
 	 *	如夜盘的偏移日期都是下一日
 	 */
-	uint32_t getOffsetDate(uint32_t uDate = 0, uint32_t uTime = 0)
+	uint32_t getOffsetDate(uint32_t uDate = 0, uint32_t uTime = 0) const
 	{
 		if(uDate == 0)
 		{
@@ -162,7 +162,7 @@ public:
 			return INVALID_UINT32;
 
 		uint32_t offset = uMinutes;
-		TradingTimes::iterator it = m_tradingTimes.begin();
+		auto it = m_tradingTimes.begin();
 		for(; it != m_tradingTimes.end(); it++)
 		{
 			TradingSection &section = *it;
@@ -229,7 +229,7 @@ public:
 
 		uint32_t offset = 0;
 		bool bFound = false;
-		TradingTimes::iterator it = m_tradingTimes.begin();
+		auto it = m_tradingTimes.begin();
 		for(; it != m_tradingTimes.end(); it++)
 		{
 			TradingSection &section = *it;
@@ -266,7 +266,7 @@ public:
 			return INVALID_UINT32;
 
 		uint32_t offset = seconds;
-		TradingTimes::iterator it = m_tradingTimes.begin();
+		auto it = m_tradingTimes.begin();
 		for(; it != m_tradingTimes.end(); it++)
 		{
 			TradingSection &section = *it;
@@ -341,7 +341,7 @@ public:
 	inline uint32_t getTradingSeconds()
 	{
 		uint32_t count = 0;
-		TradingTimes::iterator it = m_tradingTimes.begin();
+		auto it = m_tradingTimes.begin();
 		for(; it != m_tradingTimes.end(); it++)
 		{
 			TradingSection &section = *it;
@@ -362,7 +362,7 @@ public:
 	inline uint32_t getTradingMins()
 	{
 		uint32_t count = 0;
-		TradingTimes::iterator it = m_tradingTimes.begin();
+		auto it = m_tradingTimes.begin();
 		for (; it != m_tradingTimes.end(); it++)
 		{
 			TradingSection &section = *it;
@@ -400,7 +400,7 @@ public:
 	inline bool	isLastOfSection(uint32_t uTime)
 	{
 		uint32_t offTime = offsetTime(uTime, false);
-		TradingTimes::iterator it = m_tradingTimes.begin();
+		auto it = m_tradingTimes.begin();
 		for(; it != m_tradingTimes.end(); it++)
 		{
 			TradingSection &section = *it;
@@ -414,7 +414,7 @@ public:
 	inline bool	isFirstOfSection(uint32_t uTime)
 	{
 		uint32_t offTime = offsetTime(uTime, true);
-		TradingTimes::iterator it = m_tradingTimes.begin();
+		auto it = m_tradingTimes.begin();
 		for(; it != m_tradingTimes.end(); it++)
 		{
 			TradingSection &section = *it;
@@ -425,7 +425,7 @@ public:
 		return false;
 	}
 
-	inline bool	isInAuctionTime(uint32_t uTime)
+	inline bool	isInAuctionTime(uint32_t uTime) const
 	{
 		uint32_t offTime = offsetTime(uTime, true);
 

@@ -16,13 +16,13 @@ NS_WTP_BEGIN
 class WTSError : public WTSObject
 {
 protected:
-	WTSError():m_errCode(WEC_NONE),m_strMsg(""){}
-	virtual ~WTSError(){}
+	WTSError():m_errCode(WEC_NONE) {}
+	~WTSError() override = default;
 
 public:
 	static WTSError* create(WTSErroCode ec, const char* errmsg)
 	{
-		WTSError* pRet = new WTSError;
+		auto* pRet = new WTSError;
 		pRet->m_errCode = ec;
 		pRet->m_strMsg = errmsg;
 

@@ -8,7 +8,7 @@
  * \brief 
  */
 #pragma once
-#include <stdint.h>
+#include <cstdint>
 
 #include "../Includes/WTSMarcos.h"
 #include "../Includes/WTSTypes.h"
@@ -148,8 +148,8 @@ public:
 class IDataReader
 {
 public:
-	IDataReader() :_sink(NULL) {}
-	virtual ~IDataReader(){}
+	IDataReader() :_sink(nullptr) {}
+	virtual ~IDataReader() = default;
 
 public:
 	/*
@@ -158,7 +158,7 @@ public:
 	 *	@param cfg	模块配置项
 	 *	@param sink	模块回调接口
 	 */
-	virtual void init(WTSVariant* cfg, IDataReaderSink* sink, IHisDataLoader* loader = NULL) { _sink = sink; _loader = loader; }
+	virtual void init(WTSVariant* cfg, IDataReaderSink* sink, IHisDataLoader* loader = nullptr) { _sink = sink; _loader = loader; }
 
 	/*
 	 *	@brief	分钟线闭合事件处理接口
@@ -187,7 +187,7 @@ public:
 	 *	@param count	要读取的tick条数
 	 *	@param etime	结束时间,精确到毫秒,格式如yyyyMMddhhmmssmmm,如果要读取到最后一条,etime为0,默认为0
 	 */
-	virtual WTSOrdDtlSlice*	readOrdDtlSlice(const char* stdCode, uint32_t count, uint64_t etime = 0) { return NULL; }
+	virtual WTSOrdDtlSlice*	readOrdDtlSlice(const char* stdCode, uint32_t count, uint64_t etime = 0) { return nullptr; }
 	/*
 	 *	@brief	读取委托队列数据切片
 	 *	@details 切片不会复制数据,只把缓存中的数据指针传递出来,所以叫做切片
@@ -196,7 +196,7 @@ public:
 	 *	@param count	要读取的tick条数
 	 *	@param etime	结束时间,精确到毫秒,格式如yyyyMMddhhmmssmmm,如果要读取到最后一条,etime为0,默认为0
 	 */
-	virtual WTSOrdQueSlice*	readOrdQueSlice(const char* stdCode, uint32_t count, uint64_t etime = 0) { return NULL; }
+	virtual WTSOrdQueSlice*	readOrdQueSlice(const char* stdCode, uint32_t count, uint64_t etime = 0) { return nullptr; }
 
 	/*
 	 *	@brief	读取逐笔成交数据切片
@@ -206,7 +206,7 @@ public:
 	 *	@param count	要读取的tick条数
 	 *	@param etime	结束时间,精确到毫秒,格式如yyyyMMddhhmmssmmm,如果要读取到最后一条,etime为0,默认为0
 	 */
-	virtual WTSTransSlice*	readTransSlice(const char* stdCode, uint32_t count, uint64_t etime = 0) { return NULL; }
+	virtual WTSTransSlice*	readTransSlice(const char* stdCode, uint32_t count, uint64_t etime = 0) { return nullptr; }
 
 	/*
 	 *	@brief 读取K线序列,并返回一个存储容器类
@@ -235,7 +235,7 @@ public:
 
 protected:
 	IDataReaderSink*	_sink;
-	IHisDataLoader*		_loader;
+	IHisDataLoader*		_loader{};
 };
 
 //创建数据存储对象

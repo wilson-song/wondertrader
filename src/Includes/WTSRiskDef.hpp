@@ -11,44 +11,44 @@
 #include "WTSObject.hpp"
 
 NS_WTP_BEGIN
-typedef struct _TradeStatInfo
+typedef struct TradeStatInfo
 {
-	char		_code[MAX_INSTRUMENT_LENGTH];
+	char		_code[MAX_INSTRUMENT_LENGTH]{};
 	//开平统计
-	double	l_openvol;	//当日开多仓量
-	double	l_closevol;	//当日平多仓量
-	double	l_closetvol;//当日平今多仓量
-	double	s_openvol;	//当日开空仓量
-	double	s_closevol;	//当日平空仓量
-	double	s_closetvol;//当日平今空仓量
+	double	l_openvol{};	//当日开多仓量
+	double	l_closevol{};	//当日平多仓量
+	double	l_closetvol{};//当日平今多仓量
+	double	s_openvol{};	//当日开空仓量
+	double	s_closevol{};	//当日平空仓量
+	double	s_closetvol{};//当日平今空仓量
 
 	//挂单统计
-	uint32_t	b_orders;	//委买笔数
-	double		b_ordqty;	//委买数量
-	uint32_t	s_orders;	//委卖笔数
-	double		s_ordqty;	//委卖数量
+	uint32_t	b_orders{};	//委买笔数
+	double		b_ordqty{};	//委买数量
+	uint32_t	s_orders{};	//委卖笔数
+	double		s_ordqty{};	//委卖数量
 
 	//撤单统计
-	uint32_t	b_cancels;	//撤买笔数
-	double		b_canclqty;	//撤买数量
-	uint32_t	s_cancels;	//撤卖笔数
-	double		s_canclqty;	//撤卖数量
+	uint32_t	b_cancels{};	//撤买笔数
+	double		b_canclqty{};	//撤买数量
+	uint32_t	s_cancels{};	//撤卖笔数
+	double		s_canclqty{};	//撤卖数量
 
 	//自动撤单统计
-	uint32_t	b_auto_cancels;		//撤买笔数
-	double		b_auto_canclqty;	//撤买数量
-	uint32_t	s_auto_cancels;		//撤卖笔数
-	double		s_auto_canclqty;	//撤卖数量
+	uint32_t	b_auto_cancels{};		//撤买笔数
+	double		b_auto_canclqty{};	//撤买数量
+	uint32_t	s_auto_cancels{};		//撤卖笔数
+	double		s_auto_canclqty{};	//撤卖数量
 
 	//错单统计
-	uint32_t	b_wrongs;	//错单笔数
-	double		b_wrongqty;	//错单数量
-	uint32_t	s_wrongs;	//错单笔数
-	double		s_wrongqty;	//错单数量
+	uint32_t	b_wrongs{};	//错单笔数
+	double		b_wrongqty{};	//错单数量
+	uint32_t	s_wrongs{};	//错单笔数
+	double		s_wrongqty{};	//错单数量
 
-	_TradeStatInfo()
+	TradeStatInfo()
 	{
-		memset(this, 0, sizeof(_TradeStatInfo));
+		memset(this, 0, sizeof(TradeStatInfo));
 	}
 } TradeStatInfo;
 
@@ -60,7 +60,7 @@ protected:
 public:
 	static WTSTradeStateInfo* create(const char* code)
 	{
-		WTSTradeStateInfo* pRet = new WTSTradeStateInfo();
+		auto* pRet = new WTSTradeStateInfo();
 		wt_strcpy(pRet->_trd_stat_info._code, code);
 
 		return pRet;
@@ -96,40 +96,40 @@ private:
 };
 
 //组合资金数据
-typedef struct _WTSFundStruct
+typedef struct WTSFundStruct
 {
-	double		_predynbal;		//期初动态权益
-	double		_prebalance;	//期初静态权益
-	double		_balance;		//静态权益
-	double		_profit;		//平仓盈亏
-	double		_dynprofit;		//浮动盈亏
-	double		_fees;			//佣金
-	uint32_t	_last_date;		//上次结算交易日
+	double		_predynbal{};		//期初动态权益
+	double		_prebalance{};	//期初静态权益
+	double		_balance{};		//静态权益
+	double		_profit{};		//平仓盈亏
+	double		_dynprofit{};		//浮动盈亏
+	double		_fees{};			//佣金
+	uint32_t	_last_date{};		//上次结算交易日
 
 	double		_max_dyn_bal;	//日内最大净值
-	uint32_t	_max_time;		//日内高点产生时间
+	uint32_t	_max_time{};		//日内高点产生时间
 	double		_min_dyn_bal;	//日内最小净值
-	uint32_t	_min_time;		//日内低点产生时间
+	uint32_t	_min_time{};		//日内低点产生时间
 
-	int64_t		_update_time;	//数据更新时间
+	int64_t		_update_time{};	//数据更新时间
 
-	typedef struct _DynBalPair
+	typedef struct DynBalPair
 	{
-		uint32_t	_date;
-		double		_dyn_balance;
+		uint32_t	_date{};
+		double		_dyn_balance{};
 
-		_DynBalPair()
+		DynBalPair()
 		{
-			memset(this, 0, sizeof(_DynBalPair));
+			memset(this, 0, sizeof(DynBalPair));
 		}
 	} DynBalPair;
 
 	DynBalPair	_max_md_dyn_bal;	//最大动态净值
 	DynBalPair	_min_md_dyn_bal;	//最小动态净值
 
-	_WTSFundStruct()
+	WTSFundStruct()
 	{
-		memset(this, 0, sizeof(_WTSFundStruct));
+		memset(this, 0, sizeof(WTSFundStruct));
 		_max_dyn_bal = DBL_MAX;
 		_min_dyn_bal = DBL_MAX;
 	}
@@ -144,7 +144,7 @@ protected:
 public:
 	static WTSPortFundInfo* create()
 	{
-		WTSPortFundInfo* pRet = new WTSPortFundInfo();
+		auto* pRet = new WTSPortFundInfo();
 		return pRet;
 	}
 
