@@ -53,7 +53,7 @@ public:
 
 	WTSTickData*	grabLastTick(const char* code) override;
 
-	double		getPosition(const char* stdCode, bool validOnly /*= true*/, int32_t flag /*= 3*/) override;
+	double		getPosition(const char* stdCode, bool validOnly, int32_t flag) override;
 	OrderMap*	getOrders(const char* code) override;
 	double		getUndoneQty(const char* code) override;
 

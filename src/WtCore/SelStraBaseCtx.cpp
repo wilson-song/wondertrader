@@ -48,9 +48,7 @@ SelStraBaseCtx::SelStraBaseCtx(WtSelEngine* engine, const char* name, int32_t sl
 }
 
 
-SelStraBaseCtx::~SelStraBaseCtx()
-{
-}
+SelStraBaseCtx::~SelStraBaseCtx() = default;
 
 void SelStraBaseCtx::init_outputs()
 {
@@ -173,9 +171,9 @@ void SelStraBaseCtx::save_userdata()
 	//ini.save(filename.c_str());
 	rj::Document root(rj::kObjectType);
 	rj::Document::AllocatorType &allocator = root.GetAllocator();
-	for (auto it = _user_datas.begin(); it != _user_datas.end(); it++)
+	for (const auto & _user_data : _user_datas)
 	{
-		root.AddMember(rj::Value(it->first.c_str(), allocator), rj::Value(it->second.c_str(), allocator), allocator);
+		root.AddMember(rj::Value(_user_data.first.c_str(), allocator), rj::Value(_user_data.second.c_str(), allocator), allocator);
 	}
 
 	{
@@ -374,10 +372,10 @@ void SelStraBaseCtx::save_data(uint32_t flag /* = 0xFFFFFFFF */)
 
 		rj::Document::AllocatorType &allocator = root.GetAllocator();
 
-		for (auto it = _pos_map.begin(); it != _pos_map.end(); it++)
+		for (const auto & it : _pos_map)
 		{
-			const char* stdCode = it->first.c_str();
-			const PosInfo& pInfo = it->second;
+			const char* stdCode = it.first.c_str();
+			const PosInfo& pInfo = it.second;
 
 			rj::Value pItem(rj::kObjectType);
 			pItem.AddMember("code", rj::Value(stdCode, allocator), allocator);
@@ -388,10 +386,9 @@ void SelStraBaseCtx::save_data(uint32_t flag /* = 0xFFFFFFFF */)
 			pItem.AddMember("frozendate", pInfo._frozen_date, allocator);
 
 			rj::Value details(rj::kArrayType);
-			for (auto dit = pInfo._details.begin(); dit != pInfo._details.end(); dit++)
+			for (const auto & dInfo : pInfo._details)
 			{
-				const DetailInfo& dInfo = *dit;
-				rj::Value dItem(rj::kObjectType);
+					rj::Value dItem(rj::kObjectType);
 				dItem.AddMember("long", dInfo._long, allocator);
 				dItem.AddMember("price", dInfo._price, allocator);
 				dItem.AddMember("volume", dInfo._volume, allocator);
@@ -430,7 +427,7 @@ void SelStraBaseCtx::save_data(uint32_t flag /* = 0xFFFFFFFF */)
 		rj::Value jSigs(rj::kObjectType);
 		rj::Document::AllocatorType &allocator = root.GetAllocator();
 
-		for (auto it : _sig_map)
+		for (const auto& it : _sig_map)
 		{
 			const char* stdCode = it.first.c_str();
 			const SigInfo& sInfo = it.second;
@@ -499,7 +496,7 @@ void SelStraBaseCtx::update_dyn_profit(const char* stdCode, double price)
 	auto it = _pos_map.find(stdCode);
 	if (it != _pos_map.end())
 	{
-		PosInfo& pInfo = (PosInfo&)it->second;
+		auto& pInfo = (PosInfo&)it->second;
 		if (pInfo._volume == 0)
 		{
 			pInfo._dynprofit = 0;
@@ -508,10 +505,9 @@ void SelStraBaseCtx::update_dyn_profit(const char* stdCode, double price)
 		{
 			WTSCommodityInfo* commInfo = _engine->get_commodity_info(stdCode);
 			double dynprofit = 0;
-			for (auto pit = pInfo._details.begin(); pit != pInfo._details.end(); pit++)
+			for (auto & dInfo : pInfo._details)
 			{
-				DetailInfo& dInfo = *pit;
-				dInfo._profit = dInfo._volume*(price - dInfo._price)*commInfo->getVolScale()*(dInfo._long ? 1 : -1);
+					dInfo._profit = dInfo._volume*(price - dInfo._price)*commInfo->getVolScale()*(dInfo._long ? 1 : -1);
 				if (dInfo._profit > 0)
 					dInfo._max_profit = std::max(dInfo._profit, dInfo._max_profit);
 				else if (dInfo._profit < 0)
@@ -525,7 +521,7 @@ void SelStraBaseCtx::update_dyn_profit(const char* stdCode, double price)
 	}
 
 	double total_dynprofit = 0;
-	for (auto v : _pos_map)
+	for (const auto& v : _pos_map)
 	{
 		const PosInfo& pInfo = v.second;
 		total_dynprofit += pInfo._dynprofit;
@@ -621,7 +617,7 @@ void SelStraBaseCtx::on_session_begin(uint32_t uTDate)
 	for (auto& it : _pos_map)
 	{
 		const char* stdCode = it.first.c_str();
-		PosInfo& pInfo = (PosInfo&)it.second;
+		auto& pInfo = (PosInfo&)it.second;
 		if (pInfo._frozen_date != 0 && pInfo._frozen_date < uTDate && !decimal::eq(pInfo._frozen, 0))
 		{
 			log_debug("{} of {} frozen on {} released on {}", pInfo._frozen, stdCode, pInfo._frozen_date, uTDate);
@@ -648,14 +644,14 @@ void SelStraBaseCtx::enum_position(FuncEnumSelPositionCallBack cb)
 		desPos[stdCode] = pInfo._volume;
 	}
 
-	for (auto sit : _sig_map)
+	for (const auto& sit : _sig_map)
 	{
 		const char* stdCode = sit.first.c_str();
 		const SigInfo& sInfo = sit.second;
 		desPos[stdCode] = sInfo._volume;
 	}
 
-	for (auto v : desPos)
+	for (const auto& v : desPos)
 	{
 		cb(v.first.c_str(), v.second);
 	}
@@ -668,10 +664,10 @@ void SelStraBaseCtx::on_session_end(uint32_t uTDate)
 	double total_profit = 0;
 	double total_dynprofit = 0;
 
-	for (auto it = _pos_map.begin(); it != _pos_map.end(); it++)
+	for (const auto & it : _pos_map)
 	{
-		const char* stdCode = it->first.c_str();
-		const PosInfo& pInfo = it->second;
+		const char* stdCode = it.first.c_str();
+		const PosInfo& pInfo = it.second;
 		total_profit += pInfo._closeprofit;
 		total_dynprofit += pInfo._dynprofit;
 
@@ -729,16 +725,16 @@ void SelStraBaseCtx::stra_set_position(const char* stdCode, double qty, const ch
 		return;
 	}
 
-	double total = stra_get_position(stdCode, false);
+	double total = stra_get_position(stdCode, false, "");
 	//如果目标仓位和当前仓位是一致的，直接退出
 	if (decimal::eq(total, qty))
 		return;
 
 	if (commInfo->isT1())
 	{
-		double valid = stra_get_position(stdCode, true);
+		double valid = stra_get_position(stdCode, true, "");
 		double frozen = total - valid;
-		//如果是T+1规则，则目标仓位不能小于冻结仓位
+		//如果是 T+1 规则，则目标仓位不能小于冻结仓位
 		if (decimal::lt(qty, frozen))
 		{
 			log_error("New position of {} cannot be set to {} due to {} being frozen", stdCode, qty, frozen);
@@ -1023,7 +1019,7 @@ void SelStraBaseCtx::stra_save_user_data(const char* key, const char* val)
 	_ud_modified = true;
 }
 
-double SelStraBaseCtx::stra_get_position(const char* stdCode, bool bOnlyValid /* = false */, const char* userTag /* = "" */)
+double SelStraBaseCtx::stra_get_position(const char* stdCode, bool bOnlyValid, const char* userTag)
 {
 	auto it = _pos_map.find(stdCode);
 	if (it == _pos_map.end())
@@ -1043,10 +1039,9 @@ double SelStraBaseCtx::stra_get_position(const char* stdCode, bool bOnlyValid /*
 			return pInfo._volume;
 	}
 
-	for (auto it = pInfo._details.begin(); it != pInfo._details.end(); it++)
+	for (const auto & dInfo : pInfo._details)
 	{
-		const DetailInfo& dInfo = (*it);
-		if (strcmp(dInfo._opentag, userTag) != 0)
+			if (strcmp(dInfo._opentag, userTag) != 0)
 			continue;
 
 		return dInfo._volume;

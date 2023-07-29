@@ -167,7 +167,7 @@ ExecuteUnitPtr WtLocalExecuter::getUnit(const char* stdCode, bool bAutoCreate /*
 	}
 	else
 	{
-		return ExecuteUnitPtr();
+		return {};
 	}
 }
 
@@ -191,7 +191,7 @@ WTSTickData* WtLocalExecuter::grabLastTick(const char* stdCode)
 	return _data_mgr->grab_last_tick(stdCode);
 }
 
-double WtLocalExecuter::getPosition(const char* stdCode, bool validOnly /* = true */, int32_t flag /* = 3 */)
+double WtLocalExecuter::getPosition(const char* stdCode, bool validOnly, int32_t flag)
 {
 	if (nullptr == _trader)
 		return 0.0;
@@ -218,17 +218,17 @@ OrderMap* WtLocalExecuter::getOrders(const char* stdCode)
 OrderIDs WtLocalExecuter::buy(const char* stdCode, double price, double qty, bool bForceClose/* = false*/)
 {
 	if (!_channel_ready)
-		return OrderIDs();
+		return {};
 
-	return _trader->buy(stdCode, price, qty, 0, bForceClose);
+	return _trader->buy(stdCode, price, qty, 0, bForceClose, nullptr);
 }
 
 OrderIDs WtLocalExecuter::sell(const char* stdCode, double price, double qty, bool bForceClose/* = false*/)
 {
 	if (!_channel_ready)
-		return OrderIDs();
+		return {};
 
-	return _trader->sell(stdCode, price, qty, 0, bForceClose);
+	return _trader->sell(stdCode, price, qty, 0, bForceClose, nullptr);
 }
 
 bool WtLocalExecuter::cancel(uint32_t localid)
@@ -242,7 +242,7 @@ bool WtLocalExecuter::cancel(uint32_t localid)
 OrderIDs WtLocalExecuter::cancel(const char* stdCode, bool isBuy, double qty)
 {
 	if (!_channel_ready)
-		return OrderIDs();
+		return {};
 
 	return _trader->cancel(stdCode, isBuy, qty);
 }
@@ -343,10 +343,10 @@ void WtLocalExecuter::set_position(const faster_hashmap<LongKey, double>& target
 	}
 
 
-	for (auto it = targets.begin(); it != targets.end(); it++)
+	for (const auto & target : targets)
 	{
-		const char* stdCode = it->first.c_str();
-		double newVol = it->second;
+		const char* stdCode = target.first.c_str();
+		double newVol = target.second;
 		ExecuteUnitPtr unit = getUnit(stdCode);
 		if (unit == nullptr)
 			continue;
@@ -381,10 +381,10 @@ void WtLocalExecuter::set_position(const faster_hashmap<LongKey, double>& target
 	}
 
 	//在原来的目标头寸中，但是不在新的目标头寸中，则需要自动设置为0
-	for (auto it = _target_pos.begin(); it != _target_pos.end(); it++)
+	for (const auto & _target_po : _target_pos)
 	{
-		const char* code = it->first.c_str();
-		double& pos = (double&)it->second;
+		const char* code = _target_po.first.c_str();
+		auto& pos = (double&)_target_po.second;
 		auto tit = targets.find(code);
 		if(tit != targets.end())
 			continue;
@@ -527,9 +527,9 @@ void WtLocalExecuter::on_channel_ready()
 {
 	_channel_ready = true;
 	SpinLock lock(_mtx_units);
-	for (auto it = _unit_map.begin(); it != _unit_map.end(); it++)
+	for (const auto & it : _unit_map)
 	{
-		ExecuteUnitPtr& unitPtr = (ExecuteUnitPtr&)it->second;
+		auto& unitPtr = (ExecuteUnitPtr&)it.second;
 		if (unitPtr)
 		{
 			//unitPtr->self()->on_channel_ready();
@@ -551,9 +551,9 @@ void WtLocalExecuter::on_channel_lost()
 {
 	_channel_ready = false;
 	SpinLock lock(_mtx_units);
-	for (auto it = _unit_map.begin(); it != _unit_map.end(); it++)
+	for (const auto & it : _unit_map)
 	{
-		ExecuteUnitPtr& unitPtr = (ExecuteUnitPtr&)it->second;
+		auto& unitPtr = (ExecuteUnitPtr&)it.second;
 		if (unitPtr)
 		{
 			if (_pool)
@@ -574,9 +574,9 @@ void WtLocalExecuter::on_account(const char* currency, double prebalance, double
 	double avaliable, double closeprofit, double dynprofit, double margin, double fee, double deposit, double withdraw)
 {
 	SpinLock lock(_mtx_units);
-	for (auto it = _unit_map.begin(); it != _unit_map.end(); it++)
+	for (const auto & it : _unit_map)
 	{
-		ExecuteUnitPtr& unitPtr = (ExecuteUnitPtr&)it->second;
+		auto& unitPtr = (ExecuteUnitPtr&)it.second;
 		if (unitPtr)
 		{
 			if (_pool)

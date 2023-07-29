@@ -33,10 +33,7 @@ WtSelRtTicker::WtSelRtTicker(WtSelEngine* engine)
 {
 }
 
-
-WtSelRtTicker::~WtSelRtTicker()
-{
-}
+WtSelRtTicker::~WtSelRtTicker() = default;
 
 void WtSelRtTicker::init(IDataReader* store, const char* sessionID)
 {

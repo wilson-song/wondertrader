@@ -53,21 +53,21 @@ public:
 	HftStrategyPtr getStrategy(const char* id);
 
 private:
-	typedef struct _StraFactInfo
+	typedef struct StraFactInfo
 	{
 		std::string		_module_path;
 		DllHandle		_module_inst;
 		IHftStrategyFact*	_fact;
-		FuncCreateHftStraFact	_creator;
-		FuncDeleteHftStraFact	_remover;
+		FuncCreateHftStraFact	_creator{};
+		FuncDeleteHftStraFact	_remover{};
 
-		_StraFactInfo()
+		StraFactInfo()
 		{
 			_module_inst = nullptr;
 			_fact = nullptr;
 		}
 
-		~_StraFactInfo()
+		~StraFactInfo()
 		{
 			if (_fact)
 				_remover(_fact);

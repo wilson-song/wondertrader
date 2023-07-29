@@ -39,7 +39,7 @@ typedef faster_hashmap<LongKey, ExecuteUnitPtr> ExecuteUnitMap;
 class WtExecuterFactory : private boost::noncopyable
 {
 public:
-	~WtExecuterFactory() {}
+	~WtExecuterFactory() = default;
 
 public:
 	bool loadFactories(const char* path);
@@ -51,7 +51,7 @@ public:
 	ExecuteUnitPtr createDiffExeUnit(const char* factname, const char* unitname);
 
 private:
-	typedef struct _ExeFactInfo
+	typedef struct ExeFactInfo
 	{
 		std::string		_module_path;
 		DllHandle		_module_inst;

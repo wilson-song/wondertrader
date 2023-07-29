@@ -19,7 +19,7 @@ public:
 		_executers[executer->name()] = executer;
 	}
 
-	void	enum_executer(EnumExecuterCb cb);
+	void	enum_executer(const EnumExecuterCb& cb);
 
 	void	set_positions(faster_hashmap<LongKey, double> target_pos);
 	void	handle_pos_change(const char* stdCode, double targetPos, double diffPos, const char* execid = "ALL");

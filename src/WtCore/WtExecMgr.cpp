@@ -10,11 +10,11 @@ USING_NS_WTP;
 
 //////////////////////////////////////////////////////////////////////////
 #pragma region "WtExecuterMgr"
-void WtExecuterMgr::enum_executer(EnumExecuterCb cb)
+void WtExecuterMgr::enum_executer(const EnumExecuterCb& cb)
 {
 	for (auto& v : _executers)
 	{
-		ExecCmdPtr& executer = (ExecCmdPtr&)v.second;
+		auto& executer = (ExecCmdPtr&)v.second;
 		cb(executer);
 	}
 }
@@ -27,7 +27,7 @@ void WtExecuterMgr::set_positions(faster_hashmap<LongKey, double> target_pos)
 		for(auto& m : target_pos)
 		{
 			const auto& stdCode = m.first;
-			double& desVol = (double&)m.second;
+			auto& desVol = (double&)m.second;
 			double oldVol = desVol;
 
 			bool isFltd = _filter_mgr->is_filtered_by_code(stdCode.c_str(), desVol);
@@ -53,7 +53,7 @@ void WtExecuterMgr::set_positions(faster_hashmap<LongKey, double> target_pos)
 
 	for (auto& v : _executers)
 	{
-		ExecCmdPtr& executer = (ExecCmdPtr&)v.second;
+		auto& executer = (ExecCmdPtr&)v.second;
 
 		if (_filter_mgr && _filter_mgr->is_filtered_by_executer(executer->name()))
 		{
@@ -90,7 +90,7 @@ void WtExecuterMgr::handle_pos_change(const char* stdCode, double targetPos, dou
 
 	for (auto& v : _executers)
 	{
-		ExecCmdPtr& executer = (ExecCmdPtr&)v.second;
+		auto& executer = (ExecCmdPtr&)v.second;
 
 		if (_filter_mgr && _filter_mgr->is_filtered_by_executer(executer->name()))
 		{
@@ -116,7 +116,7 @@ void WtExecuterMgr::handle_tick(const char* stdCode, WTSTickData* curTick)
 
 	for (auto& v : _executers)
 	{
-		ExecCmdPtr& executer = (ExecCmdPtr&)v.second;
+		auto& executer = (ExecCmdPtr&)v.second;
 		executer->on_tick(stdCode, curTick);
 	}
 }
@@ -134,11 +134,11 @@ void WtExecuterMgr::commit_cached_targets(double scale /* = 1.0 */)
 	{	
 		//先对组合进行缩放
 		const char* execid = v.first.c_str();
-		TargetsMap& target_pos = (TargetsMap&)v.second;
+		auto& target_pos = (TargetsMap&)v.second;
 		for(auto& item : target_pos)
 		{
 			const auto& stdCode = item.first;
-			double& pos = (double&)item.second;
+			auto& pos = (double&)item.second;
 
 			if(decimal::eq(pos, 0))
 				continue;
@@ -154,7 +154,7 @@ void WtExecuterMgr::commit_cached_targets(double scale /* = 1.0 */)
 			for (auto& m : target_pos)
 			{
 				const auto& stdCode = m.first;
-				double& desVol = (double&)m.second;
+				auto& desVol = (double&)m.second;
 				double oldVol = desVol;
 
 				bool isFltd = _filter_mgr->is_filtered_by_code(stdCode.c_str(), desVol);
@@ -182,7 +182,7 @@ void WtExecuterMgr::commit_cached_targets(double scale /* = 1.0 */)
 	//遍历执行器
 	for (auto& e : _executers)
 	{
-		ExecCmdPtr& executer = (ExecCmdPtr&)e.second;
+		auto& executer = (ExecCmdPtr&)e.second;
 		if (_filter_mgr && _filter_mgr->is_filtered_by_executer(executer->name()))
 		{
 			WTSLogger::info("[Filters] Executer {} is filtered, all signals will be ignored", executer->name());

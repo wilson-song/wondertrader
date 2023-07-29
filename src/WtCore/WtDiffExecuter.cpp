@@ -139,9 +139,6 @@ void WtDiffExecuter::load_data()
 
 void WtDiffExecuter::save_data()
 {
-	std::string filename = WtHelper::getExecDataDir();
-	filename += _name + ".json";
-
 	rj::Document root(rj::kObjectType);
 	rj::Document::AllocatorType &allocator = root.GetAllocator();
 
@@ -256,7 +253,7 @@ WTSTickData* WtDiffExecuter::grabLastTick(const char* stdCode)
 	return _data_mgr->grab_last_tick(stdCode);
 }
 
-double WtDiffExecuter::getPosition(const char* stdCode, bool validOnly /* = true */, int32_t flag /* = 3 */)
+double WtDiffExecuter::getPosition(const char* stdCode, bool validOnly, int32_t flag)
 {
 	if (nullptr == _trader)
 		return 0.0;
@@ -285,7 +282,7 @@ OrderIDs WtDiffExecuter::buy(const char* stdCode, double price, double qty, bool
 	if (!_channel_ready)
 		return {};
 
-	return _trader->buy(stdCode, price, qty, 0, bForceClose);
+	return _trader->buy(stdCode, price, qty, 0, bForceClose, nullptr);
 }
 
 OrderIDs WtDiffExecuter::sell(const char* stdCode, double price, double qty, bool bForceClose/* = false*/)
@@ -293,7 +290,7 @@ OrderIDs WtDiffExecuter::sell(const char* stdCode, double price, double qty, boo
 	if (!_channel_ready)
 		return {};
 
-	return _trader->sell(stdCode, price, qty, 0, bForceClose);
+	return _trader->sell(stdCode, price, qty, 0, bForceClose, nullptr);
 }
 
 bool WtDiffExecuter::cancel(uint32_t localid)

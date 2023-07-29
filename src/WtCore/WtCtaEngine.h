@@ -86,7 +86,7 @@ private:
 
 	WtExecuterMgr	_exec_mgr;
 
-	WTSVariant*		_cfg;
+	WTSVariant*		_cfg{};
 };
 
 NS_WTP_END

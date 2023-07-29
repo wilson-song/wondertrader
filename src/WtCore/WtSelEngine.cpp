@@ -37,9 +37,7 @@ WtSelEngine::WtSelEngine()
 }
 
 
-WtSelEngine::~WtSelEngine()
-{
-}
+WtSelEngine::~WtSelEngine() = default;
 
 void WtSelEngine::on_session_end()
 {
@@ -73,13 +71,13 @@ void WtSelEngine::on_bar(const char* stdCode, const char* period, uint32_t times
 	fmtutil::format_to(key, "{}-{}-{}", stdCode, period, times);
 
 	const SubList& sids = _bar_sub_map[key];
-	for (auto it = sids.begin(); it != sids.end(); it++)
+	for (const auto & it : sids)
 	{
-		uint32_t sid = it->first;
+		uint32_t sid = it.first;
 		auto cit = _ctx_map.find(sid);
 		if (cit != _ctx_map.end())
 		{
-			SelContextPtr& ctx = (SelContextPtr&)cit->second;
+			auto& ctx = (SelContextPtr&)cit->second;
 			ctx->on_bar(stdCode, period, times, newBar);
 		}
 	}
@@ -131,16 +129,16 @@ void WtSelEngine::on_tick(const char* stdCode, WTSTickData* curTick)
 			uint32_t flag = get_adjusting_flag();
 
 			const SubList& sids = sit->second;
-			for (auto it = sids.begin(); it != sids.end(); it++)
+			for (const auto & it : sids)
 			{
-				uint32_t sid = it->first;
+				uint32_t sid = it.first;
 
 
 				auto cit = _ctx_map.find(sid);
 				if (cit != _ctx_map.end())
 				{
-					SelContextPtr& ctx = (SelContextPtr&)cit->second;
-					uint32_t opt = it->second.second;
+					auto& ctx = (SelContextPtr&)cit->second;
+					uint32_t opt = it.second.second;
 
 					if (opt == 0)
 					{
@@ -217,7 +215,7 @@ void WtSelEngine::on_minute_end(uint32_t curDate, uint32_t curTime)
 
 	for (auto& v : _tasks)
 	{
-		TaskInfoPtr& tInfo = (TaskInfoPtr&)v.second;
+		auto& tInfo = (TaskInfoPtr&)v.second;
 		if (tInfo->_time != nextTime)
 			continue;
 
@@ -370,7 +368,7 @@ void WtSelEngine::init(WTSVariant* cfg, IBaseDataMgr* bdMgr, WtDtMgr* dataMgr, I
 	_cfg->retain();
 }
 
-void WtSelEngine::addContext(SelContextPtr ctx, uint32_t date, uint32_t time, TaskPeriodType period, bool bStrict /* = true */, const char* trdtpl /* = "CHINA" */, const char* sessionID/* ="TRADING" */)
+void WtSelEngine::addContext(const SelContextPtr& ctx, uint32_t date, uint32_t time, TaskPeriodType period, bool bStrict /* = true */, const char* trdtpl /* = "CHINA" */, const char* sessionID/* ="TRADING" */)
 {
 	if (ctx == nullptr)
 		return;
@@ -402,7 +400,7 @@ SelContextPtr WtSelEngine::getContext(uint32_t id)
 {
 	auto it = _ctx_map.find(id);
 	if (it == _ctx_map.end())
-		return SelContextPtr();
+		return {};
 
 	return it->second;
 }

@@ -24,7 +24,7 @@ class SelStraBaseCtx : public ISelStraCtx
 {
 public:
 	SelStraBaseCtx(WtSelEngine* engine, const char* name, int32_t slippage);
-	virtual ~SelStraBaseCtx();
+	~SelStraBaseCtx() override;
 
 private:
 	void	init_outputs();
@@ -67,49 +67,49 @@ protected:
 	}
 
 public:
-	virtual uint32_t id() { return _context_id; }
+	uint32_t id() override { return _context_id; }
 
 	//回调函数
-	virtual void on_init() override;
-	virtual void on_session_begin(uint32_t uTDate) override;
-	virtual void on_session_end(uint32_t uTDate) override;
-	virtual void on_tick(const char* stdCode, WTSTickData* newTick, bool bEmitStrategy = true) override;
-	virtual void on_bar(const char* stdCode, const char* period, uint32_t times, WTSBarStruct* newBar) override;
-	virtual bool on_schedule(uint32_t curDate, uint32_t curTime, uint32_t fireTime) override;
+	void on_init() override;
+	void on_session_begin(uint32_t uTDate) override;
+	void on_session_end(uint32_t uTDate) override;
+	void on_tick(const char* stdCode, WTSTickData* newTick, bool bEmitStrategy = true) override;
+	void on_bar(const char* stdCode, const char* period, uint32_t times, WTSBarStruct* newBar) override;
+	bool on_schedule(uint32_t curDate, uint32_t curTime, uint32_t fireTime) override;
 
-	virtual void enum_position(FuncEnumSelPositionCallBack cb) override;
+	void enum_position(FuncEnumSelPositionCallBack cb) override;
 
 
 	//////////////////////////////////////////////////////////////////////////
 	//策略接口
-	virtual double stra_get_position(const char* stdCode, bool bOnlyValid = false, const char* userTag = "") override;
-	virtual void stra_set_position(const char* stdCode, double qty, const char* userTag = "") override;
-	virtual double stra_get_price(const char* stdCode) override;
+	double stra_get_position(const char* stdCode, bool bOnlyValid/* = false*/, const char* userTag) override;
+	void stra_set_position(const char* stdCode, double qty, const char* userTag) override;
+	double stra_get_price(const char* stdCode) override;
 
-	virtual uint32_t stra_get_date() override;
-	virtual uint32_t stra_get_time() override;
+	uint32_t stra_get_date() override;
+	uint32_t stra_get_time() override;
 
-	virtual WTSCommodityInfo* stra_get_comminfo(const char* stdCode) override;
-	virtual WTSSessionInfo* stra_get_sessinfo(const char* stdCode) override;
-	virtual WTSKlineSlice*	stra_get_bars(const char* stdCode, const char* period, uint32_t count) override;
-	virtual WTSTickSlice*	stra_get_ticks(const char* stdCode, uint32_t count) override;
-	virtual WTSTickData*	stra_get_last_tick(const char* stdCode) override;
+	WTSCommodityInfo* stra_get_comminfo(const char* stdCode) override;
+	WTSSessionInfo* stra_get_sessinfo(const char* stdCode) override;
+	WTSKlineSlice*	stra_get_bars(const char* stdCode, const char* period, uint32_t count) override;
+	WTSTickSlice*	stra_get_ticks(const char* stdCode, uint32_t count) override;
+	WTSTickData*	stra_get_last_tick(const char* stdCode) override;
 
 	/*
 	 *	获取分月合约代码
 	 */
-	virtual std::string		stra_get_rawcode(const char* stdCode) override;
+	std::string		stra_get_rawcode(const char* stdCode) override;
 
-	virtual void stra_sub_ticks(const char* stdCode) override;
+	void stra_sub_ticks(const char* stdCode) override;
 
-	virtual void stra_log_info(const char* message) override;
-	virtual void stra_log_debug(const char* message) override;
-	virtual void stra_log_warn(const char* message) override;
-	virtual void stra_log_error(const char* message) override;
+	void stra_log_info(const char* message) override;
+	void stra_log_debug(const char* message) override;
+	void stra_log_warn(const char* message) override;
+	void stra_log_error(const char* message) override;
 
-	virtual void stra_save_user_data(const char* key, const char* val) override;
+	void stra_save_user_data(const char* key, const char* val) override;
 
-	virtual const char* stra_load_user_data(const char* key, const char* defVal = "") override;
+	const char* stra_load_user_data(const char* key, const char* defVal = "") override;
 
 protected:
 	uint32_t		_context_id;
@@ -122,11 +122,11 @@ protected:
 	uint32_t		_schedule_date;
 	uint32_t		_schedule_time;
 
-	typedef struct _KlineTag
+	typedef struct KlineTag
 	{
 		bool			_closed;
 
-		_KlineTag() :_closed(false){}
+		KlineTag() :_closed(false){}
 
 	} KlineTag;
 	typedef faster_hashmap<LongKey, KlineTag> KlineTags;
@@ -135,25 +135,25 @@ protected:
 	typedef faster_hashmap<LongKey, double> PriceMap;
 	PriceMap		_price_map;
 
-	typedef struct _DetailInfo
+	typedef struct DetailInfo
 	{
-		bool		_long;
-		double		_price;
-		double		_volume;
-		uint64_t	_opentime;
-		uint32_t	_opentdate;
-		double		_max_profit;
-		double		_max_loss;
-		double		_profit;
-		char		_opentag[32];
+		bool		_long{};
+		double		_price{};
+		double		_volume{};
+		uint64_t	_opentime{};
+		uint32_t	_opentdate{};
+		double		_max_profit{};
+		double		_max_loss{};
+		double		_profit{};
+		char		_opentag[32]{};
 
-		_DetailInfo()
+		DetailInfo()
 		{
-			memset(this, 0, sizeof(_DetailInfo));
+			memset(this, 0, sizeof(DetailInfo));
 		}
 	} DetailInfo;
 
-	typedef struct _PosInfo
+	typedef struct PosInfo
 	{
 		double		_volume;
 		double		_closeprofit;
@@ -163,7 +163,7 @@ protected:
 
 		std::vector<DetailInfo> _details;
 
-		_PosInfo()
+		PosInfo()
 		{
 			_volume = 0;
 			_closeprofit = 0;
@@ -175,7 +175,7 @@ protected:
 	typedef faster_hashmap<LongKey, PosInfo> PositionMap;
 	PositionMap		_pos_map;
 
-	typedef struct _SigInfo
+	typedef struct SigInfo
 	{
 		double		_volume;
 		std::string	_usertag;
@@ -183,7 +183,7 @@ protected:
 		bool		_triggered;
 		uint64_t	_gentime;
 
-		_SigInfo()
+		SigInfo()
 		{
 			_volume = 0;
 			_sigprice = 0;
@@ -208,15 +208,15 @@ protected:
 	StringHashMap	_user_datas;
 	bool			_ud_modified;
 
-	typedef struct _StraFundInfo
+	typedef struct StraFundInfo
 	{
-		double	_total_profit;
-		double	_total_dynprofit;
-		double	_total_fees;
+		double	_total_profit{};
+		double	_total_dynprofit{};
+		double	_total_fees{};
 
-		_StraFundInfo()
+		StraFundInfo()
 		{
-			memset(this, 0, sizeof(_StraFundInfo));
+			memset(this, 0, sizeof(StraFundInfo));
 		}
 	} StraFundInfo;
 

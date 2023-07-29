@@ -104,7 +104,7 @@ bool ParserAdapter::init(const char* id, WTSVariant* cfg, IParserStub* stub, IBa
 		if (cfg->getString("module").empty())
 			return false;
 
-		std::string module = DLLHelper::wrap_module(cfg->getCString("module"), "lib");;
+		std::string module = DLLHelper::wrap_module(cfg->getCString("module"), "lib");
 
 		//先看工作目录下是否有交易模块
 		std::string dllpath = WtHelper::getModulePath(module.c_str(), "parsers", true);

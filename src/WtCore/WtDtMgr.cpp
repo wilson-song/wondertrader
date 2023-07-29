@@ -64,7 +64,7 @@ bool WtDtMgr::initStore(WTSVariant* cfg)
 		return false;
 	}
 
-	FuncCreateDataReader funcCreator = (FuncCreateDataReader)DLLHelper::get_symbol(hInst, "createDataReader");
+	auto funcCreator = (FuncCreateDataReader)DLLHelper::get_symbol(hInst, "createDataReader");
 	if(funcCreator == nullptr)
 	{
 		WTSLogger::error("Loading data reader module {} failed, entrance function createDataReader not found", module.c_str());
@@ -164,7 +164,7 @@ void WtDtMgr::on_bar(const char* code, WTSKlinePeriod period, WTSBarStruct* newB
 		//如果是基础周期, 直接触发on_bar事件
 		//_engine->on_bar(code, speriod.c_str(), times, newBar);
 		//更新完K线以后, 统一通知交易引擎
-		_bar_notifies.emplace_back(NotifyItem(code, speriod, times, newBar));
+		_bar_notifies.emplace_back(code, speriod, times, newBar);
 	}
 
 	//然后再处理非基础周期
@@ -173,13 +173,13 @@ void WtDtMgr::on_bar(const char* code, WTSKlinePeriod period, WTSBarStruct* newB
 	
 	WTSSessionInfo* sInfo = _engine->get_session_info(code, true);
 
-	for (auto it = _bars_cache->begin(); it != _bars_cache->end(); it++)
+	for (const auto & it : *_bars_cache)
 	{
-		const char* key = it->first.c_str();
+		const char* key = it.first.c_str();
 		if(memcmp(key, key_pattern.c_str(), key_pattern.size()) != 0)
 			continue;
 
-		WTSKlineData* kData = (WTSKlineData*)it->second;
+		auto* kData = (WTSKlineData*)it.second;
 		{
 			g_dataFact.updateKlineData(kData, newBar, sInfo);
 			if (kData->isClosed())
@@ -189,7 +189,7 @@ void WtDtMgr::on_bar(const char* code, WTSKlinePeriod period, WTSBarStruct* newB
 				WTSBarStruct* lastBar = kData->at(-1);
 				//_engine->on_bar(code, speriod.c_str(), times, lastBar);
 				//更新完K线以后, 统一通知交易引擎
-				_bar_notifies.emplace_back(NotifyItem(code, speriod, times*kData->times(), lastBar));
+				_bar_notifies.emplace_back(code, speriod, times*kData->times(), lastBar);
 			}
 		}
 	}

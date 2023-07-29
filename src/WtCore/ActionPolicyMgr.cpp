@@ -17,14 +17,9 @@
 
 USING_NS_WTP;
 
-ActionPolicyMgr::ActionPolicyMgr()
-{
-}
+ActionPolicyMgr::ActionPolicyMgr() = default;
 
-
-ActionPolicyMgr::~ActionPolicyMgr()
-{
-}
+ActionPolicyMgr::~ActionPolicyMgr() = default;
 
 bool ActionPolicyMgr::init(const char* filename)
 {
@@ -33,9 +28,9 @@ bool ActionPolicyMgr::init(const char* filename)
 		return false;
 
 	auto keys = cfg->memberNames();
-	for (auto it = keys.begin(); it != keys.end(); it++)
+	for (auto & key : keys)
 	{
-		const char* gpName = (*it).c_str();
+		const char* gpName = key.c_str();
 		WTSVariant*	vGpItem = cfg->get(gpName);
 		ActionRuleGroup& gp = _rules[gpName];
 

@@ -67,9 +67,7 @@ CtaStraBaseCtx::CtaStraBaseCtx(WtCtaEngine* engine, const char* name, int32_t sl
 }
 
 
-CtaStraBaseCtx::~CtaStraBaseCtx()
-{
-}
+CtaStraBaseCtx::~CtaStraBaseCtx() = default;
 
 void CtaStraBaseCtx::init_outputs()
 {
@@ -222,9 +220,9 @@ void CtaStraBaseCtx::save_userdata()
 {
 	rj::Document root(rj::kObjectType);
 	rj::Document::AllocatorType &allocator = root.GetAllocator();
-	for (auto it = _user_datas.begin(); it != _user_datas.end(); it++)
+	for (const auto & _user_data : _user_datas)
 	{
-		root.AddMember(rj::Value(it->first.c_str(), allocator), rj::Value(it->second.c_str(), allocator), allocator);
+		root.AddMember(rj::Value(_user_data.first.c_str(), allocator), rj::Value(_user_data.second.c_str(), allocator), allocator);
 	}
 
 	{
@@ -503,10 +501,10 @@ void CtaStraBaseCtx::save_data(uint32_t flag /* = 0xFFFFFFFF */)
 
 		rj::Document::AllocatorType &allocator = root.GetAllocator();
 
-		for (auto it = _pos_map.begin(); it != _pos_map.end(); it++)
+		for (const auto & it : _pos_map)
 		{
-			const char* stdCode = it->first.c_str();
-			const PosInfo& pInfo = it->second;
+			const char* stdCode = it.first.c_str();
+			const PosInfo& pInfo = it.second;
 
 			rj::Value pItem(rj::kObjectType);
 			pItem.AddMember("code", rj::Value(stdCode, allocator), allocator);
@@ -519,10 +517,9 @@ void CtaStraBaseCtx::save_data(uint32_t flag /* = 0xFFFFFFFF */)
 			pItem.AddMember("frozendate", pInfo._frozen_date, allocator);
 
 			rj::Value details(rj::kArrayType);
-			for (auto dit = pInfo._details.begin(); dit != pInfo._details.end(); dit++)
+			for (const auto & dInfo : pInfo._details)
 			{
-				const DetailInfo& dInfo = *dit;
-				rj::Value dItem(rj::kObjectType);
+					rj::Value dItem(rj::kObjectType);
 				dItem.AddMember("long", dInfo._long, allocator);
 				dItem.AddMember("price", dInfo._price, allocator);
 				dItem.AddMember("maxprice", dInfo._max_price, allocator);
@@ -588,10 +585,10 @@ void CtaStraBaseCtx::save_data(uint32_t flag /* = 0xFFFFFFFF */)
 
 		rj::Document::AllocatorType &allocator = root.GetAllocator();
 
-		for (auto it = _condtions.begin(); it != _condtions.end(); it++)
+		for (const auto & _condtion : _condtions)
 		{
-			const char* code = it->first.c_str();
-			const CondList& condList = it->second;
+			const char* code = _condtion.first.c_str();
+			const CondList& condList = _condtion.second;
 
 			rj::Value cArray(rj::kArrayType);
 			for(auto& condInfo : condList)
@@ -755,7 +752,7 @@ void CtaStraBaseCtx::update_dyn_profit(const char* stdCode, double price)
 	auto it = _pos_map.find(stdCode);
 	if (it != _pos_map.end())
 	{
-		PosInfo& pInfo = (PosInfo&)it->second;
+		auto& pInfo = (PosInfo&)it->second;
 		if (pInfo._volume == 0)
 		{
 			pInfo._dynprofit = 0;
@@ -764,10 +761,9 @@ void CtaStraBaseCtx::update_dyn_profit(const char* stdCode, double price)
 		{
 			WTSCommodityInfo* commInfo = _engine->get_commodity_info(stdCode);
 			double dynprofit = 0;
-			for (auto pit = pInfo._details.begin(); pit != pInfo._details.end(); pit++)
+			for (auto & dInfo : pInfo._details)
 			{
-				DetailInfo& dInfo = *pit;
-				dInfo._profit = dInfo._volume*(price - dInfo._price)*commInfo->getVolScale()*(dInfo._long ? 1 : -1);
+					dInfo._profit = dInfo._volume*(price - dInfo._price)*commInfo->getVolScale()*(dInfo._long ? 1 : -1);
 				if (dInfo._profit > 0)
 					dInfo._max_profit = std::max(dInfo._profit, dInfo._max_profit);
 				else if (dInfo._profit < 0)
@@ -945,10 +941,10 @@ bool CtaStraBaseCtx::on_schedule(uint32_t curDate, uint32_t curTime)
 	bool isMainUdt = false;
 	bool emmited = false;
 
-	for (auto it = _kline_tags.begin(); it != _kline_tags.end(); it++)
+	for (const auto & _kline_tag : _kline_tags)
 	{
-		const char* key = it->first.c_str();
-		KlineTag& marker = (KlineTag&)it->second;
+		const char* key = _kline_tag.first.c_str();
+		auto& marker = (KlineTag&)_kline_tag.second;
 
 		auto idx = StrUtil::findFirst(key, '#');
 
@@ -1022,7 +1018,7 @@ void CtaStraBaseCtx::on_session_begin(uint32_t uTDate)
 	for (auto& it : _pos_map)
 	{
 		const char* stdCode = it.first.c_str();
-		PosInfo& pInfo = (PosInfo&)it.second;
+		auto& pInfo = (PosInfo&)it.second;
 		if(pInfo._frozen_date!=0 && pInfo._frozen_date < uTDate && !decimal::eq(pInfo._frozen, 0))
 		{
 			log_debug("{} of %s frozen on {} released on {}", pInfo._frozen, stdCode, pInfo._frozen_date, uTDate);
@@ -1058,14 +1054,14 @@ void CtaStraBaseCtx::enum_position(FuncEnumCtaPosCallBack cb, bool bForExecute /
 		for (auto& sit : _sig_map)
 		{
 			const char* stdCode = sit.first.c_str();
-			SigInfo& sInfo = (SigInfo&)sit.second;
+			auto& sInfo = (SigInfo&)sit.second;
 			desPos[stdCode] = sInfo._volume;
 			if (bForExecute)
 				sInfo._triggered = true;
 		}
 	}	
 
-	for(auto v:desPos)
+	for(const auto& v:desPos)
 	{
 		cb(v.first.c_str(), v.second);
 	}
@@ -1078,10 +1074,10 @@ void CtaStraBaseCtx::on_session_end(uint32_t uTDate)
 	double total_profit = 0;
 	double total_dynprofit = 0;
 
-	for (auto it = _pos_map.begin(); it != _pos_map.end(); it++)
+	for (const auto & it : _pos_map)
 	{
-		const char* stdCode = it->first.c_str();
-		const PosInfo& pInfo = it->second;
+		const char* stdCode = it.first.c_str();
+		const PosInfo& pInfo = it.second;
 		total_profit += pInfo._closeprofit;
 		total_dynprofit += pInfo._dynprofit;
 
@@ -1833,10 +1829,9 @@ double CtaStraBaseCtx::stra_get_position(const char* stdCode, bool bOnlyValid /*
 			return pInfo._volume;
 	}
 
-	for (auto it = pInfo._details.begin(); it != pInfo._details.end(); it++)
+	for (const auto & dInfo : pInfo._details)
 	{
-		const DetailInfo& dInfo = (*it);
-		if (strcmp(dInfo._opentag, userTag) != 0)
+			if (strcmp(dInfo._opentag, userTag) != 0)
 			continue;
 
 		return dInfo._volume;
@@ -1856,10 +1851,9 @@ double CtaStraBaseCtx::stra_get_position_avgpx(const char* stdCode)
 		return 0.0;
 
 	double amount = 0.0;
-	for (auto dit = pInfo._details.begin(); dit != pInfo._details.end(); dit++)
+	for (const auto & dInfo : pInfo._details)
 	{
-		const DetailInfo& dInfo = *dit;
-		amount += dInfo._price*dInfo._volume;
+			amount += dInfo._price*dInfo._volume;
 	}
 
 	return amount / pInfo._volume;
@@ -1882,10 +1876,9 @@ uint64_t CtaStraBaseCtx::stra_get_detail_entertime(const char* stdCode, const ch
 		return 0;
 
 	const PosInfo& pInfo = it->second;
-	for (auto it = pInfo._details.begin(); it != pInfo._details.end(); it++)
+	for (const auto & dInfo : pInfo._details)
 	{
-		const DetailInfo& dInfo = (*it);
-		if (strcmp(dInfo._opentag, userTag) != 0)
+			if (strcmp(dInfo._opentag, userTag) != 0)
 			continue;
 
 		return dInfo._opentime;
@@ -1901,10 +1894,9 @@ double CtaStraBaseCtx::stra_get_detail_cost(const char* stdCode, const char* use
 		return 0;
 
 	const PosInfo& pInfo = it->second;
-	for (auto it = pInfo._details.begin(); it != pInfo._details.end(); it++)
+	for (const auto & dInfo : pInfo._details)
 	{
-		const DetailInfo& dInfo = (*it);
-		if (strcmp(dInfo._opentag, userTag) != 0)
+			if (strcmp(dInfo._opentag, userTag) != 0)
 			continue;
 
 		return dInfo._price;
@@ -1920,10 +1912,9 @@ double CtaStraBaseCtx::stra_get_detail_profit(const char* stdCode, const char* u
 		return 0;
 
 	const PosInfo& pInfo = it->second;
-	for (auto it = pInfo._details.begin(); it != pInfo._details.end(); it++)
+	for (const auto & dInfo : pInfo._details)
 	{
-		const DetailInfo& dInfo = (*it);
-		if (strcmp(dInfo._opentag, userTag) != 0)
+        if (strcmp(dInfo._opentag, userTag) != 0)
 			continue;
 
 		switch (flag)
@@ -1964,7 +1955,7 @@ void CtaStraBaseCtx::add_chart_mark(double price, const char* icon, const char* 
 	if (_mark_logs)
 	{
 		std::stringstream ss;
-		ss << curTime << "," << price << "," << icon << "," << tag << std::endl;;
+		ss << curTime << "," << price << "," << icon << "," << tag << std::endl;
 		_mark_logs->write_file(ss.str());
 	}
 
@@ -1987,7 +1978,7 @@ bool CtaStraBaseCtx::register_index_line(const char* idxName, const char* lineNa
 		return false;
 	}
 
-	ChartIndex& cIndex = (ChartIndex&)it->second;
+	auto& cIndex = (ChartIndex&)it->second;
 	ChartLine& cLine = cIndex._lines[lineName];
 	cLine._name = lineName;
 	cLine._lineType = lineType;
@@ -2003,7 +1994,7 @@ bool CtaStraBaseCtx::add_index_baseline(const char* idxName, const char* lineNam
 		return false;
 	}
 
-	ChartIndex& cIndex = (ChartIndex&)it->second;
+	auto& cIndex = (ChartIndex&)it->second;
 	cIndex._base_lines[lineName] = val;
 	return true;
 }
@@ -2023,7 +2014,7 @@ bool CtaStraBaseCtx::set_index_value(const char* idxName, const char* lineName, 
 		return false;
 	}
 
-	ChartIndex& cIndex = (ChartIndex&)ait->second;
+	auto& cIndex = (ChartIndex&)ait->second;
 	auto bit = cIndex._lines.find(lineName);
 	if (bit == cIndex._lines.end())
 	{
@@ -2037,7 +2028,7 @@ bool CtaStraBaseCtx::set_index_value(const char* idxName, const char* lineName, 
 	if (_idx_logs)
 	{
 		std::stringstream ss;
-		ss << curTime << "," << idxName << "," << lineName << "," << val << std::endl;;
+		ss << curTime << "," << idxName << "," << lineName << "," << val << std::endl;
 		_idx_logs->write_file(ss.str());
 	}
 

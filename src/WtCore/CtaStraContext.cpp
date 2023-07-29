@@ -22,9 +22,7 @@ CtaStraContext::CtaStraContext(WtCtaEngine* engine, const char* name, int32_t sl
 }
 
 
-CtaStraContext::~CtaStraContext()
-{
-}
+CtaStraContext::~CtaStraContext() = default;
 
 //////////////////////////////////////////////////////////////////////////
 //»Øµ÷º¯Êý

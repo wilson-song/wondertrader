@@ -178,7 +178,7 @@ protected:
 
 	void		task_loop();
 
-	void		push_task(TaskItem task);
+	void		push_task(const TaskItem& task);
 
 	void		update_fund_dynprofit();
 
@@ -219,12 +219,12 @@ protected:
 
 	//////////////////////////////////////////////////////////////////////////
 	//
-	typedef struct _SigInfo
+	typedef struct SigInfo
 	{
 		double		_volume;
 		uint64_t	_gentime;
 
-		_SigInfo()
+		SigInfo()
 		{
 			_volume = 0;
 			_gentime = 0;
@@ -240,16 +240,16 @@ protected:
 
 	//////////////////////////////////////////////////////////////////////////
 	//手续费模板
-	typedef struct _FeeItem
+	typedef struct FeeItem
 	{
-		double	_open;
-		double	_close;
-		double	_close_today;
-		bool	_by_volume;
+		double	_open{};
+		double	_close{};
+		double	_close_today{};
+		bool	_by_volume{};
 
-		_FeeItem()
+		FeeItem()
 		{
-			memset(this, 0, sizeof(_FeeItem));
+			memset(this, 0, sizeof(FeeItem));
 		}
 	} FeeItem;
 	typedef faster_hashmap<LongKey, FeeItem>	FeeMap;
@@ -260,22 +260,22 @@ protected:
 
 	//////////////////////////////////////////////////////////////////////////
 	//持仓数据
-	typedef struct _DetailInfo
+	typedef struct DetailInfo
 	{
-		bool		_long;
-		double		_price;
-		double		_volume;
-		uint64_t	_opentime;
-		uint32_t	_opentdate;
-		double		_profit;
+		bool		_long{};
+		double		_price{};
+		double		_volume{};
+		uint64_t	_opentime{};
+		uint32_t	_opentdate{};
+		double		_profit{};
 
-		_DetailInfo()
+		DetailInfo()
 		{
-			memset(this, 0, sizeof(_DetailInfo));
+			memset(this, 0, sizeof(DetailInfo));
 		}
 	} DetailInfo;
 
-	typedef struct _PosInfo
+	typedef struct PosInfo
 	{
 		double		_volume;
 		double		_closeprofit;
@@ -283,7 +283,7 @@ protected:
 
 		std::vector<DetailInfo> _details;
 
-		_PosInfo()
+		PosInfo()
 		{
 			_volume = 0;
 			_closeprofit = 0;
@@ -306,7 +306,7 @@ protected:
 	StdCondVariable	_cond_task;
 	bool			_terminated;
 
-	typedef struct _RiskMonFactInfo
+	typedef struct RiskMonFactInfo
 	{
 		std::string		_module_path;
 		DllHandle		_module_inst;

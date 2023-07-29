@@ -293,10 +293,10 @@ void WtCtaEngine::on_schedule(uint32_t curDate, uint32_t curTime)
 	}
 
 	//处理组合理论部位
-	for (auto it = target_pos.begin(); it != target_pos.end(); it++)
+	for (const auto & target_po : target_pos)
 	{
-		const auto& stdCode = it->first;
-		double& pos = (double&)it->second;
+		const auto& stdCode = target_po.first;
+		auto& pos = (double&)target_po.second;
 
 		if (bRiskEnabled && !decimal::eq(pos, 0))
 		{
@@ -455,7 +455,7 @@ void WtCtaEngine::on_tick(const char* stdCode, WTSTickData* curTick)
 					
 				if (opt == 0)
 				{
-					ctx->on_tick(stdCode, curTick);
+					ctx->on_tick(stdCode, curTick, true);
 				}
 				else
 				{
@@ -463,7 +463,7 @@ void WtCtaEngine::on_tick(const char* stdCode, WTSTickData* curTick)
 					wCode = fmt::format("{}{}", stdCode, opt == 1 ? SUFFIX_QFQ : SUFFIX_HFQ);
 					if (opt == 1)
 					{
-						ctx->on_tick(wCode.c_str(), curTick);
+						ctx->on_tick(wCode.c_str(), curTick, true);
 					}
 					else //(opt == 2)
 					{
@@ -508,7 +508,7 @@ void WtCtaEngine::on_tick(const char* stdCode, WTSTickData* curTick)
 
 						_price_map[wCode] = newTS.price;
 
-						ctx->on_tick(wCode.c_str(), newTick);
+						ctx->on_tick(wCode.c_str(), newTick, true);
 						newTick->release();
 					}
 				}

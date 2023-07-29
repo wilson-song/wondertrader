@@ -7,7 +7,7 @@ class WTSVariant;
 class WtDistExecuter : public IExecCommand
 {
 public:
-	WtDistExecuter(const char* name);
+	explicit WtDistExecuter(const char* name);
 	virtual ~WtDistExecuter();
 
 public:
@@ -21,13 +21,13 @@ public:
 public:
 	//////////////////////////////////////////////////////////////////////////
 	//IExecCommand
-	virtual void set_position(const faster_hashmap<LongKey, double>& targets) override;
+	void set_position(const faster_hashmap<LongKey, double>& targets) override;
 
 
-	virtual void on_position_changed(const char* stdCode, double targetPos) override;
+	void on_position_changed(const char* stdCode, double targetPos) override;
 
 
-	virtual void on_tick(const char* stdCode, WTSTickData* newTick) override;
+	void on_tick(const char* stdCode, WTSTickData* newTick) override;
 
 private:
 	WTSVariant*			_config;

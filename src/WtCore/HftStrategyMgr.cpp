@@ -17,14 +17,10 @@
 #include "../WTSTools/WTSLogger.h"
 
 
-HftStrategyMgr::HftStrategyMgr()
-{
-}
+HftStrategyMgr::HftStrategyMgr() = default;
 
 
-HftStrategyMgr::~HftStrategyMgr()
-{
-}
+HftStrategyMgr::~HftStrategyMgr() = default;
 
 bool HftStrategyMgr::loadFactories(const char* path)
 {
@@ -51,10 +47,10 @@ bool HftStrategyMgr::loadFactories(const char* path)
 #endif
 
 		DllHandle hInst = DLLHelper::load_library(iter->path().string().c_str());
-		if (hInst == nullptrptr)
+		if (hInst == nullptr)
 			continue;
 
-		FuncCreateHftStraFact creator = (FuncCreateHftStraFact)DLLHelper::get_symbol(hInst, "createStrategyFact");
+		auto creator = (FuncCreateHftStraFact)DLLHelper::get_symbol(hInst, "createStrategyFact");
 		if (creator == nullptr)
 		{
 			DLLHelper::free_library(hInst);
@@ -91,9 +87,9 @@ HftStrategyPtr HftStrategyMgr::createStrategy(const char* factname, const char* 
 {
 	auto it = _factories.find(factname);
 	if (it == _factories.end())
-		return HftStrategyPtr();
+		return {};
 
-	StraFactInfo& fInfo = (StraFactInfo&)it->second;
+	auto& fInfo = (StraFactInfo&)it->second;
 	HftStrategyPtr ret(new HftStraWrapper(fInfo._fact->createStrategy(unitname, id), fInfo._fact));
 	_strategies[id] = ret;
 	return ret;
@@ -103,16 +99,16 @@ HftStrategyPtr HftStrategyMgr::createStrategy(const char* name, const char* id)
 {
 	StringVector ay = StrUtil::split(name, ".");
 	if (ay.size() < 2)
-		return HftStrategyPtr();
+		return {};
 
 	const char* factname = ay[0].c_str();
 	const char* unitname = ay[1].c_str();
 
 	auto it = _factories.find(factname);
 	if (it == _factories.end())
-		return HftStrategyPtr();
+		return {};
 
-	StraFactInfo& fInfo = (StraFactInfo&)it->second;
+	auto& fInfo = (StraFactInfo&)it->second;
 	HftStrategyPtr ret(new HftStraWrapper(fInfo._fact->createStrategy(unitname, id), fInfo._fact));
 	_strategies[id] = ret;
 	return ret;
@@ -122,7 +118,7 @@ HftStrategyPtr HftStrategyMgr::getStrategy(const char* id)
 {
 	auto it = _strategies.find(id);
 	if (it == _strategies.end())
-		return HftStrategyPtr();
+		return {};
 
 	return it->second;
 }

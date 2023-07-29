@@ -125,9 +125,9 @@ bool TraderAdapter::init(const char* id, WTSVariant* params, IBaseDataMgr* bdMgr
 
 			WTSVariant* cfgPolicy = cfgRisk->get("policy");
 			auto keys = cfgPolicy->memberNames();
-			for (auto it = keys.begin(); it != keys.end(); it++)
+			for (auto & key : keys)
 			{
-				const char* product = (*it).c_str();
+				const char* product = key.c_str();
 				WTSVariant*	vProdItem = cfgPolicy->get(product);
 				RiskParams& rParam = _risk_params_map[product];
 				rParam._cancel_total_limits = vProdItem->getUInt32("cancel_total_limits");
@@ -160,7 +160,7 @@ bool TraderAdapter::init(const char* id, WTSVariant* params, IBaseDataMgr* bdMgr
 	if (params->getString("module").empty())
 		return false;
 
-	std::string module = DLLHelper::wrap_module(params->getCString("module"), "lib");;
+	std::string module = DLLHelper::wrap_module(params->getCString("module"), "lib");
 
 	//先看工作目录下是否有交易模块
 	std::string dllpath = WtHelper::getModulePath(module.c_str(), "traders", true);
@@ -178,7 +178,7 @@ bool TraderAdapter::init(const char* id, WTSVariant* params, IBaseDataMgr* bdMgr
 		WTSLogger::log_dyn("trader", _id.c_str(), LL_INFO, "[{}] Trader module {} loaded", _id.c_str(), dllpath.c_str());
 	}
 
-	FuncCreateTrader pFunCreateTrader = (FuncCreateTrader)DLLHelper::get_symbol(hInst, "createTrader");
+	auto pFunCreateTrader = (FuncCreateTrader)DLLHelper::get_symbol(hInst, "createTrader");
 	if (nullptr == pFunCreateTrader)
 	{
 		WTSLogger::log_dyn("trader", _id.c_str(), LL_FATAL, "[{}] Entrance function createTrader not found", _id.c_str());
@@ -276,7 +276,7 @@ void TraderAdapter::initSaveData()
 
 void TraderAdapter::logTrade(uint32_t localid, const char* stdCode, WTSTradeInfo* trdInfo)
 {
-	if (_trades_log == nullptr || trdInfo == nullptrptr)
+	if (_trades_log == nullptr || trdInfo == nullptr)
 		return;
 
 	_trades_log->write_file(fmt::format("{},{},{},{},{},{},{},{},{}\n",
@@ -287,7 +287,7 @@ void TraderAdapter::logTrade(uint32_t localid, const char* stdCode, WTSTradeInfo
 
 void TraderAdapter::logOrder(uint32_t localid, const char* stdCode, WTSOrderInfo* ordInfo)
 {
-	if (_orders_log == nullptrptr || ordInfo == nullptrptr)
+	if (_orders_log == nullptr || ordInfo == nullptr)
 		return;
 
 	_orders_log->write_file(fmt::format("{},{},{},{},{},{},{},{},{},{},{}\n",
@@ -318,10 +318,10 @@ void TraderAdapter::saveData(WTSArray* ayFunds /* = nullptr */)
 		double	s_preavail;
 		 */
 
-		for (auto it = _positions.begin(); it != _positions.end(); it++)
+		for (const auto & _position : _positions)
 		{
-			const char* stdCode = it->first.c_str();
-			const PosItem& pInfo = it->second;
+			const char* stdCode = _position.first.c_str();
+			const PosItem& pInfo = _position.second;
 
 			rj::Value pItem(rj::kObjectType);
 			pItem.AddMember("code", rj::Value(stdCode, allocator), allocator);
@@ -351,9 +351,9 @@ void TraderAdapter::saveData(WTSArray* ayFunds /* = nullptr */)
 
 		if(ayFunds && ayFunds->size() > 0)
 		{
-			for(auto it = ayFunds->begin(); it != ayFunds->end(); it++)
+			for(auto & ayFund : *ayFunds)
 			{
-				WTSAccountInfo* fundInfo = (WTSAccountInfo*)(*it);
+				auto* fundInfo = (WTSAccountInfo*)ayFund;
 				rj::Value fItem(rj::kObjectType);
 				fItem.AddMember("prebalance", fundInfo->getPreBalance(), allocator);
 				fItem.AddMember("balance", fundInfo->getBalance(), allocator);
@@ -422,7 +422,7 @@ void TraderAdapter::release()
 	}
 }
 
-double TraderAdapter::getPosition(const char* stdCode, bool bValidOnly, int32_t flag /* = 3 */)
+double TraderAdapter::getPosition(const char* stdCode, bool bValidOnly, int32_t flag)
 {
 	auto it = _positions.find(stdCode);
 	if (it == _positions.end())
@@ -430,7 +430,7 @@ double TraderAdapter::getPosition(const char* stdCode, bool bValidOnly, int32_t 
 
 	double ret = 0;
 	const PosItem& pItem = it->second;
-	if(flag & 1)
+	if(flag & POSITION_LONG)
 	{
 		if(bValidOnly)
 			ret += (pItem.l_newavail + pItem.l_preavail);
@@ -438,7 +438,7 @@ double TraderAdapter::getPosition(const char* stdCode, bool bValidOnly, int32_t 
 			ret += (pItem.l_newvol + pItem.l_prevol);
 	}
 
-	if (flag & 2)
+	if (flag & POSITION_SHORT)
 	{
 		if (bValidOnly)
 			ret -= (pItem.s_newavail + pItem.s_preavail);
@@ -448,7 +448,7 @@ double TraderAdapter::getPosition(const char* stdCode, bool bValidOnly, int32_t 
 	return ret;
 }
 
-void TraderAdapter::enumPosition(FuncEnumChnlPosCallBack cb)
+void TraderAdapter::enumPosition(const FuncEnumChnlPosCallBack& cb)
 {
 	for(auto& v : _positions)
 	{
@@ -470,10 +470,10 @@ OrderMap* TraderAdapter::getOrders(const char* stdCode)
 
 	StdUniqueLock lock(_mtx_orders);
 	OrderMap* ret = OrderMap::create();
-	for (auto it = _orders->begin(); it != _orders->end(); it++)
+	for (auto & _order : *_orders)
 	{
-		uint32_t localid = it->first;
-		WTSOrderInfo* ordInfo = (WTSOrderInfo*)it->second;
+		uint32_t localid = _order.first;
+		auto* ordInfo = (WTSOrderInfo*)_order.second;
 
 		if (isAll || strcmp(ordInfo->getCode(), stdCode) == 0)
 			ret->add(localid, ordInfo);
@@ -558,7 +558,7 @@ bool TraderAdapter::checkCancelLimits(const char* stdCode)
 	auto it = _cancel_time_cache.find(stdCode);
 	if (it != _cancel_time_cache.end())
 	{
-		TimeCacheList& cache = (TimeCacheList&)it->second;
+		auto& cache = (TimeCacheList&)it->second;
 		uint32_t cnt = cache.size();
 		if (cnt >= riskPara->_cancel_times_boundary)
 		{
@@ -623,7 +623,7 @@ bool TraderAdapter::checkOrderLimits(const char* stdCode)
 	auto it = _order_time_cache.find(stdCode);
 	if (it != _order_time_cache.end())
 	{
-		TimeCacheList& cache = (TimeCacheList&)it->second;
+		auto& cache = (TimeCacheList&)it->second;
 		uint32_t cnt = cache.size();
 		if (cnt >= riskPara->_order_times_boundary)
 		{
@@ -698,9 +698,8 @@ OrderIDs TraderAdapter::buy(const char* stdCode, double price, double qty, int f
 	if (decimal::eq(unitQty, 0))
 		unitQty = DBL_MAX;
 
-	for (auto it = ruleGP.begin(); it != ruleGP.end(); it++)
+	for (const auto & curRule : ruleGP)
 	{
-		const ActionRule& curRule = (*it);
 		if(curRule._atype == AT_Open && !bForceClose)
 		{
 			//先检查是否已经到了限额
@@ -990,9 +989,8 @@ OrderIDs TraderAdapter::sell(const char* stdCode, double price, double qty, int 
 	if (decimal::eq(unitQty, 0))
 		unitQty = DBL_MAX;
 
-	for (auto it = ruleGP.begin(); it != ruleGP.end(); it++)
+	for (const auto & curRule : ruleGP)
 	{
-		const ActionRule& curRule = (*it);
 		if (curRule._atype == AT_Open && !bForceClose)
 		{
 			//先检查是否已经到了限额
@@ -1282,7 +1280,7 @@ bool TraderAdapter::cancel(uint32_t localid)
 	return bRet;
 }
 
-OrderIDs TraderAdapter::cancel(const char* stdCode, bool isBuy, double qty /* = 0 */)
+OrderIDs TraderAdapter::cancel(const char* stdCode, bool isBuy, double qty)
 {
 	CodeHelper::CodeInfo cInfo = CodeHelper::extractStdCode(stdCode, nullptr);
 
@@ -1292,9 +1290,9 @@ OrderIDs TraderAdapter::cancel(const char* stdCode, bool isBuy, double qty /* = 
 	bool isAll = strlen(stdCode) == 0;
 	if (_orders != nullptr && _orders->size() > 0)
 	{
-		for (auto it = _orders->begin(); it != _orders->end(); it++)
+		for (auto & _order : *_orders)
 		{
-			WTSOrderInfo* orderInfo = (WTSOrderInfo*)it->second;
+			auto* orderInfo = (WTSOrderInfo*)_order.second;
 			if(!orderInfo->isAlive())
 				continue;
 
@@ -1307,7 +1305,7 @@ OrderIDs TraderAdapter::cancel(const char* stdCode, bool isBuy, double qty /* = 
 				if(doCancel(orderInfo))
 				{
 					actQty += orderInfo->getVolLeft();
-					ret.emplace_back(it->first);
+					ret.emplace_back(_order.first);
 					//_cancel_time_cache[orderInfo->getCode()].emplace_back(TimeUtils::getLocalTimeNow());
 				}
 			}
@@ -1515,9 +1513,9 @@ void TraderAdapter::onRspAccount(WTSArray* ayAccounts)
 		//通知所有监听接口
 		for (auto sink : _sinks)
 		{
-			for (uint32_t idx = 0; idx < ayAccounts->size(); idx++)
+			for (auto ayAccount : *ayAccounts)
 			{
-				WTSAccountInfo* fundInfo = (WTSAccountInfo*)ayAccounts->at(idx);
+				auto* fundInfo = (WTSAccountInfo*)ayAccount;
 				sink->on_account(fundInfo->getCurrency(), fundInfo->getPreBalance(), fundInfo->getBalance(), fundInfo->getBalance() + fundInfo->getDynProfit(), fundInfo->getAvailable(),
 					fundInfo->getCloseProfit(), fundInfo->getDynProfit(), fundInfo->getMargin(), fundInfo->getCommission(), fundInfo->getDeposit(), fundInfo->getWithdraw());
 			}
@@ -1538,9 +1536,9 @@ void TraderAdapter::onRspPosition(const WTSArray* ayPositions)
 {
 	if (ayPositions && ayPositions->size() > 0)
 	{
-		for (auto it = ayPositions->begin(); it != ayPositions->end(); it++)
+		for (auto ayPosition : *ayPositions)
 		{
-			WTSPositionItem* pItem = (WTSPositionItem*)(*it);
+			auto* pItem = (WTSPositionItem*)ayPosition;
 			WTSContractInfo* cInfo = pItem->getContractInfo();
 			if (cInfo == nullptr)
 				continue;
@@ -1570,10 +1568,10 @@ void TraderAdapter::onRspPosition(const WTSArray* ayPositions)
 			}
 		}
 
-		for (auto it = _positions.begin(); it != _positions.end(); it++)
+		for (const auto & _position : _positions)
 		{
-			const char* stdCode = it->first.c_str();
-			const PosItem& pItem = it->second;
+			const char* stdCode = _position.first.c_str();
+			const PosItem& pItem = _position.second;
 			printPosition(stdCode, pItem);
 			for (auto sink : _sinks)
 			{
@@ -1602,9 +1600,9 @@ void TraderAdapter::onRspOrders(const WTSArray* ayOrders)
 
 		_undone_qty.clear();
 
-		for (auto it = ayOrders->begin(); it != ayOrders->end(); it++)
+		for (auto ayOrder : *ayOrders)
 		{
-			WTSOrderInfo* orderInfo = (WTSOrderInfo*)(*it);
+			auto* orderInfo = (WTSOrderInfo*)ayOrder;
 			if (orderInfo == nullptr)
 				continue;
 
@@ -1686,7 +1684,7 @@ void TraderAdapter::onRspOrders(const WTSArray* ayOrders)
 				continue;
 
 			if (!StrUtil::startsWith(orderInfo->getUserTag(), _order_pattern.c_str(), true))
-				continue;;
+				continue;
 
 			char* userTag = (char*)orderInfo->getUserTag();
 			userTag += _order_pattern.size() + 1;
@@ -1701,9 +1699,9 @@ void TraderAdapter::onRspOrders(const WTSArray* ayOrders)
 			curQty += orderInfo->getVolLeft()*(isBuy ? 1 : -1);
 		}
 
-		for (auto it = _undone_qty.begin(); it != _undone_qty.end(); it++)
+		for (const auto & it : _undone_qty)
 		{
-			const char* stdCode = it->first.c_str();
+			const char* stdCode = it.first.c_str();
 			const double& curQty = _undone_qty[stdCode];
 
 			WTSLogger::log_dyn("trader", _id.c_str(), LL_INFO, 
@@ -1730,9 +1728,9 @@ void TraderAdapter::onRspTrades(const WTSArray* ayTrades)
 {
 	if (ayTrades)
 	{
-		for (auto it = ayTrades->begin(); it != ayTrades->end(); it++)
+		for (auto ayTrade : *ayTrades)
 		{
-			WTSTradeInfo* tInfo = (WTSTradeInfo*)(*it);
+			auto* tInfo = (WTSTradeInfo*)ayTrade;
 
 			WTSContractInfo* cInfo = tInfo->getContractInfo();
 			if (cInfo == nullptr)
@@ -1784,10 +1782,10 @@ void TraderAdapter::onRspTrades(const WTSArray* ayTrades)
 			checkSelfMatch(stdCode.c_str(), tInfo);
 		}
 
-		for (auto it = _stat_map->begin(); it != _stat_map->end(); it++)
+		for (const auto & it : *_stat_map)
 		{
-			const char* stdCode = it->first.c_str();
-			WTSTradeStateInfo* pItem = (WTSTradeStateInfo*)it->second;
+			const char* stdCode = it.first.c_str();
+			auto* pItem = (WTSTradeStateInfo*)it.second;
 			WTSLogger::log_dyn("trader", _id.c_str(), LL_INFO, 
 				"[{}] {} action stats updated, long opened: {}, long closed: {}, new long closed: {}, short opened: {}, short closed: {}, new short closed: {}",
 				_id.c_str(), stdCode, pItem->open_volume_long(), pItem->close_volume_long(), pItem->closet_volume_long(),
@@ -1819,7 +1817,7 @@ bool TraderAdapter::checkSelfMatch(const char* stdCode, WTSTradeInfo* tInfo)
 		 *	如果成交单号已经存在，则检查关联订单号是否相同
 		 */
 		const std::string& oid = it->second;
-		if (oid.compare(refid) != 0)
+		if (oid != refid)
 		{
 			//同一个成交单的关联订单ID不同，这一定是自成交了
 			WTSLogger::log_dyn("trader", _id.c_str(), LL_FATAL, 
@@ -2298,14 +2296,14 @@ TraderAdapterPtr TraderAdapterMgr::getAdapter(const char* tname)
 		return it->second;
 	}
 
-	return TraderAdapterPtr();
+	return {};
 }
 
 void TraderAdapterMgr::run()
 {
-	for (auto it = _adapters.begin(); it != _adapters.end(); it++)
+	for (const auto & _adapter : _adapters)
 	{
-		it->second->run();
+		_adapter.second->run();
 	}
 
 	WTSLogger::info("{} trading channels started", _adapters.size());
@@ -2313,9 +2311,9 @@ void TraderAdapterMgr::run()
 
 void TraderAdapterMgr::release()
 {
-	for (auto it = _adapters.begin(); it != _adapters.end(); it++)
+	for (const auto & _adapter : _adapters)
 	{
-		it->second->release();
+		_adapter.second->release();
 	}
 
 	_adapters.clear();
@@ -2323,8 +2321,8 @@ void TraderAdapterMgr::release()
 
 void TraderAdapterMgr::refresh_funds()
 {
-	for (auto it = _adapters.begin(); it != _adapters.end(); it++)
+	for (const auto & _adapter : _adapters)
 	{
-		it->second->queryFund();
+		_adapter.second->queryFund();
 	}
 }

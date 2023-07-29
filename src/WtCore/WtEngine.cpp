@@ -153,7 +153,7 @@ void WtEngine::on_tick(const char* stdCode, WTSTickData* curTick)
 		if (it == _pos_map.end())
 			return;
 
-		PosInfo* pInfo = (PosInfo*)&it->second;
+		auto* pInfo = (PosInfo*)&it->second;
 		if (pInfo->_volume == 0)
 		{
 			pInfo->_dynprofit = 0;
@@ -162,10 +162,9 @@ void WtEngine::on_tick(const char* stdCode, WTSTickData* curTick)
 		{
 			WTSCommodityInfo* commInfo = get_commodity_info(code.c_str());
 			double dynprofit = 0;
-			for (auto pit = pInfo->_details.begin(); pit != pInfo->_details.end(); pit++)
+			for (auto & dInfo : pInfo->_details)
 			{
-				DetailInfo& dInfo = *pit;
-				dInfo._profit = dInfo._volume*(price - dInfo._price)*commInfo->getVolScale()*(dInfo._long ? 1 : -1);
+					dInfo._profit = dInfo._volume*(price - dInfo._price)*commInfo->getVolScale()*(dInfo._long ? 1 : -1);
 				dynprofit += dInfo._profit;
 			}
 
@@ -195,7 +194,7 @@ void WtEngine::update_fund_dynprofit()
 	}
 
 	double profit = 0.0;
-	for(auto v : _pos_map)
+	for(const auto& v : _pos_map)
 	{
 		const PosInfo& pItem = v.second;
 		profit += pItem._dynprofit;
@@ -212,7 +211,7 @@ void WtEngine::update_fund_dynprofit()
 	if (fundInfo._min_dyn_bal == DBL_MAX || decimal::lt(dynbal, fundInfo._min_dyn_bal))
 	{
 		fundInfo._min_dyn_bal = dynbal;
-		fundInfo._min_time = _cur_raw_time * 100000 + _cur_secs;;
+		fundInfo._min_time = _cur_raw_time * 100000 + _cur_secs;
 	}
 
 	double dynbalance = fundInfo._balance + profit;
@@ -402,10 +401,10 @@ void WtEngine::save_datas()
 	{//持仓数据保存
 		rj::Value jPos(rj::kArrayType);
 
-		for (auto it = _pos_map.begin(); it != _pos_map.end(); it++)
+		for (const auto & it : _pos_map)
 		{
-			const char* stdCode = it->first.c_str();
-			const PosInfo& pInfo = it->second;
+			const char* stdCode = it.first.c_str();
+			const PosInfo& pInfo = it.second;
 
 			rj::Value pItem(rj::kObjectType);
 			pItem.AddMember("code", rj::Value(stdCode, allocator), allocator);
@@ -414,10 +413,9 @@ void WtEngine::save_datas()
 			pItem.AddMember("dynprofit", pInfo._dynprofit, allocator);
 
 			rj::Value details(rj::kArrayType);
-			for (auto dit = pInfo._details.begin(); dit != pInfo._details.end(); dit++)
+			for (const auto & dInfo : pInfo._details)
 			{
-				const DetailInfo& dInfo = *dit;
-				if(decimal::eq(dInfo._volume, 0))
+					if(decimal::eq(dInfo._volume, 0))
 					continue;
 				rj::Value dItem(rj::kObjectType);
 				dItem.AddMember("long", dInfo._long, allocator);
@@ -1063,7 +1061,7 @@ void WtEngine::do_set_position(const char* stdCode, double qty, double curPx /* 
 	}
 }
 
-void WtEngine::push_task(TaskItem task)
+void WtEngine::push_task(const TaskItem& task)
 {
 	{
 		StdUniqueLock lock(_mtx_task);

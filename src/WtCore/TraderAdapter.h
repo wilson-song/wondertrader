@@ -140,7 +140,7 @@ private:
 	inline void updateUndone(const char* stdCode, double qty, bool bOuput = true);
 
 public:
-	double getPosition(const char* stdCode, bool bValidOnly, int32_t flag = 3);
+	double getPosition(const char* stdCode, bool bValidOnly, int32_t flag);
 	OrderMap* getOrders(const char* stdCode);
 	double getUndoneQty(const char* stdCode)
 	{
@@ -151,15 +151,15 @@ public:
 		return 0;
 	}
 
-	void enumPosition(FuncEnumChnlPosCallBack cb);
+	void enumPosition(const FuncEnumChnlPosCallBack& cb);
 
 	uint32_t openLong(const char* stdCode, double price, double qty, int flag, WTSContractInfo* cInfo = nullptr);
 	uint32_t openShort(const char* stdCode, double price, double qty, int flag, WTSContractInfo* cInfo = nullptr);
 	uint32_t closeLong(const char* stdCode, double price, double qty, bool isToday, int flag, WTSContractInfo* cInfo = nullptr);
 	uint32_t closeShort(const char* stdCode, double price, double qty, bool isToday, int flag, WTSContractInfo* cInfo = nullptr);
 	
-	OrderIDs buy(const char* stdCode, double price, double qty, int flag, bool bForceClose, WTSContractInfo* cInfo = nullptr);
-	OrderIDs sell(const char* stdCode, double price, double qty, int flag, bool bForceClose, WTSContractInfo* cInfo = nullptr);
+	OrderIDs buy(const char* stdCode, double price, double qty, int flag, bool bForceClose, WTSContractInfo* cInfo);
+	OrderIDs sell(const char* stdCode, double price, double qty, int flag, bool bForceClose, WTSContractInfo* cInfo);
 	bool	cancel(uint32_t localid);
 	OrderIDs cancel(const char* stdCode, bool isBuy, double qty = 0);
 
@@ -214,18 +214,18 @@ private:
 	std::string			_id;
 	std::string			_order_pattern;
 
-	uint32_t			_trading_day;
+	uint32_t			_trading_day{};
 
 	ITraderApi*			_trader_api;
-	FuncDeleteTrader	_remover;
+	FuncDeleteTrader	_remover{};
 	AdapterState		_state;
 
 	EventNotifier*		_notifier;
 
 	faster_hashset<ITrdNotifySink*>	_sinks;
 
-	IBaseDataMgr*		_bd_mgr;
-	ActionPolicyMgr*	_policy_mgr;
+	IBaseDataMgr*		_bd_mgr{};
+	ActionPolicyMgr*	_policy_mgr{};
 
 	faster_hashmap<LongKey, PosItem> _positions;
 

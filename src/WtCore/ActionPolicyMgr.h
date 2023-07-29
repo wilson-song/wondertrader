@@ -9,8 +9,8 @@
  */
 #pragma once
 #include <vector>
-#include <stdint.h>
-#include <string.h>
+#include <cstdint>
+#include <cstring>
 
 #include "../Includes/FasterDefs.h"
 
@@ -27,17 +27,17 @@ typedef enum tagActionType
 	AT_CloseYestoday	//平昨
 } ActionType;
 
-typedef struct _ActionRule
+typedef struct ActionRule
 {
 	ActionType	_atype;		//动作类型
-	uint32_t	_limit;		//手数限制
-	uint32_t	_limit_l;	//多头手数限制
-	uint32_t	_limit_s;	//空头手数限制
-	bool		_pure;		//主要针对AT_CloseToday和AT_CloseYestoday，用于判断是否是净今仓或者净昨仓
+	uint32_t	_limit{};		//手数限制
+	uint32_t	_limit_l{};	//多头手数限制
+	uint32_t	_limit_s{};	//空头手数限制
+	bool		_pure{};		//主要针对AT_CloseToday和AT_CloseYestoday，用于判断是否是净今仓或者净昨仓
 
-	_ActionRule()
+	ActionRule()
 	{
-		memset(this, 0, sizeof(_ActionRule));
+		memset(this, 0, sizeof(ActionRule));
 	}
 } ActionRule;
 

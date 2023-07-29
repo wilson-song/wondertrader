@@ -17,14 +17,10 @@
 #include <boost/filesystem.hpp>
 
 
-CtaStrategyMgr::CtaStrategyMgr()
-{
-}
+CtaStrategyMgr::CtaStrategyMgr() = default;
 
 
-CtaStrategyMgr::~CtaStrategyMgr()
-{
-}
+CtaStrategyMgr::~CtaStrategyMgr() = default;
 
 bool CtaStrategyMgr::loadFactories(const char* path)
 {
@@ -54,7 +50,7 @@ bool CtaStrategyMgr::loadFactories(const char* path)
 		if (hInst == nullptr)
 			continue;
 
-		FuncCreateStrategyFact creator = (FuncCreateStrategyFact)DLLHelper::get_symbol(hInst, "createStrategyFact");
+		auto creator = (FuncCreateStrategyFact)DLLHelper::get_symbol(hInst, "createStrategyFact");
 		if (creator == nullptr)
 		{
 			DLLHelper::free_library(hInst);
@@ -92,9 +88,9 @@ CtaStrategyPtr CtaStrategyMgr::createStrategy(const char* factname, const char* 
 {
 	auto it = _factories.find(factname);
 	if (it == _factories.end())
-		return CtaStrategyPtr();
+		return {};
 
-	StraFactInfo& fInfo = (StraFactInfo&)it->second;
+	auto& fInfo = (StraFactInfo&)it->second;
 	CtaStrategyPtr ret(new CtaStrategyWrapper(fInfo._fact->createStrategy(unitname, id), fInfo._fact));
 	_strategies[id] = ret;
 	return ret;
@@ -123,7 +119,7 @@ CtaStrategyPtr CtaStrategyMgr::getStrategy(const char* id)
 {
 	auto it = _strategies.find(id);
 	if (it == _strategies.end())
-		return CtaStrategyPtr();
+		return {};
 
 	return it->second;
 }

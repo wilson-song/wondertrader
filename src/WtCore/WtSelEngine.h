@@ -19,7 +19,7 @@ typedef enum tagTaskPeriodType
 	TPT_Yearly		//每年,遇到节假日顺延
 }TaskPeriodType;
 
-typedef struct _TaskInfo
+typedef struct TaskInfo
 {
 	uint32_t	_id;
 	char		_name[16];		//任务名
@@ -49,33 +49,33 @@ public:
 public:
 	//////////////////////////////////////////////////////////////////////////
 	//WtEngine接口
-	virtual void init(WTSVariant* cfg, IBaseDataMgr* bdMgr, WtDtMgr* dataMgr, IHotMgr* hotMgr, EventNotifier* notifier) override;
+	void init(WTSVariant* cfg, IBaseDataMgr* bdMgr, WtDtMgr* dataMgr, IHotMgr* hotMgr, EventNotifier* notifier) override;
 
-	virtual void run(bool bAsync = false) override;
+	void run(bool bAsync /*= false*/) override;
 
-	virtual void on_tick(const char* stdCode, WTSTickData* curTick) override;
+	void on_tick(const char* stdCode, WTSTickData* curTick) override;
 
-	virtual void on_bar(const char* stdCode, const char* period, uint32_t times, WTSBarStruct* newBar) override;
+	void on_bar(const char* stdCode, const char* period, uint32_t times, WTSBarStruct* newBar) override;
 
-	virtual void handle_push_quote(WTSTickData* newTick, uint32_t hotFlag) override;
+	void handle_push_quote(WTSTickData* newTick, uint32_t hotFlag) override;
 
-	virtual void on_init() override;
+	void on_init() override;
 
-	virtual void on_session_begin() override;
+	void on_session_begin() override;
 
-	virtual void on_session_end() override;
+	void on_session_end() override;
 
 	///////////////////////////////////////////////////////////////////////////
 	//IExecutorStub 接口
-	virtual uint64_t get_real_time() override;
-	virtual WTSCommodityInfo* get_comm_info(const char* stdCode) override;
-	virtual WTSSessionInfo* get_sess_info(const char* stdCode) override;
-	virtual IHotMgr* get_hot_mon() { return _hot_mgr; }
-	virtual uint32_t get_trading_day() { return _cur_tdate; }
+	uint64_t get_real_time() override;
+	WTSCommodityInfo* get_comm_info(const char* stdCode) override;
+	WTSSessionInfo* get_sess_info(const char* stdCode) override;
+	IHotMgr* get_hot_mon() override { return _hot_mgr; }
+	uint32_t get_trading_day() override { return _cur_tdate; }
 
 public:
 	//uint32_t	register_task(const char* name, uint32_t date, uint32_t time, TaskPeriodType period, bool bStrict = true, const char* trdtpl = "CHINA");
-	void			addContext(SelContextPtr ctx, uint32_t date, uint32_t time, TaskPeriodType period, bool bStrict = true, const char* trdtpl = "CHINA", const char* sessionID="TRADING");
+	void			addContext(const SelContextPtr& ctx, uint32_t date, uint32_t time, TaskPeriodType period, bool bStrict = true, const char* trdtpl = "CHINA", const char* sessionID="TRADING");
 
 	SelContextPtr	getContext(uint32_t id);
 
@@ -99,7 +99,7 @@ private:
 
 	bool	_terminated;
 
-	WtSelRtTicker*	_tm_ticker;
+	WtSelRtTicker*	_tm_ticker{};
 	WTSVariant*		_cfg;
 };
 

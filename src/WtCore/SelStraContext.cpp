@@ -9,9 +9,7 @@ SelStraContext::SelStraContext(WtSelEngine* engine, const char* name, int32_t sl
 }
 
 
-SelStraContext::~SelStraContext()
-{
-}
+SelStraContext::~SelStraContext() = default;
 
 void SelStraContext::on_init()
 {
