@@ -1,1 +1,4 @@
 dist/*
+.vs/
+mingw9deps/
+vc141depends/
