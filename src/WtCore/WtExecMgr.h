@@ -10,7 +10,7 @@ typedef std::function<void(ExecCmdPtr)> EnumExecuterCb;
 class WtExecuterMgr : private boost::noncopyable
 {
 public:
-	WtExecuterMgr():_filter_mgr(NULL){}
+	WtExecuterMgr():_filter_mgr(nullptr){}
 
 	inline void set_filter_mgr(WtFilterMgr* mgr) { _filter_mgr = mgr; }
 

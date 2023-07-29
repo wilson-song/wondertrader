@@ -108,8 +108,8 @@ WTSSessionInfo* WtEngine::get_session_info(const char* sid, bool isCode /* = fal
 
 	CodeHelper::CodeInfo codeInfo = CodeHelper::extractStdCode(sid, _hot_mgr);
 	WTSCommodityInfo* cInfo = _base_data_mgr->getCommodity(codeInfo._exchg, codeInfo._product);
-	if (cInfo == NULL)
-		return NULL;
+	if (cInfo == nullptr)
+		return nullptr;
 
 	return _base_data_mgr->getSession(cInfo->getSession());
 }
@@ -364,7 +364,7 @@ void WtEngine::save_datas()
 	rj::Document root(rj::kObjectType);
 	rj::Document::AllocatorType &allocator = root.GetAllocator();
 
-	if (_port_fund != NULL)
+	if (_port_fund != nullptr)
 	{//保存资金数据
 		const WTSFundStruct& fundInfo = _port_fund->fundInfo();
 		rj::Value jFund(rj::kObjectType);
@@ -676,7 +676,7 @@ double WtEngine::get_cur_price(const char* stdCode)
 		//找不到的时候，先读取未复权的tick数据
 		std::string fCode = bAdjusted ? std::string(stdCode, len - 1) : stdCode;
 		WTSTickData* lastTick = _data_mgr->grab_last_tick(fCode.c_str());
-		if (lastTick == NULL)
+		if (lastTick == nullptr)
 			return 0.0;
 
 		WTSContractInfo* cInfo = lastTick->getContractInfo();
@@ -711,7 +711,7 @@ double WtEngine::get_day_price(const char* stdCode, int flag /* = 0 */)
 	//找不到的时候，先读取未复权的tick数据
 	std::string fCode = bAdjusted ? std::string(stdCode, len - 1) : stdCode;
 	WTSTickData* lastTick = _data_mgr->grab_last_tick(fCode.c_str());
-	if (lastTick == NULL)
+	if (lastTick == nullptr)
 		return 0.0;
 
 	WTSCommodityInfo* commInfo = get_commodity_info(fCode.c_str());
@@ -741,12 +741,12 @@ double WtEngine::get_day_price(const char* stdCode, int flag /* = 0 */)
 	return ret;
 }
 
-double WtEngine::get_exright_factor(const char* stdCode, WTSCommodityInfo* commInfo /* = NULL */)
+double WtEngine::get_exright_factor(const char* stdCode, WTSCommodityInfo* commInfo /* = nullptr */)
 {
-	if (commInfo == NULL)
+	if (commInfo == nullptr)
 		commInfo = get_commodity_info(stdCode);
 
-	if (commInfo == NULL)
+	if (commInfo == nullptr)
 		return 1.0;
 
 	if (commInfo->isStock())
@@ -845,7 +845,7 @@ void WtEngine::load_fees(const char* filename)
 	}
 
 	WTSVariant* cfg = WTSCfgLoader::load_from_file(filename);
-	if (cfg == NULL)
+	if (cfg == nullptr)
 	{
 		WTSLogger::error("Fee templates file {} loading failed", filename);
 		return;
@@ -1071,7 +1071,7 @@ void WtEngine::push_task(TaskItem task)
 	}
 	
 
-	if (_thread_task == NULL)
+	if (_thread_task == nullptr)
 	{
 		_thread_task.reset(new StdThread([this]{
 			task_loop();

@@ -37,13 +37,13 @@ bool WtExecuterFactory::loadFactories(const char* path)
 		const std::string& path = iter->path().string();
 
 		DllHandle hInst = DLLHelper::load_library(path.c_str());
-		if (hInst == NULL)
+		if (hInst == nullptr)
 		{
 			continue;
 		}
 
 		FuncCreateExeFactory creator = (FuncCreateExeFactory)DLLHelper::get_symbol(hInst, "createExecFact");
-		if (creator == NULL)
+		if (creator == nullptr)
 		{
 			DLLHelper::free_library(hInst);
 			continue;
@@ -72,7 +72,7 @@ ExecuteUnitPtr WtExecuterFactory::createExeUnit(const char* factname, const char
 
 	ExeFactInfo& fInfo = (ExeFactInfo&)it->second;
 	ExecuteUnit* unit = fInfo._fact->createExeUnit(unitname);
-	if (unit == NULL)
+	if (unit == nullptr)
 	{
 		WTSLogger::error("Createing execution unit failed: {}.{}", factname, unitname);
 		return ExecuteUnitPtr();
@@ -88,7 +88,7 @@ ExecuteUnitPtr WtExecuterFactory::createDiffExeUnit(const char* factname, const 
 
 	ExeFactInfo& fInfo = (ExeFactInfo&)it->second;
 	ExecuteUnit* unit = fInfo._fact->createDiffExeUnit(unitname);
-	if (unit == NULL)
+	if (unit == nullptr)
 	{
 		WTSLogger::error("Createing execution unit failed: {}.{}", factname, unitname);
 		return ExecuteUnitPtr();
@@ -111,7 +111,7 @@ ExecuteUnitPtr WtExecuterFactory::createExeUnit(const char* name)
 
 	ExeFactInfo& fInfo = (ExeFactInfo&)it->second;
 	ExecuteUnit* unit = fInfo._fact->createExeUnit(unitname);
-	if (unit == NULL)
+	if (unit == nullptr)
 	{
 		WTSLogger::error("Createing execution unit failed: {}", name);
 		return ExecuteUnitPtr();
@@ -134,7 +134,7 @@ ExecuteUnitPtr WtExecuterFactory::createDiffExeUnit(const char* name)
 
 	ExeFactInfo& fInfo = (ExeFactInfo&)it->second;
 	ExecuteUnit* unit = fInfo._fact->createDiffExeUnit(unitname);
-	if (unit == NULL)
+	if (unit == nullptr)
 	{
 		WTSLogger::error("Createing execution unit failed: {}", name);
 		return ExecuteUnitPtr();

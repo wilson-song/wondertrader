@@ -4,7 +4,7 @@
 
 SelStraContext::SelStraContext(WtSelEngine* engine, const char* name, int32_t slippage)
 	: SelStraBaseCtx(engine, name, slippage)
-	, _strategy(NULL)
+	, _strategy(nullptr)
 {
 }
 

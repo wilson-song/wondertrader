@@ -51,18 +51,18 @@ bool CtaStrategyMgr::loadFactories(const char* path)
 #endif
 
 		DllHandle hInst = DLLHelper::load_library(iter->path().string().c_str());
-		if (hInst == NULL)
+		if (hInst == nullptr)
 			continue;
 
 		FuncCreateStrategyFact creator = (FuncCreateStrategyFact)DLLHelper::get_symbol(hInst, "createStrategyFact");
-		if (creator == NULL)
+		if (creator == nullptr)
 		{
 			DLLHelper::free_library(hInst);
 			continue;
 		}
 
 		ICtaStrategyFactory* fact = creator();
-		if(fact != NULL)
+		if(fact != nullptr)
 		{
 			StraFactInfo& fInfo = _factories[fact->getName()];
 			fInfo._module_inst = hInst;

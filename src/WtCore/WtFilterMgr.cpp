@@ -167,7 +167,7 @@ bool WtFilterMgr::is_filtered_by_strategy(const char* straName, double& targetPo
 
 bool WtFilterMgr::is_filtered_by_code(const char* stdCode, double& targetPos)
 {
-	CodeHelper::CodeInfo cInfo = CodeHelper::extractStdCode(stdCode, NULL);
+	CodeHelper::CodeInfo cInfo = CodeHelper::extractStdCode(stdCode, nullptr);
 	auto cit = _code_filters.find(stdCode);
 	if (cit != _code_filters.end())
 	{

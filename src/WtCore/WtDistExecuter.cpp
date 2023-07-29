@@ -20,7 +20,7 @@ WtDistExecuter::~WtDistExecuter()
 
 bool WtDistExecuter::init(WTSVariant* params)
 {
-	if (params == NULL)
+	if (params == nullptr)
 		return false;
 
 	_config = params;

@@ -66,7 +66,7 @@ void WtHftRtTicker::trigger_price(WTSTickData* curTick, uint32_t hotFlag /* = 0 
 
 void WtHftRtTicker::on_tick(WTSTickData* curTick, uint32_t hotFlag/* = 0*/)
 {
-	if (_thrd == NULL)
+	if (_thrd == nullptr)
 	{
 		trigger_price(curTick, hotFlag);
 		return;

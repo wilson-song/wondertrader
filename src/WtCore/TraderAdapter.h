@@ -30,7 +30,7 @@ typedef std::function<void(const char*, bool, double, double, double, double)> F
 class TraderAdapter : public ITraderSpi
 {
 public:
-	TraderAdapter(EventNotifier* caster = NULL);
+	TraderAdapter(EventNotifier* caster = nullptr);
 	~TraderAdapter();
 
 	typedef enum tagAdapterState
@@ -135,7 +135,7 @@ private:
 	inline void	logTrade(uint32_t localid, const char* stdCode, WTSTradeInfo* trdInfo);
 	inline void	logOrder(uint32_t localid, const char* stdCode, WTSOrderInfo* ordInfo);
 
-	void	saveData(WTSArray* ayFunds = NULL);
+	void	saveData(WTSArray* ayFunds = nullptr);
 
 	inline void updateUndone(const char* stdCode, double qty, bool bOuput = true);
 
@@ -153,13 +153,13 @@ public:
 
 	void enumPosition(FuncEnumChnlPosCallBack cb);
 
-	uint32_t openLong(const char* stdCode, double price, double qty, int flag, WTSContractInfo* cInfo = NULL);
-	uint32_t openShort(const char* stdCode, double price, double qty, int flag, WTSContractInfo* cInfo = NULL);
-	uint32_t closeLong(const char* stdCode, double price, double qty, bool isToday, int flag, WTSContractInfo* cInfo = NULL);
-	uint32_t closeShort(const char* stdCode, double price, double qty, bool isToday, int flag, WTSContractInfo* cInfo = NULL);
+	uint32_t openLong(const char* stdCode, double price, double qty, int flag, WTSContractInfo* cInfo = nullptr);
+	uint32_t openShort(const char* stdCode, double price, double qty, int flag, WTSContractInfo* cInfo = nullptr);
+	uint32_t closeLong(const char* stdCode, double price, double qty, bool isToday, int flag, WTSContractInfo* cInfo = nullptr);
+	uint32_t closeShort(const char* stdCode, double price, double qty, bool isToday, int flag, WTSContractInfo* cInfo = nullptr);
 	
-	OrderIDs buy(const char* stdCode, double price, double qty, int flag, bool bForceClose, WTSContractInfo* cInfo = NULL);
-	OrderIDs sell(const char* stdCode, double price, double qty, int flag, bool bForceClose, WTSContractInfo* cInfo = NULL);
+	OrderIDs buy(const char* stdCode, double price, double qty, int flag, bool bForceClose, WTSContractInfo* cInfo = nullptr);
+	OrderIDs sell(const char* stdCode, double price, double qty, int flag, bool bForceClose, WTSContractInfo* cInfo = nullptr);
 	bool	cancel(uint32_t localid);
 	OrderIDs cancel(const char* stdCode, bool isBuy, double qty = 0);
 

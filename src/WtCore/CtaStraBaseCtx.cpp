@@ -321,7 +321,7 @@ void CtaStraBaseCtx::load_data(uint32_t flag /* = 0xFFFFFFFF */)
 			{
 				const char* stdCode = pItem["code"].GetString();
 				const char* ruleTag = _engine->get_hot_mgr()->getRuleTag(stdCode);
-				bool isExpired = (strlen(ruleTag) == 0 && _engine->get_contract_info(stdCode) == NULL);
+				bool isExpired = (strlen(ruleTag) == 0 && _engine->get_contract_info(stdCode) == nullptr);
 
 				if(isExpired)
 					log_info("{} not exists or expired, position ignored", stdCode);
@@ -419,7 +419,7 @@ void CtaStraBaseCtx::load_data(uint32_t flag /* = 0xFFFFFFFF */)
 			{
 				const char* stdCode = m.name.GetString();
 				const char* ruleTag = _engine->get_hot_mgr()->getRuleTag(stdCode);
-				if (strlen(ruleTag) == 0 && _engine->get_contract_info(stdCode) == NULL)
+				if (strlen(ruleTag) == 0 && _engine->get_contract_info(stdCode) == nullptr)
 				{
 					log_info("{} not exists or expired, condition ignored", stdCode);
 					continue;
@@ -463,7 +463,7 @@ void CtaStraBaseCtx::load_data(uint32_t flag /* = 0xFFFFFFFF */)
 			{
 				const char* stdCode = m.name.GetString();
 				const char* ruleTag = _engine->get_hot_mgr()->getRuleTag(stdCode);
-				if (strlen(ruleTag) == 0 && _engine->get_contract_info(stdCode) == NULL)
+				if (strlen(ruleTag) == 0 && _engine->get_contract_info(stdCode) == nullptr)
 				{
 					log_info("{} not exists or expired, signal ignored", stdCode);
 					continue;
@@ -648,7 +648,7 @@ void CtaStraBaseCtx::save_data(uint32_t flag /* = 0xFFFFFFFF */)
 //回调函数
 void CtaStraBaseCtx::on_bar(const char* stdCode, const char* period, uint32_t times, WTSBarStruct* newBar)
 {
-	if (newBar == NULL)
+	if (newBar == nullptr)
 		return;
 
 	thread_local static char realPeriod[8] = { 0 };
@@ -1120,7 +1120,7 @@ CondList& CtaStraBaseCtx::get_cond_entrusts(const char* stdCode)
 void CtaStraBaseCtx::stra_enter_long(const char* stdCode, double qty, const char* userTag /* = "" */, double limitprice, double stopprice)
 {
 	WTSCommodityInfo* commInfo = _engine->get_commodity_info(stdCode);
-	if (commInfo == NULL)
+	if (commInfo == nullptr)
 	{
 		log_error("Cannot find corresponding commodity info of {}", stdCode);
 		return;
@@ -1172,7 +1172,7 @@ void CtaStraBaseCtx::stra_enter_long(const char* stdCode, double qty, const char
 void CtaStraBaseCtx::stra_enter_short(const char* stdCode, double qty, const char* userTag /* = "" */, double limitprice, double stopprice)
 {
 	WTSCommodityInfo* commInfo = _engine->get_commodity_info(stdCode);
-	if (commInfo == NULL)
+	if (commInfo == nullptr)
 	{
 		log_error("Cannot find corresponding commodity info of {}", stdCode);
 		return;
@@ -1230,7 +1230,7 @@ void CtaStraBaseCtx::stra_enter_short(const char* stdCode, double qty, const cha
 void CtaStraBaseCtx::stra_exit_long(const char* stdCode, double qty, const char* userTag /* = "" */, double limitprice, double stopprice)
 {
 	WTSCommodityInfo* commInfo = _engine->get_commodity_info(stdCode);
-	if (commInfo == NULL)
+	if (commInfo == nullptr)
 	{
 		log_error("Cannot find corresponding commodity info of {}", stdCode);
 		return;
@@ -1276,7 +1276,7 @@ void CtaStraBaseCtx::stra_exit_long(const char* stdCode, double qty, const char*
 void CtaStraBaseCtx::stra_exit_short(const char* stdCode, double qty, const char* userTag /* = "" */, double limitprice, double stopprice)
 {
 	WTSCommodityInfo* commInfo = _engine->get_commodity_info(stdCode);
-	if (commInfo == NULL)
+	if (commInfo == nullptr)
 	{
 		log_error("Cannot find corresponding commodity info of {}", stdCode);
 		return;
@@ -1417,7 +1417,7 @@ void CtaStraBaseCtx::do_set_position(const char* stdCode, double qty, const char
 	double diff = qty - pInfo._volume;
 
 	WTSCommodityInfo* commInfo = _engine->get_commodity_info(stdCode);
-	if (commInfo == NULL)
+	if (commInfo == nullptr)
 		return;
 
 	//成交价
@@ -1583,7 +1583,7 @@ WTSKlineSlice* CtaStraBaseCtx::stra_get_bars(const char* stdCode, const char* pe
 		else if (_main_key != key)
 		{
 			log_error("Main KBars already confirmed");
-			return NULL;
+			return nullptr;
 		}
 
 		/*
@@ -1597,7 +1597,7 @@ WTSKlineSlice* CtaStraBaseCtx::stra_get_bars(const char* stdCode, const char* pe
 	basePeriod[0] = period[0];
 	uint32_t times = 1;
 	if (strlen(period) > 1)
-		times = strtoul(period + 1, NULL, 10);
+		times = strtoul(period + 1, nullptr, 10);
 
 	WTSKlineSlice* kline = _engine->get_kline_slice(_context_id, stdCode, basePeriod, count, times);
 	if(kline)

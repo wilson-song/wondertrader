@@ -51,18 +51,18 @@ bool SelStrategyMgr::loadFactories(const char* path)
 #endif
 
 		DllHandle hInst = DLLHelper::load_library(iter->path().string().c_str());
-		if (hInst == NULL)
+		if (hInst == nullptr)
 			continue;
 
 		FuncCreateSelStraFact creator = (FuncCreateSelStraFact)DLLHelper::get_symbol(hInst, "createMfStrategyFact");
-		if (creator == NULL)
+		if (creator == nullptr)
 		{
 			DLLHelper::free_library(hInst);
 			continue;
 		}
 
 		ISelStrategyFact* fact = creator();
-		if (fact != NULL)
+		if (fact != nullptr)
 		{
 			StraFactInfo& fInfo = _factories[fact->getName()];
 			fInfo._module_inst = hInst;

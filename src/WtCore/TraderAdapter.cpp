@@ -71,14 +71,14 @@ inline const char* formatAction(WTSDirectionType dType, WTSOffsetType oType)
 	}
 }
 
-TraderAdapter::TraderAdapter(EventNotifier* caster /* = NULL */)
+TraderAdapter::TraderAdapter(EventNotifier* caster /* = nullptr */)
 	: _id("")
-	, _cfg(NULL)
+	, _cfg(nullptr)
 	, _state(AS_NOTLOGIN)
-	, _trader_api(NULL)
-	, _orders(NULL)
+	, _trader_api(nullptr)
+	, _orders(nullptr)
 	, _undone_qty(0)
-	, _stat_map(NULL)
+	, _stat_map(nullptr)
 	, _risk_mon_enabled(false)
 	, _save_data(false)
 	, _notifier(caster)
@@ -95,7 +95,7 @@ TraderAdapter::~TraderAdapter()
 
 bool TraderAdapter::init(const char* id, WTSVariant* params, IBaseDataMgr* bdMgr, ActionPolicyMgr* policyMgr)
 {
-	if (params == NULL)
+	if (params == nullptr)
 		return false;
 
 	_policy_mgr = policyMgr;
@@ -104,7 +104,7 @@ bool TraderAdapter::init(const char* id, WTSVariant* params, IBaseDataMgr* bdMgr
 
 	_order_pattern = fmt::format("otp.{}", id);
 
-	if (_cfg != NULL)
+	if (_cfg != nullptr)
 		return false;
 
 	_cfg = params;
@@ -168,7 +168,7 @@ bool TraderAdapter::init(const char* id, WTSVariant* params, IBaseDataMgr* bdMgr
 	if (!StdFile::exists(dllpath.c_str()))
 		dllpath = WtHelper::getModulePath(module.c_str(), "traders", false);
 	DllHandle hInst = DLLHelper::load_library(dllpath.c_str());
-	if (hInst == NULL)
+	if (hInst == nullptr)
 	{
 		WTSLogger::log_dyn("trader", _id.c_str(), LL_ERROR, "[{}] Loading trading module {} failed", _id.c_str(), dllpath.c_str());
 		return false;
@@ -179,14 +179,14 @@ bool TraderAdapter::init(const char* id, WTSVariant* params, IBaseDataMgr* bdMgr
 	}
 
 	FuncCreateTrader pFunCreateTrader = (FuncCreateTrader)DLLHelper::get_symbol(hInst, "createTrader");
-	if (NULL == pFunCreateTrader)
+	if (nullptr == pFunCreateTrader)
 	{
 		WTSLogger::log_dyn("trader", _id.c_str(), LL_FATAL, "[{}] Entrance function createTrader not found", _id.c_str());
 		return false;
 	}
 
 	_trader_api = pFunCreateTrader();
-	if (NULL == _trader_api)
+	if (nullptr == _trader_api)
 	{
 		WTSLogger::log_dyn("trader", _id.c_str(), LL_FATAL, "[{}] Creating trading api failed", _id.c_str());
 		return false;
@@ -205,7 +205,7 @@ bool TraderAdapter::init(const char* id, WTSVariant* params, IBaseDataMgr* bdMgr
 
 bool TraderAdapter::initExt(const char* id, ITraderApi* api, IBaseDataMgr* bdMgr, ActionPolicyMgr* policyMgr)
 {
-	if (api == NULL)
+	if (api == nullptr)
 		return false;
 
 	_policy_mgr = policyMgr;
@@ -214,7 +214,7 @@ bool TraderAdapter::initExt(const char* id, ITraderApi* api, IBaseDataMgr* bdMgr
 
 	_order_pattern = fmt::format("otp.{}", id);
 
-	if (_cfg != NULL)
+	if (_cfg != nullptr)
 		return false;
 
 	_save_data = true;
@@ -222,7 +222,7 @@ bool TraderAdapter::initExt(const char* id, ITraderApi* api, IBaseDataMgr* bdMgr
 		initSaveData();
 
 	_trader_api = api;
-	if (!_trader_api->init(NULL))
+	if (!_trader_api->init(nullptr))
 	{
 		WTSLogger::log_dyn("trader", _id.c_str(), LL_ERROR, "[{}] Trader initializing failed", id);
 		return false;
@@ -276,7 +276,7 @@ void TraderAdapter::initSaveData()
 
 void TraderAdapter::logTrade(uint32_t localid, const char* stdCode, WTSTradeInfo* trdInfo)
 {
-	if (_trades_log == NULL || trdInfo == NULL)
+	if (_trades_log == nullptr || trdInfo == nullptrptr)
 		return;
 
 	_trades_log->write_file(fmt::format("{},{},{},{},{},{},{},{},{}\n",
@@ -287,7 +287,7 @@ void TraderAdapter::logTrade(uint32_t localid, const char* stdCode, WTSTradeInfo
 
 void TraderAdapter::logOrder(uint32_t localid, const char* stdCode, WTSOrderInfo* ordInfo)
 {
-	if (_orders_log == NULL || ordInfo == NULL)
+	if (_orders_log == nullptrptr || ordInfo == nullptrptr)
 		return;
 
 	_orders_log->write_file(fmt::format("{},{},{},{},{},{},{},{},{},{},{}\n",
@@ -297,7 +297,7 @@ void TraderAdapter::logOrder(uint32_t localid, const char* stdCode, WTSOrderInfo
 		ordInfo->getOrderID(), ordInfo->getOrderState()==WOS_Canceled?"TRUE":"FALSE", ordInfo->getStateMsg()));
 }
 
-void TraderAdapter::saveData(WTSArray* ayFunds /* = NULL */)
+void TraderAdapter::saveData(WTSArray* ayFunds /* = nullptr */)
 {
 	rj::Document root(rj::kObjectType);
 	rj::Document::AllocatorType &allocator = root.GetAllocator();
@@ -388,7 +388,7 @@ void TraderAdapter::saveData(WTSArray* ayFunds /* = NULL */)
 
 const TraderAdapter::RiskParams* TraderAdapter::getRiskParams(const char* stdCode)
 {
-	CodeHelper::CodeInfo cInfo = CodeHelper::extractStdCode(stdCode, NULL);
+	CodeHelper::CodeInfo cInfo = CodeHelper::extractStdCode(stdCode, nullptr);
 	std::string pid = cInfo.stdCommID();
 	auto it = _risk_params_map.find(pid);
 	if (it != _risk_params_map.end())
@@ -400,10 +400,10 @@ const TraderAdapter::RiskParams* TraderAdapter::getRiskParams(const char* stdCod
 
 bool TraderAdapter::run()
 {
-	if (_trader_api == NULL)
+	if (_trader_api == nullptr)
 		return false;
 
-	if (_stat_map == NULL)
+	if (_stat_map == nullptr)
 		_stat_map = TradeStatMap::create();
 
 	_trader_api->registerSpi(this);
@@ -417,7 +417,7 @@ void TraderAdapter::release()
 {
 	if (_trader_api)
 	{
-		_trader_api->registerSpi(NULL);
+		_trader_api->registerSpi(nullptr);
 		_trader_api->release();
 	}
 }
@@ -463,8 +463,8 @@ void TraderAdapter::enumPosition(FuncEnumChnlPosCallBack cb)
 
 OrderMap* TraderAdapter::getOrders(const char* stdCode)
 {
-	if (_orders == NULL)
-		return NULL;
+	if (_orders == nullptr)
+		return nullptr;
 
 	bool isAll = strlen(stdCode) == 0;
 
@@ -486,7 +486,7 @@ uint32_t TraderAdapter::doEntrust(WTSEntrust* entrust)
 	_trader_api->makeEntrustID(entrust->getEntrustID(), 64);
 
 	WTSContractInfo* cInfo = entrust->getContractInfo();
-	if (cInfo == NULL) cInfo = getContract(entrust->getCode());
+	if (cInfo == nullptr) cInfo = getContract(entrust->getCode());
 
 	entrust->setCode(cInfo->getCode());
 	entrust->setExchange(cInfo->getExchg());
@@ -523,13 +523,13 @@ void TraderAdapter::updateUndone(const char* stdCode, double qty, bool bOuput /*
 
 WTSContractInfo* TraderAdapter::getContract(const char* stdCode)
 {
-	CodeHelper::CodeInfo cInfo = CodeHelper::extractStdCode(stdCode, NULL);
+	CodeHelper::CodeInfo cInfo = CodeHelper::extractStdCode(stdCode, nullptr);
 	return _bd_mgr->getContract(cInfo._code, cInfo._exchg);
 }
 
 WTSCommodityInfo* TraderAdapter::getCommodify(const char* stdCode)
 {
-	CodeHelper::CodeInfo cInfo = CodeHelper::extractStdCode(stdCode, NULL);
+	CodeHelper::CodeInfo cInfo = CodeHelper::extractStdCode(stdCode, nullptr);
 	return _bd_mgr->getCommodity(cInfo._exchg, cInfo._product);
 }
 
@@ -542,7 +542,7 @@ bool TraderAdapter::checkCancelLimits(const char* stdCode)
 		return false;
 
 	const RiskParams* riskPara = getRiskParams(stdCode);
-	if (riskPara == NULL)
+	if (riskPara == nullptr)
 		return true;
 
 	WTSTradeStateInfo* statInfo = (WTSTradeStateInfo*)_stat_map->get(stdCode);
@@ -607,7 +607,7 @@ bool TraderAdapter::checkOrderLimits(const char* stdCode)
 		return false;
 
 	const RiskParams* riskPara = getRiskParams(stdCode);
-	if (riskPara == NULL)
+	if (riskPara == nullptr)
 		return true;
 
 	WTSTradeStateInfo* statInfo = (WTSTradeStateInfo*)_stat_map->get(stdCode);
@@ -652,7 +652,7 @@ bool TraderAdapter::checkOrderLimits(const char* stdCode)
 	return true;
 }
 
-OrderIDs TraderAdapter::buy(const char* stdCode, double price, double qty, int flag, bool bForceClose, WTSContractInfo* cInfo /* = NULL */)
+OrderIDs TraderAdapter::buy(const char* stdCode, double price, double qty, int flag, bool bForceClose, WTSContractInfo* cInfo /* = nullptr */)
 {
 	OrderIDs ret;
 	if (qty == 0)
@@ -665,7 +665,7 @@ OrderIDs TraderAdapter::buy(const char* stdCode, double price, double qty, int f
 		return ret;
 	}
 
-	if(cInfo == NULL) cInfo = getContract(stdCode);
+	if(cInfo == nullptr) cInfo = getContract(stdCode);
 	WTSCommodityInfo* commInfo = cInfo->getCommInfo();
 	WTSSessionInfo* sInfo = commInfo->getSessionInfo();
 
@@ -683,7 +683,7 @@ OrderIDs TraderAdapter::buy(const char* stdCode, double price, double qty, int f
 
 	const PosItem& pItem = _positions[stdCode];
 	WTSTradeStateInfo* statInfo = (WTSTradeStateInfo*)_stat_map->get(stdCode);
-	if (statInfo == NULL)
+	if (statInfo == nullptr)
 	{
 		statInfo = WTSTradeStateInfo::create(stdCode);
 		_stat_map->add(stdCode, statInfo, false);
@@ -945,7 +945,7 @@ OrderIDs TraderAdapter::buy(const char* stdCode, double price, double qty, int f
 	return ret;
 }
 
-OrderIDs TraderAdapter::sell(const char* stdCode, double price, double qty, int flag, bool bForceClose, WTSContractInfo* cInfo /* = NULL */)
+OrderIDs TraderAdapter::sell(const char* stdCode, double price, double qty, int flag, bool bForceClose, WTSContractInfo* cInfo /* = nullptr */)
 {
 	OrderIDs ret;
 	if (qty == 0)
@@ -958,7 +958,7 @@ OrderIDs TraderAdapter::sell(const char* stdCode, double price, double qty, int 
 		return ret;
 	}
 
-	if (cInfo == NULL) cInfo = getContract(stdCode);
+	if (cInfo == nullptr) cInfo = getContract(stdCode);
 	WTSCommodityInfo* commInfo = cInfo->getCommInfo();
 	WTSSessionInfo* sInfo = commInfo->getSessionInfo();
 
@@ -975,7 +975,7 @@ OrderIDs TraderAdapter::sell(const char* stdCode, double price, double qty, int 
 
 	const PosItem& pItem = _positions[stdCode];	
 	WTSTradeStateInfo* statInfo = (WTSTradeStateInfo*)_stat_map->get(stdCode);
-	if (statInfo == NULL)
+	if (statInfo == nullptr)
 	{
 		statInfo = WTSTradeStateInfo::create(stdCode);
 		_stat_map->add(stdCode, statInfo, false);
@@ -1235,7 +1235,7 @@ OrderIDs TraderAdapter::sell(const char* stdCode, double price, double qty, int 
 
 bool TraderAdapter::doCancel(WTSOrderInfo* ordInfo)
 {
-	if (ordInfo == NULL || !ordInfo->isAlive())
+	if (ordInfo == nullptr || !ordInfo->isAlive())
 		return false;
 
 	WTSContractInfo* cInfo = ordInfo->getContractInfo();
@@ -1262,14 +1262,14 @@ bool TraderAdapter::doCancel(WTSOrderInfo* ordInfo)
 
 bool TraderAdapter::cancel(uint32_t localid)
 {
-	if (_orders == NULL || _orders->size() == 0)
+	if (_orders == nullptr || _orders->size() == 0)
 		return false;
 
-	WTSOrderInfo* ordInfo = NULL;
+	WTSOrderInfo* ordInfo = nullptr;
 	{
 		StdUniqueLock lock(_mtx_orders);
 		ordInfo = (WTSOrderInfo*)_orders->grab(localid);
-		if (ordInfo == NULL)
+		if (ordInfo == nullptr)
 			return false;
 	}
 	
@@ -1284,13 +1284,13 @@ bool TraderAdapter::cancel(uint32_t localid)
 
 OrderIDs TraderAdapter::cancel(const char* stdCode, bool isBuy, double qty /* = 0 */)
 {
-	CodeHelper::CodeInfo cInfo = CodeHelper::extractStdCode(stdCode, NULL);
+	CodeHelper::CodeInfo cInfo = CodeHelper::extractStdCode(stdCode, nullptr);
 
 	OrderIDs ret;
 
 	double actQty = 0;
 	bool isAll = strlen(stdCode) == 0;
-	if (_orders != NULL && _orders->size() > 0)
+	if (_orders != nullptr && _orders->size() > 0)
 	{
 		for (auto it = _orders->begin(); it != _orders->end(); it++)
 		{
@@ -1320,10 +1320,10 @@ OrderIDs TraderAdapter::cancel(const char* stdCode, bool isBuy, double qty /* = 
 	return ret;
 }
 
-uint32_t TraderAdapter::openLong(const char* stdCode, double price, double qty, int flag, WTSContractInfo* cInfo /* = NULL */)
+uint32_t TraderAdapter::openLong(const char* stdCode, double price, double qty, int flag, WTSContractInfo* cInfo /* = nullptr */)
 {
 	WTSEntrust* entrust = WTSEntrust::create(stdCode, qty, price);
-	entrust->setContractInfo(cInfo == NULL ? getContract(stdCode) : cInfo);
+	entrust->setContractInfo(cInfo == nullptr ? getContract(stdCode) : cInfo);
 	if(decimal::eq(price, 0.0))
 		entrust->setPriceType(WPT_ANYPRICE);
 	else
@@ -1338,10 +1338,10 @@ uint32_t TraderAdapter::openLong(const char* stdCode, double price, double qty, 
 	return ret;
 }
 
-uint32_t TraderAdapter::openShort(const char* stdCode, double price, double qty, int flag, WTSContractInfo* cInfo /* = NULL */)
+uint32_t TraderAdapter::openShort(const char* stdCode, double price, double qty, int flag, WTSContractInfo* cInfo /* = nullptr */)
 {
 	WTSEntrust* entrust = WTSEntrust::create(stdCode, qty, price);
-	entrust->setContractInfo(cInfo == NULL ? getContract(stdCode) : cInfo);
+	entrust->setContractInfo(cInfo == nullptr ? getContract(stdCode) : cInfo);
 	if (decimal::eq(price, 0.0))
 		entrust->setPriceType(WPT_ANYPRICE);
 	else
@@ -1356,10 +1356,10 @@ uint32_t TraderAdapter::openShort(const char* stdCode, double price, double qty,
 	return ret;
 }
 
-uint32_t TraderAdapter::closeLong(const char* stdCode, double price, double qty, bool isToday, int flag, WTSContractInfo* cInfo /* = NULL */)
+uint32_t TraderAdapter::closeLong(const char* stdCode, double price, double qty, bool isToday, int flag, WTSContractInfo* cInfo /* = nullptr */)
 {
 	WTSEntrust* entrust = WTSEntrust::create(stdCode, qty, price);
-	entrust->setContractInfo(cInfo == NULL ? getContract(stdCode) : cInfo);
+	entrust->setContractInfo(cInfo == nullptr ? getContract(stdCode) : cInfo);
 	if (decimal::eq(price, 0.0))
 		entrust->setPriceType(WPT_ANYPRICE);
 	else
@@ -1374,10 +1374,10 @@ uint32_t TraderAdapter::closeLong(const char* stdCode, double price, double qty,
 	return ret;
 }
 
-uint32_t TraderAdapter::closeShort(const char* stdCode, double price, double qty, bool isToday, int flag, WTSContractInfo* cInfo /* = NULL */)
+uint32_t TraderAdapter::closeShort(const char* stdCode, double price, double qty, bool isToday, int flag, WTSContractInfo* cInfo /* = nullptr */)
 {
 	WTSEntrust* entrust = WTSEntrust::create(stdCode, qty, price);
-	entrust->setContractInfo(cInfo == NULL ? getContract(stdCode) : cInfo);
+	entrust->setContractInfo(cInfo == nullptr ? getContract(stdCode) : cInfo);
 	if (decimal::eq(price, 0.0))
 		entrust->setPriceType(WPT_ANYPRICE);
 	else
@@ -1487,7 +1487,7 @@ void TraderAdapter::onRspEntrust(WTSEntrust* entrust, WTSError *err)
 		{
 			char* userTag = (char*)entrust->getUserTag();
 			userTag += _order_pattern.size() + 1;
-			uint32_t localid = strtoul(userTag, NULL, 10);
+			uint32_t localid = strtoul(userTag, nullptr, 10);
 
 			for(auto sink : _sinks)
 				sink->on_entrust(localid, stdCode.c_str(), false, err->getMessage());
@@ -1542,7 +1542,7 @@ void TraderAdapter::onRspPosition(const WTSArray* ayPositions)
 		{
 			WTSPositionItem* pItem = (WTSPositionItem*)(*it);
 			WTSContractInfo* cInfo = pItem->getContractInfo();
-			if (cInfo == NULL)
+			if (cInfo == nullptr)
 				continue;
 
 			WTSCommodityInfo* commInfo = cInfo->getCommInfo();
@@ -1597,7 +1597,7 @@ void TraderAdapter::onRspOrders(const WTSArray* ayOrders)
 {
 	if (ayOrders)
 	{
-		if (_orders == NULL)
+		if (_orders == nullptr)
 			_orders = OrderMap::create();
 
 		_undone_qty.clear();
@@ -1605,11 +1605,11 @@ void TraderAdapter::onRspOrders(const WTSArray* ayOrders)
 		for (auto it = ayOrders->begin(); it != ayOrders->end(); it++)
 		{
 			WTSOrderInfo* orderInfo = (WTSOrderInfo*)(*it);
-			if (orderInfo == NULL)
+			if (orderInfo == nullptr)
 				continue;
 
 			WTSContractInfo* cInfo = orderInfo->getContractInfo();
-			if (cInfo == NULL)
+			if (cInfo == nullptr)
 				continue;
 
 			bool isBuy = (orderInfo->getDirection() == WDT_LONG && orderInfo->getOffsetType() == WOT_OPEN) || (orderInfo->getDirection() == WDT_SHORT && orderInfo->getOffsetType() != WOT_OPEN);
@@ -1626,7 +1626,7 @@ void TraderAdapter::onRspOrders(const WTSArray* ayOrders)
 			_orderids.insert(orderInfo->getOrderID());
 
 			WTSTradeStateInfo* statInfo = (WTSTradeStateInfo*)_stat_map->get(stdCode.c_str());
-			if (statInfo == NULL)
+			if (statInfo == nullptr)
 			{
 				statInfo = WTSTradeStateInfo::create(stdCode.c_str());
 				_stat_map->add(stdCode, statInfo, false);
@@ -1690,7 +1690,7 @@ void TraderAdapter::onRspOrders(const WTSArray* ayOrders)
 
 			char* userTag = (char*)orderInfo->getUserTag();
 			userTag += _order_pattern.size() + 1;
-			uint32_t localid = strtoul(userTag, NULL, 10);
+			uint32_t localid = strtoul(userTag, nullptr, 10);
 
 			{
 				StdUniqueLock lock(_mtx_orders);
@@ -1735,7 +1735,7 @@ void TraderAdapter::onRspTrades(const WTSArray* ayTrades)
 			WTSTradeInfo* tInfo = (WTSTradeInfo*)(*it);
 
 			WTSContractInfo* cInfo = tInfo->getContractInfo();
-			if (cInfo == NULL)
+			if (cInfo == nullptr)
 				continue;
 
 			WTSCommodityInfo* commInfo = cInfo->getCommInfo();
@@ -1750,7 +1750,7 @@ void TraderAdapter::onRspTrades(const WTSArray* ayTrades)
 				stdCode = CodeHelper::rawFlatCodeToStdCode(cInfo->getCode(), cInfo->getExchg(), commInfo->getProduct());
 
 			WTSTradeStateInfo* statInfo = (WTSTradeStateInfo*)_stat_map->get(stdCode.c_str());
-			if(statInfo == NULL)
+			if(statInfo == nullptr)
 			{
 				statInfo = WTSTradeStateInfo::create(stdCode.c_str());
 				_stat_map->add(stdCode, statInfo, false);
@@ -1805,7 +1805,7 @@ void TraderAdapter::onRspTrades(const WTSArray* ayTrades)
 
 bool TraderAdapter::checkSelfMatch(const char* stdCode, WTSTradeInfo* tInfo)
 {
-	if (tInfo == NULL)
+	if (tInfo == nullptr)
 		return false;
 
 	const char* tid = tInfo->getTradeID();
@@ -1860,12 +1860,12 @@ inline const char* stateToName(WTSOrderState woState)
 
 void TraderAdapter::onPushOrder(WTSOrderInfo* orderInfo)
 {
-	if (orderInfo == NULL)
+	if (orderInfo == nullptr)
 		return;
 
 
 	WTSContractInfo* cInfo = orderInfo->getContractInfo();
-	if (cInfo == NULL)
+	if (cInfo == nullptr)
 		return;
 
 	WTSCommodityInfo* commInfo = cInfo->getCommInfo();
@@ -1883,7 +1883,7 @@ void TraderAdapter::onPushOrder(WTSOrderInfo* orderInfo)
 	if (orderInfo->getOrderState() == WOS_Canceled)
 	{
 		WTSTradeStateInfo* statInfo = (WTSTradeStateInfo*)_stat_map->get(stdCode.c_str());
-		if (statInfo == NULL)
+		if (statInfo == nullptr)
 		{
 			statInfo = WTSTradeStateInfo::create(stdCode.c_str());
 			_stat_map->add(stdCode, statInfo, false);
@@ -1948,7 +1948,7 @@ void TraderAdapter::onPushOrder(WTSOrderInfo* orderInfo)
 			_orderids.insert(orderInfo->getOrderID());
 
 			WTSTradeStateInfo* statInfo = (WTSTradeStateInfo*)_stat_map->get(stdCode.c_str());
-			if (statInfo == NULL)
+			if (statInfo == nullptr)
 			{
 				statInfo = WTSTradeStateInfo::create(stdCode.c_str());
 				_stat_map->add(stdCode, statInfo, false);
@@ -2069,7 +2069,7 @@ void TraderAdapter::onPushOrder(WTSOrderInfo* orderInfo)
 	{
 		char* userTag = (char*)orderInfo->getUserTag();
 		userTag += _order_pattern.size() + 1;
-		localid = strtoul(userTag, NULL, 10);
+		localid = strtoul(userTag, nullptr, 10);
 
 		//如果订单撤销, 并且是wt的订单, 则要先更新未完成数量
 		if (orderInfo->getOrderState() == WOS_Canceled )
@@ -2100,7 +2100,7 @@ void TraderAdapter::onPushOrder(WTSOrderInfo* orderInfo)
 		}
 		else
 		{
-			if (_orders == NULL)
+			if (_orders == nullptr)
 				_orders = OrderMap::create();
 
 			_orders->add(localid, orderInfo);
@@ -2124,7 +2124,7 @@ void TraderAdapter::onPushOrder(WTSOrderInfo* orderInfo)
 void TraderAdapter::onPushTrade(WTSTradeInfo* tradeRecord)
 {
 	WTSContractInfo* cInfo = tradeRecord->getContractInfo();
-	if (cInfo == NULL)
+	if (cInfo == nullptr)
 		return;
 
 	bool isLong = (tradeRecord->getDirection() == WDT_LONG);
@@ -2148,7 +2148,7 @@ void TraderAdapter::onPushTrade(WTSTradeInfo* tradeRecord)
 
 	PosItem& pItem = _positions[stdCode];
 	WTSTradeStateInfo* statInfo = (WTSTradeStateInfo*)_stat_map->get(stdCode.c_str());
-	if (statInfo == NULL)
+	if (statInfo == nullptr)
 	{
 		statInfo = WTSTradeStateInfo::create(stdCode.c_str());
 		_stat_map->add(stdCode, statInfo, false);
@@ -2220,7 +2220,7 @@ void TraderAdapter::onPushTrade(WTSTradeInfo* tradeRecord)
 	{
 		char* userTag = (char*)tradeRecord->getUserTag();
 		userTag += _order_pattern.size() + 1;
-		localid = strtoul(userTag, NULL, 10);
+		localid = strtoul(userTag, nullptr, 10);
 
 		updateUndone(stdCode.c_str(), vol*(isBuy ? -1 : 1), true);
 	}
@@ -2275,7 +2275,7 @@ void TraderAdapter::queryFund()
 //CTPWrapperMgr
 bool TraderAdapterMgr::addAdapter(const char* tname, TraderAdapterPtr& adapter)
 {
-	if (adapter == NULL || strlen(tname) == 0)
+	if (adapter == nullptr || strlen(tname) == 0)
 		return false;
 
 	auto it = _adapters.find(tname);

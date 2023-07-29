@@ -21,7 +21,7 @@ void WtExecuterMgr::enum_executer(EnumExecuterCb cb)
 
 void WtExecuterMgr::set_positions(faster_hashmap<LongKey, double> target_pos)
 {
-	if(_filter_mgr != NULL)
+	if(_filter_mgr != nullptr)
 	{
 		faster_hashmap<LongKey, double> des_port;
 		for(auto& m : target_pos)
@@ -66,7 +66,7 @@ void WtExecuterMgr::set_positions(faster_hashmap<LongKey, double> target_pos)
 
 void WtExecuterMgr::handle_pos_change(const char* stdCode, double targetPos, double diffPos, const char* execid /* = "ALL" */)
 {
-	if(_filter_mgr != NULL)
+	if(_filter_mgr != nullptr)
 	{
 		double oldVol = targetPos;
 		bool isFltd = _filter_mgr->is_filtered_by_code(stdCode, targetPos);
@@ -148,7 +148,7 @@ void WtExecuterMgr::commit_cached_targets(double scale /* = 1.0 */)
 		}
 
 		//然后根据过滤器调整目标仓位
-		if (_filter_mgr != NULL)
+		if (_filter_mgr != nullptr)
 		{
 			TargetsMap des_port;
 			for (auto& m : target_pos)
@@ -208,7 +208,7 @@ void WtExecuterMgr::commit_cached_targets(double scale /* = 1.0 */)
 
 bool WtExecuterMgr::load_router_rules(WTSVariant* config)
 {
-	if (config == NULL || !config->isArray())
+	if (config == nullptr || !config->isArray())
 		return false;
 
 	for(uint32_t i = 0; i < config->size(); i++)

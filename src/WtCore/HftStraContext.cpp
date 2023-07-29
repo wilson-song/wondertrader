@@ -13,7 +13,7 @@
 
 HftStraContext::HftStraContext(WtHftEngine* engine, const char* name, bool bAgent, int32_t slippage)
 	: HftStraBaseCtx(engine, name, bAgent, slippage)
-	, _strategy(NULL)
+	, _strategy(nullptr)
 {
 }
 

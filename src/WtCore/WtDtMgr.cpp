@@ -24,12 +24,12 @@
 WTSDataFactory g_dataFact;
 
 WtDtMgr::WtDtMgr()
-	: _reader(NULL)
-	, _engine(NULL)
-	, _loader(NULL)
-	, _bars_cache(NULL)
-	, _ticks_adjusted(NULL)
-	, _rt_tick_map(NULL)
+	: _reader(nullptr)
+	, _engine(nullptr)
+	, _loader(nullptr)
+	, _bars_cache(nullptr)
+	, _ticks_adjusted(nullptr)
+	, _rt_tick_map(nullptr)
 {
 }
 
@@ -48,7 +48,7 @@ WtDtMgr::~WtDtMgr()
 
 bool WtDtMgr::initStore(WTSVariant* cfg)
 {
-	if (cfg == NULL)
+	if (cfg == nullptr)
 		return false;
 
 	std::string module = cfg->getCString("module");
@@ -58,14 +58,14 @@ bool WtDtMgr::initStore(WTSVariant* cfg)
 		module = WtHelper::getInstDir() + DLLHelper::wrap_module(module.c_str());
 
 	DllHandle hInst = DLLHelper::load_library(module.c_str());
-	if(hInst == NULL)
+	if(hInst == nullptr)
 	{
 		WTSLogger::error("Loading data reader module {} failed", module.c_str());
 		return false;
 	}
 
 	FuncCreateDataReader funcCreator = (FuncCreateDataReader)DLLHelper::get_symbol(hInst, "createDataReader");
-	if(funcCreator == NULL)
+	if(funcCreator == nullptr)
 	{
 		WTSLogger::error("Loading data reader module {} failed, entrance function createDataReader not found", module.c_str());
 		DLLHelper::free_library(hInst);
@@ -73,7 +73,7 @@ bool WtDtMgr::initStore(WTSVariant* cfg)
 	}
 
 	_reader = funcCreator();
-	if(_reader == NULL)
+	if(_reader == nullptr)
 	{
 		WTSLogger::error("Creating instance of data reader module {} failed", module.c_str());
 		DLLHelper::free_library(hInst);
@@ -168,7 +168,7 @@ void WtDtMgr::on_bar(const char* code, WTSKlinePeriod period, WTSBarStruct* newB
 	}
 
 	//然后再处理非基础周期
-	if (_bars_cache == NULL || _bars_cache->size() == 0)
+	if (_bars_cache == nullptr || _bars_cache->size() == 0)
 		return;
 	
 	WTSSessionInfo* sInfo = _engine->get_session_info(code, true);
@@ -197,18 +197,18 @@ void WtDtMgr::on_bar(const char* code, WTSKlinePeriod period, WTSBarStruct* newB
 
 void WtDtMgr::handle_push_quote(const char* stdCode, WTSTickData* newTick)
 {
-	if (newTick == NULL)
+	if (newTick == nullptr)
 		return;
 
-	if (_rt_tick_map == NULL)
+	if (_rt_tick_map == nullptr)
 		_rt_tick_map = DataCacheMap::create();
 
 	_rt_tick_map->add(stdCode, newTick, true);
 
-	if(_ticks_adjusted != NULL)
+	if(_ticks_adjusted != nullptr)
 	{
 		WTSHisTickData* tData = (WTSHisTickData*)_ticks_adjusted->get(stdCode);
-		if (tData == NULL)
+		if (tData == nullptr)
 			return;
 
 		if (tData->isValidOnly() && newTick->volume() == 0)
@@ -220,12 +220,12 @@ void WtDtMgr::handle_push_quote(const char* stdCode, WTSTickData* newTick)
 
 WTSTickData* WtDtMgr::grab_last_tick(const char* code)
 {
-	if (_rt_tick_map == NULL)
-		return NULL;
+	if (_rt_tick_map == nullptr)
+		return nullptr;
 
 	WTSTickData* curTick = (WTSTickData*)_rt_tick_map->get(code);
-	if (curTick == NULL)
-		return NULL;
+	if (curTick == nullptr)
+		return nullptr;
 
 	curTick->retain();
 	return curTick;
@@ -255,8 +255,8 @@ uint32_t WtDtMgr::get_adjusting_flag()
 
 WTSTickSlice* WtDtMgr::get_tick_slice(const char* stdCode, uint32_t count, uint64_t etime /* = 0 */)
 {
-	if (_reader == NULL)
-		return NULL;
+	if (_reader == nullptr)
+		return nullptr;
 
 	/*
 	 *	By Wesley @ 2022.02.11
@@ -273,7 +273,7 @@ WTSTickSlice* WtDtMgr::get_tick_slice(const char* stdCode, uint32_t count, uint6
 	//先转成不带+的标准代码
 	std::string pureStdCode(stdCode, len - 1);
 
-	if (_ticks_adjusted == NULL)
+	if (_ticks_adjusted == nullptr)
 		_ticks_adjusted = DataCacheMap::create();
 
 	//如果缓存没有，先重新生成一下缓存
@@ -281,7 +281,7 @@ WTSTickSlice* WtDtMgr::get_tick_slice(const char* stdCode, uint32_t count, uint6
 	if (it == _ticks_adjusted->end())
 	{
 		//先读取全部tick数据
-		double factor = _engine->get_exright_factor(stdCode, NULL);
+		double factor = _engine->get_exright_factor(stdCode, nullptr);
 		WTSTickSlice* slice = _reader->readTickSlice(pureStdCode.c_str(), 999999, etime);
 		std::vector<WTSTickStruct> ayTicks;
 		ayTicks.resize(slice->size());
@@ -364,24 +364,24 @@ WTSOrdQueSlice* WtDtMgr::get_order_queue_slice(const char* stdCode, uint32_t cou
 
 WTSOrdDtlSlice* WtDtMgr::get_order_detail_slice(const char* stdCode, uint32_t count, uint64_t etime /* = 0 */)
 {
-	if (_reader == NULL)
-		return NULL;
+	if (_reader == nullptr)
+		return nullptr;
 
 	return _reader->readOrdDtlSlice(stdCode, count, etime);
 }
 
 WTSTransSlice* WtDtMgr::get_transaction_slice(const char* stdCode, uint32_t count, uint64_t etime /* = 0 */)
 {
-	if (_reader == NULL)
-		return NULL;
+	if (_reader == nullptr)
+		return nullptr;
 
 	return _reader->readTransSlice(stdCode, count, etime);
 }
 
 WTSKlineSlice* WtDtMgr::get_kline_slice(const char* stdCode, WTSKlinePeriod period, uint32_t times, uint32_t count, uint64_t etime /* = 0 */)
 {
-	if (_reader == NULL)
-		return NULL;
+	if (_reader == nullptr)
+		return nullptr;
 
 	//std::string key = StrUtil::printf("%s-%u", stdCode, period);
 
@@ -398,7 +398,7 @@ WTSKlineSlice* WtDtMgr::get_kline_slice(const char* stdCode, WTSKlinePeriod peri
 	//只有非基础周期的会进到下面的步骤
 	WTSSessionInfo* sInfo = _engine->get_session_info(stdCode, true);
 
-	if (_bars_cache == NULL)
+	if (_bars_cache == nullptr)
 		_bars_cache = DataCacheMap::create();
 
 	//key = StrUtil::printf("%s-%u-%u", stdCode, period, times);
@@ -406,18 +406,18 @@ WTSKlineSlice* WtDtMgr::get_kline_slice(const char* stdCode, WTSKlinePeriod peri
 
 	WTSKlineData* kData = (WTSKlineData*)_bars_cache->get(key);
 	//如果缓存里的K线条数大于请求的条数, 则直接返回
-	if (kData == NULL || kData->size() < count)
+	if (kData == nullptr || kData->size() < count)
 	{
 		uint32_t realCount = count*times + times;
 		WTSKlineSlice* rawData = _reader->readKlineSlice(stdCode, period, realCount, etime);
-		if (rawData != NULL)
+		if (rawData != nullptr)
 		{
 			kData = g_dataFact.extractKlineData(rawData, period, times, sInfo, true);
 			rawData->release();
 		}
 		else
 		{
-			return NULL;
+			return nullptr;
 		}
 
 		if (kData)

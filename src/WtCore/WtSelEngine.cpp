@@ -32,7 +32,7 @@ inline uint32_t makeTaskId()
 
 WtSelEngine::WtSelEngine()
 	: _terminated(false)
-	, _cfg(NULL)
+	, _cfg(nullptr)
 {
 }
 
@@ -362,7 +362,7 @@ void WtSelEngine::run(bool bAsync /*= false*/)
 	_tm_ticker->run();
 }
 
-void WtSelEngine::init(WTSVariant* cfg, IBaseDataMgr* bdMgr, WtDtMgr* dataMgr, IHotMgr* hotMgr, EventNotifier* notifier /* = NULL */)
+void WtSelEngine::init(WTSVariant* cfg, IBaseDataMgr* bdMgr, WtDtMgr* dataMgr, IHotMgr* hotMgr, EventNotifier* notifier /* = nullptr */)
 {
 	WtEngine::init(cfg, bdMgr, dataMgr, hotMgr, notifier);
 
@@ -372,7 +372,7 @@ void WtSelEngine::init(WTSVariant* cfg, IBaseDataMgr* bdMgr, WtDtMgr* dataMgr, I
 
 void WtSelEngine::addContext(SelContextPtr ctx, uint32_t date, uint32_t time, TaskPeriodType period, bool bStrict /* = true */, const char* trdtpl /* = "CHINA" */, const char* sessionID/* ="TRADING" */)
 {
-	if (ctx == NULL)
+	if (ctx == nullptr)
 		return;
 
 	auto it = _tasks.find(ctx->id());
@@ -471,8 +471,8 @@ WTSSessionInfo* WtSelEngine::get_sess_info(const char* stdCode)
 {
 	CodeHelper::CodeInfo codeInfo = CodeHelper::extractStdCode(stdCode, _hot_mgr);
 	WTSCommodityInfo* cInfo = _base_data_mgr->getCommodity(codeInfo._exchg, codeInfo._product);
-	if (cInfo == NULL)
-		return NULL;
+	if (cInfo == nullptr)
+		return nullptr;
 
 	return cInfo->getSessionInfo();
 }

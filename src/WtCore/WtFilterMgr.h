@@ -10,7 +10,7 @@ class EventNotifier;
 class WtFilterMgr
 {
 public:
-	WtFilterMgr():_filter_timestamp(0), _notifier(NULL){}
+	WtFilterMgr():_filter_timestamp(0), _notifier(nullptr){}
 
 	void		set_notifier(EventNotifier* notifier) { _notifier = notifier; }
 

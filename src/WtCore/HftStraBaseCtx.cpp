@@ -235,7 +235,7 @@ OrderIDs HftStraBaseCtx::stra_buy(const char* stdCode, double price, double qty,
 	else
 	{
 		WTSContractInfo* ct = _engine->get_basedata_mgr()->getContract(cInfo._code, cInfo._exchg);
-		if (ct == NULL)
+		if (ct == nullptr)
 		{
 			log_error("Cannot find corresponding contract info of {}", stdCode);
 			return OrderIDs();
@@ -298,7 +298,7 @@ OrderIDs HftStraBaseCtx::stra_sell(const char* stdCode, double price, double qty
 	else
 	{
 		WTSContractInfo* ct = _engine->get_basedata_mgr()->getContract(cInfo._code, cInfo._exchg);
-		if (ct == NULL)
+		if (ct == nullptr)
 		{
 			log_error("Cannot find corresponding contract info of {}", stdCode);
 			return OrderIDs();
@@ -424,7 +424,7 @@ WTSKlineSlice* HftStraBaseCtx::stra_get_bars(const char* stdCode, const char* pe
 	basePeriod[0] = period[0];
 	uint32_t times = 1;
 	if (strlen(period) > 1)
-		times = strtoul(period + 1, NULL, 10);
+		times = strtoul(period + 1, nullptr, 10);
 
 	WTSKlineSlice* ret = _engine->get_kline_slice(_context_id, stdCode, basePeriod, count, times);
 

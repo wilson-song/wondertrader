@@ -29,7 +29,7 @@ WtLocalExecuter::WtLocalExecuter(WtExecuterFactory* factory, const char* name, I
 	, _channel_ready(false)
 	, _scale(1.0)
 	, _auto_clear(true)
-	, _trader(NULL)
+	, _trader(nullptr)
 {
 }
 
@@ -50,7 +50,7 @@ void WtLocalExecuter::setTrader(TraderAdapter* adapter)
 
 bool WtLocalExecuter::init(WTSVariant* params)
 {
-	if (params == NULL)
+	if (params == nullptr)
 		return false;
 
 	_config = params;
@@ -108,7 +108,7 @@ bool WtLocalExecuter::init(WTSVariant* params)
 		for(const std::string& gpname : names)
 		{
 			CodeGroupPtr& gpInfo = _groups[gpname];
-			if (gpInfo == NULL)
+			if (gpInfo == nullptr)
 			{
 				gpInfo.reset(new CodeGroup);
 				wt_strcpy(gpInfo->_name, gpname.c_str(), gpname.size());
@@ -132,7 +132,7 @@ bool WtLocalExecuter::init(WTSVariant* params)
 
 ExecuteUnitPtr WtLocalExecuter::getUnit(const char* stdCode, bool bAutoCreate /* = true */)
 {
-	CodeHelper::CodeInfo codeInfo = CodeHelper::extractStdCode(stdCode, NULL);
+	CodeHelper::CodeInfo codeInfo = CodeHelper::extractStdCode(stdCode, nullptr);
 	std::string commID = codeInfo.stdCommID();
 
 	WTSVariant* policy = _config->get("policy");
@@ -154,7 +154,7 @@ ExecuteUnitPtr WtLocalExecuter::getUnit(const char* stdCode, bool bAutoCreate /*
 
 		const char* name = cfg->getCString("name");
 		ExecuteUnitPtr unit = _factory->createExeUnit(name);
-		if (unit != NULL)
+		if (unit != nullptr)
 		{
 			_unit_map[stdCode] = unit;
 			unit->self()->init(this, stdCode, cfg);
@@ -177,23 +177,23 @@ ExecuteUnitPtr WtLocalExecuter::getUnit(const char* stdCode, bool bAutoCreate /*
 #pragma region Context回调接口
 WTSTickSlice* WtLocalExecuter::getTicks(const char* stdCode, uint32_t count, uint64_t etime /* = 0 */)
 {
-	if (_data_mgr == NULL)
-		return NULL;
+	if (_data_mgr == nullptr)
+		return nullptr;
 
 	return _data_mgr->get_tick_slice(stdCode, count, 0);
 }
 
 WTSTickData* WtLocalExecuter::grabLastTick(const char* stdCode)
 {
-	if (_data_mgr == NULL)
-		return NULL;
+	if (_data_mgr == nullptr)
+		return nullptr;
 
 	return _data_mgr->grab_last_tick(stdCode);
 }
 
 double WtLocalExecuter::getPosition(const char* stdCode, bool validOnly /* = true */, int32_t flag /* = 3 */)
 {
-	if (NULL == _trader)
+	if (nullptr == _trader)
 		return 0.0;
 
 	return _trader->getPosition(stdCode, validOnly, flag);
@@ -201,7 +201,7 @@ double WtLocalExecuter::getPosition(const char* stdCode, bool validOnly /* = tru
 
 double WtLocalExecuter::getUndoneQty(const char* stdCode)
 {
-	if (NULL == _trader)
+	if (nullptr == _trader)
 		return 0.0;
 
 	return _trader->getUndoneQty(stdCode);
@@ -209,8 +209,8 @@ double WtLocalExecuter::getUndoneQty(const char* stdCode)
 
 OrderMap* WtLocalExecuter::getOrders(const char* stdCode)
 {
-	if (NULL == _trader)
-		return NULL;
+	if (nullptr == _trader)
+		return nullptr;
 
 	return _trader->getOrders(stdCode);
 }
@@ -280,7 +280,7 @@ uint64_t WtLocalExecuter::getCurTime()
 void WtLocalExecuter::on_position_changed(const char* stdCode, double diffPos)
 {
 	ExecuteUnitPtr unit = getUnit(stdCode);
-	if (unit == NULL)
+	if (unit == nullptr)
 		return;
 
 	double oldVol = _target_pos[stdCode];
@@ -348,7 +348,7 @@ void WtLocalExecuter::set_position(const faster_hashmap<LongKey, double>& target
 		const char* stdCode = it->first.c_str();
 		double newVol = it->second;
 		ExecuteUnitPtr unit = getUnit(stdCode);
-		if (unit == NULL)
+		if (unit == nullptr)
 			continue;
 
 		double oldVol = _target_pos[stdCode];
@@ -392,7 +392,7 @@ void WtLocalExecuter::set_position(const faster_hashmap<LongKey, double>& target
 		WTSLogger::log_dyn("executer", _name.c_str(), LL_INFO, "{} is not in target, set to 0 automatically", code);
 
 		ExecuteUnitPtr unit = getUnit(code);
-		if (unit == NULL)
+		if (unit == nullptr)
 			continue;
 
 		//unit->self()->set_position(code, 0);
@@ -423,7 +423,7 @@ void WtLocalExecuter::set_position(const faster_hashmap<LongKey, double>& target
 			WTSLogger::log_dyn("executer", _name.c_str(), LL_INFO, "{} is not in management, set to 0 due to strict sync mode", stdCode.c_str());
 
 			ExecuteUnitPtr unit = getUnit(stdCode.c_str());
-			if (unit == NULL)
+			if (unit == nullptr)
 				continue;
 
 			if (_pool)
@@ -444,7 +444,7 @@ void WtLocalExecuter::set_position(const faster_hashmap<LongKey, double>& target
 void WtLocalExecuter::on_tick(const char* stdCode, WTSTickData* newTick)
 {
 	ExecuteUnitPtr unit = getUnit(stdCode, false);
-	if (unit == NULL)
+	if (unit == nullptr)
 		return;
 
 	//unit->self()->on_tick(newTick);
@@ -465,7 +465,7 @@ void WtLocalExecuter::on_tick(const char* stdCode, WTSTickData* newTick)
 void WtLocalExecuter::on_trade(uint32_t localid, const char* stdCode, bool isBuy, double vol, double price)
 {
 	ExecuteUnitPtr unit = getUnit(stdCode, false);
-	if (unit == NULL)
+	if (unit == nullptr)
 		return;
 
 	//unit->self()->on_trade(stdCode, isBuy, vol, price);
@@ -485,7 +485,7 @@ void WtLocalExecuter::on_trade(uint32_t localid, const char* stdCode, bool isBuy
 void WtLocalExecuter::on_order(uint32_t localid, const char* stdCode, bool isBuy, double totalQty, double leftQty, double price, bool isCanceled /* = false */)
 {
 	ExecuteUnitPtr unit = getUnit(stdCode, false);
-	if (unit == NULL)
+	if (unit == nullptr)
 		return;
 
 	//unit->self()->on_order(localid, stdCode, isBuy, leftQty, price, isCanceled);
@@ -505,7 +505,7 @@ void WtLocalExecuter::on_order(uint32_t localid, const char* stdCode, bool isBuy
 void WtLocalExecuter::on_entrust(uint32_t localid, const char* stdCode, bool bSuccess, const char* message)
 {
 	ExecuteUnitPtr unit = getUnit(stdCode, false);
-	if (unit == NULL)
+	if (unit == nullptr)
 		return;
 
 	//unit->self()->on_entrust(localid, stdCode, bSuccess, message);
@@ -611,7 +611,7 @@ void WtLocalExecuter::on_position(const char* stdCode, bool isLong, double prevo
 		return;
 
 	IHotMgr* hotMgr = _stub->get_hot_mon();
-	CodeHelper::CodeInfo cInfo = CodeHelper::extractStdCode(stdCode, NULL);
+	CodeHelper::CodeInfo cInfo = CodeHelper::extractStdCode(stdCode, nullptr);
 	//获取上一期的主力合约
 	std::string prevCode = hotMgr->getPrevRawCode(cInfo._exchg, cInfo._product, tradingday);
 

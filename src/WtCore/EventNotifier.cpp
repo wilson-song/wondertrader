@@ -33,7 +33,7 @@ void on_mq_log(unsigned long id, const char* message, bool bServer)
 
 EventNotifier::EventNotifier()
 	: _mq_sid(0)
-	, _publisher(NULL)
+	, _publisher(nullptr)
 	, _stopped(false)
 {
 	
@@ -66,14 +66,14 @@ bool EventNotifier::init(WTSVariant* cfg)
 		dllpath = WtHelper::getInstDir() + module;
 
 	DllHandle dllInst = DLLHelper::load_library(dllpath.c_str());
-	if (dllInst == NULL)
+	if (dllInst == nullptr)
 	{
 		WTSLogger::error("MQ module {} loading failed", dllpath.c_str());
 		return false;
 	}
 
 	_creator = (FuncCreateMQServer)DLLHelper::get_symbol(dllInst, "create_server");
-	if (_creator == NULL)
+	if (_creator == nullptr)
 	{
 		DLLHelper::free_library(dllInst);
 		WTSLogger::error("MQ module {} is not compatible", dllpath.c_str());
@@ -92,7 +92,7 @@ bool EventNotifier::init(WTSVariant* cfg)
 
 	WTSLogger::info("EventNotifier initialized with channel {}", _url.c_str());
 
-	if (_worker == NULL)
+	if (_worker == nullptr)
 	{
 		boost::asio::io_service::work work(_asyncio);
 		_worker.reset(new StdThread([this]() {
@@ -193,7 +193,7 @@ void EventNotifier::notify(const char* trader, const char* message)
 
 void EventNotifier::notify(const char* trader, uint32_t localid, const char* stdCode, WTSTradeInfo* trdInfo)
 {
-	if (trdInfo == NULL || _mq_sid == 0)
+	if (trdInfo == nullptr || _mq_sid == 0)
 		return;
 
 	std::string strTrader = trader;
@@ -210,7 +210,7 @@ void EventNotifier::notify(const char* trader, uint32_t localid, const char* std
 
 void EventNotifier::notify(const char* trader, uint32_t localid, const char* stdCode, WTSOrderInfo* ordInfo)
 {
-	if (ordInfo == NULL || _mq_sid == 0)
+	if (ordInfo == nullptr || _mq_sid == 0)
 		return;
 
 	std::string strTrader = trader;
@@ -228,7 +228,7 @@ void EventNotifier::notify(const char* trader, uint32_t localid, const char* std
 
 void EventNotifier::tradeToJson(const char* trader, uint32_t localID, const char* stdCode, WTSTradeInfo* trdInfo, std::string& output)
 {
-	if(trdInfo == NULL)
+	if(trdInfo == nullptr)
 	{
 		output = "{}";
 		return;
@@ -263,7 +263,7 @@ void EventNotifier::tradeToJson(const char* trader, uint32_t localID, const char
 
 void EventNotifier::orderToJson(const char* trader, uint32_t localID, const char* stdCode, WTSOrderInfo* ordInfo, std::string& output)
 {
-	if (ordInfo == NULL)
+	if (ordInfo == nullptr)
 	{
 		output = "{}";
 		return;

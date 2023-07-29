@@ -35,8 +35,8 @@ extern boost::asio::io_service g_asyncIO;
 USING_NS_WTP;
 
 WtHftEngine::WtHftEngine()
-	: _cfg(NULL)
-	, _tm_ticker(NULL)
+	: _cfg(nullptr)
+	, _tm_ticker(nullptr)
 {
 }
 
@@ -47,14 +47,14 @@ WtHftEngine::~WtHftEngine()
 	{
 		_tm_ticker->stop();
 		delete _tm_ticker;
-		_tm_ticker = NULL;
+		_tm_ticker = nullptr;
 	}
 
 	if (_cfg)
 		_cfg->release();
 }
 
-void WtHftEngine::init(WTSVariant* cfg, IBaseDataMgr* bdMgr, WtDtMgr* dataMgr, IHotMgr* hotMgr, EventNotifier* notifier /* = NULL */)
+void WtHftEngine::init(WTSVariant* cfg, IBaseDataMgr* bdMgr, WtDtMgr* dataMgr, IHotMgr* hotMgr, EventNotifier* notifier /* = nullptr */)
 {
 	WtEngine::init(cfg, bdMgr, dataMgr, hotMgr, notifier);
 

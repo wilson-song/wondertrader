@@ -29,7 +29,7 @@ ActionPolicyMgr::~ActionPolicyMgr()
 bool ActionPolicyMgr::init(const char* filename)
 {
 	WTSVariant* cfg = WTSCfgLoader::load_from_file(filename);
-	if (cfg == NULL)
+	if (cfg == nullptr)
 		return false;
 
 	auto keys = cfg->memberNames();
@@ -40,7 +40,7 @@ bool ActionPolicyMgr::init(const char* filename)
 		ActionRuleGroup& gp = _rules[gpName];
 
 		WTSVariant* vOrds = vGpItem->get("order");
-		if(vOrds != NULL && vOrds->isArray())
+		if(vOrds != nullptr && vOrds->isArray())
 		{
 			for (uint32_t i = 0; i < vOrds->size(); i++)
 			{
@@ -73,7 +73,7 @@ bool ActionPolicyMgr::init(const char* filename)
 		}
 
 		WTSVariant* filters = vGpItem->get("filters");
-		if(filters!=NULL && filters->isArray() && filters->size()>0)
+		if(filters!=nullptr && filters->isArray() && filters->size()>0)
 		{
 			for (uint32_t i = 0; i < filters->size(); i++)
 			{

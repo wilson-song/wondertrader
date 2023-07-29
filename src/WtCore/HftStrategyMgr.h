@@ -63,8 +63,8 @@ private:
 
 		_StraFactInfo()
 		{
-			_module_inst = NULL;
-			_fact = NULL;
+			_module_inst = nullptr;
+			_fact = nullptr;
 		}
 
 		~_StraFactInfo()

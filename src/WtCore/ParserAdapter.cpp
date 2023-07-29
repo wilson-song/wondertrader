@@ -41,7 +41,7 @@ ParserAdapter::ParserAdapter()
 ParserAdapter::~ParserAdapter()
 = default;
 
-bool ParserAdapter::initExt(const char* id, IParserApi* api, IParserStub* stub, IBaseDataMgr* bgMgr, IHotMgr* hotMgr/* = NULL*/)
+bool ParserAdapter::initExt(const char* id, IParserApi* api, IParserStub* stub, IBaseDataMgr* bgMgr, IHotMgr* hotMgr/* = nullptr*/)
 {
 	if (api == nullptr)
 		return false;
@@ -81,7 +81,7 @@ bool ParserAdapter::initExt(const char* id, IParserApi* api, IParserStub* stub, 
 	return true;
 }
 
-bool ParserAdapter::init(const char* id, WTSVariant* cfg, IParserStub* stub, IBaseDataMgr* bgMgr, IHotMgr* hotMgr/* = NULL*/)
+bool ParserAdapter::init(const char* id, WTSVariant* cfg, IParserStub* stub, IBaseDataMgr* bgMgr, IHotMgr* hotMgr/* = nullptr*/)
 {
 	if (cfg == nullptr)
 		return false;

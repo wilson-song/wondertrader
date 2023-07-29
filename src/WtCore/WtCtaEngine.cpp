@@ -114,7 +114,7 @@ void WtCtaEngine::run(bool bAsync /* = false */)
 	}
 }
 
-void WtCtaEngine::init(WTSVariant* cfg, IBaseDataMgr* bdMgr, WtDtMgr* dataMgr, IHotMgr* hotMgr, EventNotifier* notifier /* = NULL */)
+void WtCtaEngine::init(WTSVariant* cfg, IBaseDataMgr* bdMgr, WtDtMgr* dataMgr, IHotMgr* hotMgr, EventNotifier* notifier /* = nullptr */)
 {
 	WtEngine::init(cfg, bdMgr, dataMgr, hotMgr, notifier);
 
@@ -322,7 +322,7 @@ void WtCtaEngine::on_schedule(uint32_t curDate, uint32_t curTime)
 
 			//因为组合持仓里会有过期的合约代码存在，所以这里在丢给执行以前要做一个检查
 			auto cInfo = get_contract_info(stdCode.c_str());
-			if (cInfo != NULL)
+			if (cInfo != nullptr)
 			{
 				//target_pos[stdCode] = 0;
 				_exec_mgr.add_target_to_cache(stdCode.c_str(), 0);

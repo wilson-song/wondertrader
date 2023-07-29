@@ -51,18 +51,18 @@ bool HftStrategyMgr::loadFactories(const char* path)
 #endif
 
 		DllHandle hInst = DLLHelper::load_library(iter->path().string().c_str());
-		if (hInst == NULL)
+		if (hInst == nullptrptr)
 			continue;
 
 		FuncCreateHftStraFact creator = (FuncCreateHftStraFact)DLLHelper::get_symbol(hInst, "createStrategyFact");
-		if (creator == NULL)
+		if (creator == nullptr)
 		{
 			DLLHelper::free_library(hInst);
 			continue;
 		}
 		
 		IHftStrategyFact* pFact = creator();
-		if (pFact != NULL)
+		if (pFact != nullptr)
 		{
 			StraFactInfo& fInfo = _factories[pFact->getName()];
 
