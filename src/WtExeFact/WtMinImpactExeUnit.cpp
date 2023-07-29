@@ -146,7 +146,7 @@ void WtMinImpactExeUnit::on_channel_ready()
 		_ctx->writeLog(fmtutil::format("Unmanaged live orders with qty {} of {} found, cancel all", undone, _code.c_str()));
 
 		bool isBuy = (undone > 0);
-		OrderIDs ids = _ctx->cancel(_code.c_str(), isBuy);
+		OrderIDs ids = _ctx->cancel(_code.c_str(), isBuy, 0);
 		_orders_mon.push_order(ids.data(), ids.size(), _ctx->getCurTime());
 		_cancel_cnt += ids.size();
 
@@ -261,7 +261,7 @@ void WtMinImpactExeUnit::do_calc()
 	const char* stdCode = _code.c_str();
 
 	double undone = _ctx->getUndoneQty(stdCode);
-	double realPos = _ctx->getPosition(stdCode);
+	double realPos = _ctx->getPosition(stdCode, true, POSITION_LONG_SHORT);
 	double diffPos = newVol - realPos;
 
 	//有未完成订单，与实际仓位变动方向相反
@@ -269,7 +269,7 @@ void WtMinImpactExeUnit::do_calc()
 	if (decimal::lt(diffPos * undone, 0))
 	{
 		bool isBuy = decimal::gt(undone, 0);
-		OrderIDs ids = _ctx->cancel(stdCode, isBuy);
+		OrderIDs ids = _ctx->cancel(stdCode, isBuy, 0);
 		if(!ids.empty())
 		{
 			_orders_mon.push_order(ids.data(), ids.size(), _ctx->getCurTime());
@@ -304,7 +304,7 @@ void WtMinImpactExeUnit::do_calc()
 
 		//如果是清仓的需求，还要再进行对比
 		//如果多头为0，说明已经全部清理掉了，则直接退出
-		double lPos = _ctx->getPosition(stdCode, true , 1);
+		double lPos = _ctx->getPosition(stdCode, true , POSITION_LONG);
 		if (decimal::eq(lPos, 0))
 			return;
 

@@ -10,6 +10,7 @@
 #pragma once
 #include "../Includes/WTSDataDef.hpp"
 #include "../Includes/WTSCollection.hpp"
+#include "../Includes/ConstDefs.h"
 
 NS_WTP_BEGIN
 class WTSTickData;
@@ -52,11 +53,11 @@ public:
 	 *	获取仓位
 	 *	code		合约代码
 	 *	validOnly	只读取可用持仓
-	 *	flag		操作标记 1-多仓, 2-空仓, 3-多空轧平
+	 *	flag		操作标记 1-多仓(POSITION_LONG), 2-空仓(POSITION_SHORT), 3-多空轧平(POSITION_LONG_SHORT)
 	 *	
 	 *	返回值	轧平后的仓位: 多仓>0, 空仓<0
 	 */
-	virtual double getPosition(const char* stdCode, bool validOnly /*= true*/, int32_t flag /*= 3*/) = 0;
+	virtual double getPosition(const char* stdCode, bool validOnly, int32_t flag) = 0;
 
 	/*
 	 *	获取未完成订单

@@ -51,7 +51,7 @@ public:
 
 	virtual WTSTickData* grabLastTick(const char* stdCode) override;
 
-	virtual double getPosition(const char* stdCode, bool validOnly = true, int32_t flag = 3) override;
+	virtual double getPosition(const char* stdCode, bool validOnly, int32_t flag) override;
 
 	virtual OrderMap* getOrders(const char* stdCode) override;
 

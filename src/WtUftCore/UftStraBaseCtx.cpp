@@ -38,9 +38,7 @@ UftStraBaseCtx::UftStraBaseCtx(WtUftEngine* engine, const char* name)
 }
 
 
-UftStraBaseCtx::~UftStraBaseCtx()
-{
-}
+UftStraBaseCtx::~UftStraBaseCtx() = default;
 
 uint32_t UftStraBaseCtx::id()
 {
@@ -98,12 +96,12 @@ OrderIDs UftStraBaseCtx::stra_cancel_all(const char* stdCode)
 
 OrderIDs UftStraBaseCtx::stra_buy(const char* stdCode, double price, double qty, int flag /* = 0 */)
 {
-	return _trader->buy(stdCode, price, qty, flag, false);
+	return _trader->buy(stdCode, price, qty, flag, false, nullptr);
 }
 
 OrderIDs UftStraBaseCtx::stra_sell(const char* stdCode, double price, double qty, int flag /* = 0 */)
 {
-	return _trader->sell(stdCode, price, qty, flag, false);
+	return _trader->sell(stdCode, price, qty, flag, false, nullptr);
 }
 
 uint32_t UftStraBaseCtx::stra_enter_long(const char* stdCode, double price, double qty, int flag /* = 0 */)
@@ -137,7 +135,7 @@ WTSKlineSlice* UftStraBaseCtx::stra_get_bars(const char* stdCode, const char* pe
 	basePeriod[0] = period[0];
 	uint32_t times = 1;
 	if (strlen(period) > 1)
-		times = strtoul(period + 1, NULL, 10);
+		times = strtoul(period + 1, nullptr, 10);
 
 	WTSKlineSlice* ret = _engine->get_kline_slice(_context_id, stdCode, basePeriod, count, times);
 

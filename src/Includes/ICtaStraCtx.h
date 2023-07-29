@@ -26,8 +26,8 @@ typedef std::function<void(const char*, double)> FuncEnumCtaPosCallBack;
 class ICtaStraCtx
 {
 public:
-	ICtaStraCtx(const char* name) :_name(name){}
-	virtual ~ICtaStraCtx(){}
+	explicit ICtaStraCtx(const char* name) :_name(name){}
+	virtual ~ICtaStraCtx()= default;
 
 	inline const char* name() const{ return _name.c_str(); }
 
@@ -38,7 +38,7 @@ public:
 	virtual void on_init() = 0;
 	virtual void on_session_begin(uint32_t uTDate) = 0;
 	virtual void on_session_end(uint32_t uTDate) = 0;
-	virtual void on_tick(const char* stdCode, WTSTickData* newTick, bool bEmitStrategy = true) = 0;
+	virtual void on_tick(const char* stdCode, WTSTickData* newTick, bool bEmitStrategy /*= true*/) = 0;
 	virtual void on_bar(const char* stdCode, const char* period, uint32_t times, WTSBarStruct* newBar) = 0;
 	virtual bool on_schedule(uint32_t curDate, uint32_t curTime) = 0;
 	/*
@@ -59,13 +59,13 @@ public:
 	virtual void on_tick_updated(const char* stdCode, WTSTickData* newTick){}
 	virtual void on_condition_triggered(const char* stdCode, double target, double price, const char* usertag){}
 
-	virtual void enum_position(FuncEnumCtaPosCallBack cb, bool bForExecute = false) = 0;
+	virtual void enum_position(FuncEnumCtaPosCallBack cb, bool bForExecute/* = false*/) = 0;
 
 	//策略接口
-	virtual void stra_enter_long(const char* stdCode, double qty, const char* userTag = "", double limitprice = 0.0, double stopprice = 0.0) = 0;
-	virtual void stra_enter_short(const char* stdCode, double qty, const char* userTag = "", double limitprice = 0.0, double stopprice = 0.0) = 0;
-	virtual void stra_exit_long(const char* stdCode, double qty, const char* userTag = "", double limitprice = 0.0, double stopprice = 0.0) = 0;
-	virtual void stra_exit_short(const char* stdCode, double qty, const char* userTag = "", double limitprice = 0.0, double stopprice = 0.0) = 0;
+	virtual void stra_enter_long(const char* stdCode, double qty, const char* userTag/* = ""*/, double limitprice/* = 0.0*/, double stopprice/* = 0.0*/) = 0;
+	virtual void stra_enter_short(const char* stdCode, double qty, const char* userTag/* = ""*/, double limitprice/* = 0.0*/, double stopprice/* = 0.0*/) = 0;
+	virtual void stra_exit_long(const char* stdCode, double qty, const char* userTag/* = ""*/, double limitprice/* = 0.0*/, double stopprice/* = 0.0*/) = 0;
+	virtual void stra_exit_short(const char* stdCode, double qty, const char* userTag/* = ""*/, double limitprice/* = 0.0*/, double stopprice/* = 0.0*/) = 0;
 
 	/*
 	 *	获取当前持仓

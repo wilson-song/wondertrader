@@ -127,7 +127,7 @@ private:
 	const RiskParams* getRiskParams(const char* stdCode);
 
 public:
-	double	getPosition(const char* stdCode, bool bValidOnly, int32_t flag = 3);
+	double	getPosition(const char* stdCode, bool bValidOnly, int32_t flag);
 	double	enumPosition(const char* stdCode = "");
 	OrderMap* getOrders(const char* stdCode);
 	double getUndoneQty(const char* stdCode)
@@ -139,8 +139,8 @@ public:
 		return 0;
 	}
 
-	OrderIDs buy(const char* stdCode, double price, double qty, int flag, bool bForceClose, WTSContractInfo* cInfo = NULL);
-	OrderIDs sell(const char* stdCode, double price, double qty, int flag, bool bForceClose, WTSContractInfo* cInfo = NULL);
+	OrderIDs buy(const char* stdCode, double price, double qty, int flag, bool bForceClose, WTSContractInfo* cInfo);
+	OrderIDs sell(const char* stdCode, double price, double qty, int flag, bool bForceClose, WTSContractInfo* cInfo);
 
 	/*
 	 *	下单接口: 开多

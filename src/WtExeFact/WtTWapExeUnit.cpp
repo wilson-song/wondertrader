@@ -6,15 +6,15 @@
 #include "../Share/decimal.h"
 #include "../Share/fmtlib.h"
 
-#include <math.h>
+#include <cmath>
 
 
 extern const char* FACT_NAME;
 
 
 WtTWapExeUnit::WtTWapExeUnit()
-	: _last_tick(NULL)
-	, _comm_info(NULL)
+	: _last_tick(nullptr)
+	, _comm_info(nullptr)
 	, _ord_sticky(0)
 	, _cancel_cnt(0)
 	, _channel_ready(false)
@@ -86,7 +86,7 @@ void WtTWapExeUnit::on_order(uint32_t localid, const char* stdCode, bool isBuy, 
 	//如果全部订单已撤销,这个时候一般是遇到要超时撤单
 	if (isCanceled && _cancel_cnt == 0)
 	{
-		double realPos = _ctx->getPosition(stdCode);
+		double realPos = _ctx->getPosition(stdCode, true, POSITION_LONG_SHORT);
 		if (!decimal::eq(realPos, _this_target))
 		{
 			//撤单以后重发,一般是加点重发
@@ -105,7 +105,7 @@ void WtTWapExeUnit::on_channel_ready()
 		_ctx->writeLog(fmt::format("{} unmanaged orders of {}, cancel all", undone, _code).c_str());
 
 		bool isBuy = (undone > 0);
-		OrderIDs ids = _ctx->cancel(_code.c_str(), isBuy);
+		OrderIDs ids = _ctx->cancel(_code.c_str(), isBuy, 0);
 		_orders_mon.push_order(ids.data(), ids.size(), _ctx->getCurTime());
 		_cancel_cnt += ids.size();
 
@@ -123,7 +123,7 @@ void WtTWapExeUnit::on_channel_lost()
 
 void WtTWapExeUnit::on_tick(WTSTickData* newTick)
 {
-	if (newTick == NULL || _code.compare(newTick->code()) != 0)
+	if (newTick == nullptr || _code != newTick->code())
 		return;
 
 	bool isFirstTick = false;
@@ -148,7 +148,7 @@ void WtTWapExeUnit::on_tick(WTSTickData* newTick)
 		double newVol = _target_pos;
 		const char* stdCode = _code.c_str();
 		double undone = _ctx->getUndoneQty(stdCode);
-		double realPos = _ctx->getPosition(stdCode);
+		double realPos = _ctx->getPosition(stdCode, true, POSITION_LONG_SHORT);
 		if (!decimal::eq(newVol, undone + realPos)) //仓位变化要交易
 		{
 			do_calc();
@@ -228,9 +228,9 @@ void WtTWapExeUnit::fire_at_once(double qty)
 	//最后发出指令
 	OrderIDs ids;
 	if (qty > 0)
-		ids = _ctx->buy(code, targetPx, abs(qty));
+		ids = _ctx->buy(code, targetPx, abs(qty), false);
 	else
-		ids = _ctx->sell(code, targetPx, abs(qty));
+		ids = _ctx->sell(code, targetPx, abs(qty), false);
 
 	_orders_mon.push_order(ids.data(), ids.size(), now);
 
@@ -249,7 +249,7 @@ void WtTWapExeUnit::do_calc()
 		return;
 	}
 
-	if (_last_tick == NULL)
+	if (_last_tick == nullptr)
 	{
 		_ctx->writeLog(fmt::format("{}没有最新tick数据,退出执行逻辑", _code).c_str());
 		return;
@@ -265,7 +265,7 @@ void WtTWapExeUnit::do_calc()
 		return;
 	}
 
-	double realPos = _ctx->getPosition(code);
+	double realPos = _ctx->getPosition(code, true, POSITION_LONG_SHORT);
 	double diffQty = _target_pos - realPos;
 
 	if (decimal::eq(diffQty, 0))
@@ -324,9 +324,9 @@ void WtTWapExeUnit::do_calc()
 	//最后发出指令
 	OrderIDs ids;
 	if (curQty > 0)
-		ids = _ctx->buy(code, targetPx, abs(curQty));
+		ids = _ctx->buy(code, targetPx, abs(curQty), false);
 	else
-		ids = _ctx->sell(code, targetPx, abs(curQty));
+		ids = _ctx->sell(code, targetPx, abs(curQty), false);
 
 	_orders_mon.push_order(ids.data(), ids.size(), now);
 	_last_fire_time = now;
@@ -337,7 +337,7 @@ void WtTWapExeUnit::do_calc()
 
 void WtTWapExeUnit::set_position(const char* stdCode, double newVol)
 {
-	if (_code.compare(stdCode) != 0)
+	if (_code != stdCode)
 		return;
 
 	//double diff = newVol - _target_pos;

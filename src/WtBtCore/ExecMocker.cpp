@@ -199,7 +199,7 @@ WTSTickData* ExecMocker::grabLastTick(const char* stdCode)
 	return _replayer->get_last_tick(stdCode);
 }
 
-double ExecMocker::getPosition(const char* stdCode, bool validOnly /* = true */, int32_t flag /* = 3 */)
+double ExecMocker::getPosition(const char* stdCode, bool validOnly, int32_t flag)
 {
 	return _position;
 }
@@ -262,7 +262,7 @@ bool ExecMocker::cancel(uint32_t localid)
 	return true;
 }
 
-OrderIDs ExecMocker::cancel(const char* stdCode, bool isBuy, double qty /*= 0*/)
+OrderIDs ExecMocker::cancel(const char* stdCode, bool isBuy, double qty)
 {
 	OrderIDs ret = _matcher.cancel(stdCode, isBuy, qty, [this](double change) {
 		_undone -= change;

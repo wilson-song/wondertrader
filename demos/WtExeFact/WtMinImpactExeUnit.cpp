@@ -253,7 +253,7 @@ void WtMinImpactExeUnit::do_calc()
 	const char* stdCode = _code.c_str();
 
 	double undone = _ctx->getUndoneQty(stdCode);
-	double realPos = _ctx->getPosition(stdCode);
+	double realPos = _ctx->getPosition(stdCode, true, POSITION_LONG_SHORT);
 	double diffPos = newVol - realPos;
 
 	//有未完成订单，与实际仓位变动方向相反

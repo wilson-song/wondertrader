@@ -23,7 +23,7 @@
 template<typename... Args>
 inline void write_log(IParserSpi* sink, WTSLogLevel ll, const char* format, const Args&... args)
 {
-	if (sink == NULL)
+	if (sink == nullptr)
 		return;
 
 	static thread_local char buffer[512] = { 0 };
@@ -36,16 +36,16 @@ extern "C"
 {
 	EXPORT_FLAG IParserApi* createParser()
 	{
-		ParserCTPMini* parser = new ParserCTPMini();
+		auto* parser = new ParserCTPMini();
 		return parser;
 	}
 
 	EXPORT_FLAG void deleteParser(IParserApi* &parser)
 	{
-		if (NULL != parser)
+		if (nullptr != parser)
 		{
 			delete parser;
-			parser = NULL;
+			parser = nullptr;
 		}
 	}
 };
@@ -64,7 +64,7 @@ uint32_t strToTime(const char* strTime)
 		pos++;
 	}
 
-	return strtoul(str.c_str(), NULL, 10);
+	return strtoul(str.c_str(), nullptr, 10);
 }
 
 inline double checkValid(double val)
@@ -76,7 +76,7 @@ inline double checkValid(double val)
 }
 
 ParserCTPMini::ParserCTPMini()
-	:m_pUserAPI(NULL)
+	:m_pUserAPI(nullptr)
 	,m_iRequestID(0)
 	,m_uTradingDate(0)
 {
@@ -85,7 +85,7 @@ ParserCTPMini::ParserCTPMini()
 
 ParserCTPMini::~ParserCTPMini()
 {
-	m_pUserAPI = NULL;
+	m_pUserAPI = nullptr;
 }
 
 bool ParserCTPMini::init(WTSVariant* config)
@@ -137,7 +137,7 @@ bool ParserCTPMini::connect()
 {
 	if(m_pUserAPI)
 	{
-		m_pUserAPI->Init();
+		m_pUserAPI->Init(false);
 	}
 
 	return true;
@@ -147,9 +147,9 @@ bool ParserCTPMini::disconnect()
 {
 	if(m_pUserAPI)
 	{
-		m_pUserAPI->RegisterSpi(NULL);
+		m_pUserAPI->RegisterSpi(nullptr);
 		m_pUserAPI->Release();
-		m_pUserAPI = NULL;
+		m_pUserAPI = nullptr;
 	}
 
 	return true;
@@ -175,7 +175,7 @@ void ParserCTPMini::OnRspUserLogin( CThostFtdcRspUserLoginField *pRspUserLogin, 
 {
 	if(bIsLast && !IsErrorRspInfo(pRspInfo))
 	{
-		m_uTradingDate = strtoul(m_pUserAPI->GetTradingDay(), NULL, 10);
+		m_uTradingDate = strtoul(m_pUserAPI->GetTradingDay(), nullptr, 10);
 		
 		if(m_sink)
 		{
@@ -211,12 +211,12 @@ void ParserCTPMini::OnRspUnSubMarketData( CThostFtdcSpecificInstrumentField *pSp
 
 void ParserCTPMini::OnRtnDepthMarketData( CThostFtdcDepthMarketDataField *pDepthMarketData )
 {	
-	if(m_pBaseDataMgr == NULL)
+	if(m_pBaseDataMgr == nullptr)
 	{
 		return;
 	}
 
-	uint32_t actDate = strtoul(pDepthMarketData->ActionDay, NULL, 10);
+	uint32_t actDate = strtoul(pDepthMarketData->ActionDay, nullptr, 10);
 	uint32_t actTime = strToTime(pDepthMarketData->UpdateTime) * 1000 + pDepthMarketData->UpdateMillisec;
 	uint32_t actHour = actTime / 10000000;
 	
@@ -251,7 +251,7 @@ void ParserCTPMini::OnRtnDepthMarketData( CThostFtdcDepthMarketDataField *pDepth
 	}
 
 	WTSContractInfo* contract = m_pBaseDataMgr->getContract(pDepthMarketData->InstrumentID, pDepthMarketData->ExchangeID);
-	if (contract == NULL)
+	if (contract == nullptr)
 		return;
 
 	WTSCommodityInfo* pCommInfo = contract->getCommInfo();
@@ -350,12 +350,12 @@ void ParserCTPMini::OnHeartBeatWarning( int nTimeLapse )
 
 void ParserCTPMini::ReqUserLogin()
 {
-	if(m_pUserAPI == NULL)
+	if(m_pUserAPI == nullptr)
 	{
 		return;
 	}
 
-	CThostFtdcReqUserLoginField req;
+	CThostFtdcReqUserLoginField req{};
 	memset(&req, 0, sizeof(req));
 	strcpy(req.BrokerID, m_strBroker.c_str());
 	strcpy(req.UserID, m_strUserID.c_str());
@@ -420,7 +420,7 @@ void ParserCTPMini::subscribe(const CodeSet &vecSymbols)
 	else
 	{
 		m_filterSubs = vecSymbols;
-		char * subscribe[500] = {NULL};
+		char * subscribe[500] = {nullptr};
 		int nCount = 0;
 		for (auto& code  : vecSymbols)
 		{
@@ -454,7 +454,7 @@ void ParserCTPMini::unsubscribe(const CodeSet &vecSymbols)
 
 bool ParserCTPMini::isConnected()
 {
-	return m_pUserAPI!=NULL;
+	return m_pUserAPI!=nullptr;
 }
 
 void ParserCTPMini::registerSpi(IParserSpi* listener)

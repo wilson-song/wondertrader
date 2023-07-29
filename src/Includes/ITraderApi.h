@@ -10,9 +10,10 @@
 #pragma once
 #include <set>
 #include <map>
-#include <stdint.h>
+#include <cstdint>
 #include <functional>
 #include "WTSTypes.h"
+#include "../Includes/ConstDefs.h"
 
 NS_WTP_BEGIN
 class WTSVariant;

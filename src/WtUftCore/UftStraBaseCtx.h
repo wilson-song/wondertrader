@@ -25,34 +25,34 @@ class UftStraBaseCtx : public IUftStraCtx, public ITrdNotifySink
 {
 public:
 	UftStraBaseCtx(WtUftEngine* engine, const char* name);
-	virtual ~UftStraBaseCtx();
+	~UftStraBaseCtx() override;
 
 	void setTrader(TraderAdapter* trader);
 
 public:
 	//////////////////////////////////////////////////////////////////////////
 	//IHftStraCtx 接口
-	virtual uint32_t id() override;
+	uint32_t id() override;
 
-	virtual void on_init() override;
+	void on_init() override;
 
-	virtual void on_tick(const char* stdCode, WTSTickData* newTick) override;
+	void on_tick(const char* stdCode, WTSTickData* newTick) override;
 
-	virtual void on_order_queue(const char* stdCode, WTSOrdQueData* newOrdQue) override;
+	void on_order_queue(const char* stdCode, WTSOrdQueData* newOrdQue) override;
 
-	virtual void on_order_detail(const char* stdCode, WTSOrdDtlData* newOrdDtl) override;
+	void on_order_detail(const char* stdCode, WTSOrdDtlData* newOrdDtl) override;
 
-	virtual void on_transaction(const char* stdCode, WTSTransData* newTrans) override;
+	void on_transaction(const char* stdCode, WTSTransData* newTrans) override;
 
-	virtual void on_bar(const char* stdCode, const char* period, uint32_t times, WTSBarStruct* newBar) override;
+	void on_bar(const char* stdCode, const char* period, uint32_t times, WTSBarStruct* newBar) override;
 
-	virtual uint32_t stra_get_date() override;
-	virtual uint32_t stra_get_time() override;
-	virtual uint32_t stra_get_secs() override;
+	uint32_t stra_get_date() override;
+	uint32_t stra_get_time() override;
+	uint32_t stra_get_secs() override;
 
-	virtual bool stra_cancel(uint32_t localid) override;
+	bool stra_cancel(uint32_t localid) override;
 
-	virtual OrderIDs stra_cancel_all(const char* stdCode) override;
+	OrderIDs stra_cancel_all(const char* stdCode) override;
 
 	/*
 	 *	下单接口: 买入
@@ -62,7 +62,7 @@ public:
 	 *	@qty		下单数量
 	 *	@flag		下单标志: 0-normal，1-fak，2-fok，默认0
 	 */
-	virtual OrderIDs	stra_buy(const char* stdCode, double price, double qty, int flag = 0) override;
+	OrderIDs	stra_buy(const char* stdCode, double price, double qty, int flag = 0) override;
 
 	/*
 	 *	下单接口: 卖出
@@ -72,7 +72,7 @@ public:
 	 *	@qty		下单数量
 	 *	@flag		下单标志: 0-normal，1-fak，2-fok，默认0
 	 */
-	virtual OrderIDs	stra_sell(const char* stdCode, double price, double qty, int flag = 0) override;
+	OrderIDs	stra_sell(const char* stdCode, double price, double qty, int flag = 0) override;
 
 	/*
 	 *	下单接口: 开多
@@ -82,7 +82,7 @@ public:
 	 *	@qty		下单数量
 	 *	@flag		下单标志: 0-normal，1-fak，2-fok
 	 */
-	virtual uint32_t	stra_enter_long(const char* stdCode, double price, double qty, int flag = 0) override;
+	uint32_t	stra_enter_long(const char* stdCode, double price, double qty, int flag = 0) override;
 
 	/*
 	 *	下单接口: 开空
@@ -92,7 +92,7 @@ public:
 	 *	@qty		下单数量
 	 *	@flag		下单标志: 0-normal，1-fak，2-fok
 	 */
-	virtual uint32_t	stra_enter_short(const char* stdCode, double price, double qty, int flag = 0) override;
+	uint32_t	stra_enter_short(const char* stdCode, double price, double qty, int flag = 0) override;
 
 	/*
 	 *	下单接口: 平多
@@ -103,7 +103,7 @@ public:
 	 *	@isToday	是否今仓，默认false
 	 *	@flag		下单标志: 0-normal，1-fak，2-fok，默认0
 	 */
-	virtual uint32_t	stra_exit_long(const char* stdCode, double price, double qty, bool isToday = false, int flag = 0) override;
+	uint32_t	stra_exit_long(const char* stdCode, double price, double qty, bool isToday = false, int flag = 0) override;
 
 	/*
 	 *	下单接口: 平空
@@ -114,48 +114,48 @@ public:
 	 *	@isToday	是否今仓，默认false
 	 *	@flag		下单标志: 0-normal，1-fak，2-fok，默认0
 	 */
-	virtual uint32_t	stra_exit_short(const char* stdCode, double price, double qty, bool isToday = false, int flag = 0) override;
+	uint32_t	stra_exit_short(const char* stdCode, double price, double qty, bool isToday = false, int flag = 0) override;
 
-	virtual WTSCommodityInfo* stra_get_comminfo(const char* stdCode) override;
+	WTSCommodityInfo* stra_get_comminfo(const char* stdCode) override;
 
-	virtual WTSKlineSlice* stra_get_bars(const char* stdCode, const char* period, uint32_t count) override;
+	WTSKlineSlice* stra_get_bars(const char* stdCode, const char* period, uint32_t count) override;
 
-	virtual WTSTickSlice* stra_get_ticks(const char* stdCode, uint32_t count) override;
+	WTSTickSlice* stra_get_ticks(const char* stdCode, uint32_t count) override;
 
-	virtual WTSOrdDtlSlice*	stra_get_order_detail(const char* stdCode, uint32_t count) override;
+	WTSOrdDtlSlice*	stra_get_order_detail(const char* stdCode, uint32_t count) override;
 
-	virtual WTSOrdQueSlice*	stra_get_order_queue(const char* stdCode, uint32_t count) override;
+	WTSOrdQueSlice*	stra_get_order_queue(const char* stdCode, uint32_t count) override;
 
-	virtual WTSTransSlice*	stra_get_transaction(const char* stdCode, uint32_t count) override;
+	WTSTransSlice*	stra_get_transaction(const char* stdCode, uint32_t count) override;
 
-	virtual WTSTickData* stra_get_last_tick(const char* stdCode) override;
+	WTSTickData* stra_get_last_tick(const char* stdCode) override;
 
-	virtual void stra_log_info(const char* message) override;
-	virtual void stra_log_debug(const char* message) override;
-	virtual void stra_log_error(const char* message) override;
+	void stra_log_info(const char* message) override;
+	void stra_log_debug(const char* message) override;
+	void stra_log_error(const char* message) override;
 
-	virtual double stra_get_position(const char* stdCode, bool bOnlyValid = false, int32_t iFlag = 3) override;
-	virtual double stra_enum_position(const char* stdCode) override;
-	virtual double stra_get_price(const char* stdCode) override;
-	virtual double stra_get_undone(const char* stdCode) override;
+	double stra_get_position(const char* stdCode, bool bOnlyValid = false, int32_t iFlag = 3) override;
+	double stra_enum_position(const char* stdCode) override;
+	double stra_get_price(const char* stdCode) override;
+	double stra_get_undone(const char* stdCode) override;
 
-	virtual void stra_sub_ticks(const char* stdCode) override;
-	virtual void stra_sub_order_details(const char* stdCode) override;
-	virtual void stra_sub_order_queues(const char* stdCode) override;
-	virtual void stra_sub_transactions(const char* stdCode) override;
+	void stra_sub_ticks(const char* stdCode) override;
+	void stra_sub_order_details(const char* stdCode) override;
+	void stra_sub_order_queues(const char* stdCode) override;
+	void stra_sub_transactions(const char* stdCode) override;
 
 	//////////////////////////////////////////////////////////////////////////
-	virtual void on_trade(uint32_t localid, const char* stdCode, bool isLong, uint32_t offset, double vol, double price) override;
+	void on_trade(uint32_t localid, const char* stdCode, bool isLong, uint32_t offset, double vol, double price) override;
 
-	virtual void on_order(uint32_t localid, const char* stdCode, bool isLong, uint32_t offset, double totalQty, double leftQty, double price, bool isCanceled) override;
+	void on_order(uint32_t localid, const char* stdCode, bool isLong, uint32_t offset, double totalQty, double leftQty, double price, bool isCanceled) override;
 
-	virtual void on_channel_ready() override;
+	void on_channel_ready() override;
 
-	virtual void on_channel_lost() override;
+	void on_channel_lost() override;
 
-	virtual void on_entrust(uint32_t localid, const char* stdCode, bool bSuccess, const char* message) override;
+	void on_entrust(uint32_t localid, const char* stdCode, bool bSuccess, const char* message) override;
 
-	virtual void on_position(const char* stdCode, bool isLong, double prevol, double preavail, double newvol, double newavail, uint32_t tradingday) override;
+	void on_position(const char* stdCode, bool isLong, double prevol, double preavail, double newvol, double newavail, uint32_t tradingday) override;
 
 protected:
 	template<typename... Args>
@@ -193,7 +193,7 @@ protected:
 protected:
 	uint32_t		_context_id;
 	WtUftEngine*	_engine;
-	TraderAdapter*	_trader;
+	TraderAdapter*	_trader{};
 
 private:
 

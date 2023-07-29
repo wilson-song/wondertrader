@@ -130,7 +130,7 @@ void WtStockMinImpactExeUnit::on_channel_ready()
 	if (!decimal::eq(undone, 0))
 	{
 		bool isBuy = (undone > 0);
-		OrderIDs ids = _ctx->cancel(_code.c_str(), isBuy);
+		OrderIDs ids = _ctx->cancel(_code.c_str(), isBuy, 0);
 		_orders_mon.push_order(ids.data(), ids.size(), _ctx->getCurTime());
 		_cancel_cnt += ids.size();
 		_ctx->writeLog(fmt::format("cancelcnt -> {}", _cancel_cnt).c_str());
@@ -320,9 +320,9 @@ void WtStockMinImpactExeUnit::do_calc()
 
 	double undone = _ctx->getUndoneQty(stdCode);
 	// 可用仓位，即昨仓的
-	double vailyPos = _ctx->getPosition(stdCode, true);
+	double vailyPos = _ctx->getPosition(stdCode, true, POSITION_LONG);
 	// 总仓位，等于昨仓 + 今仓买入的
-	double curPos = _ctx->getPosition(stdCode, false);
+	double curPos = _ctx->getPosition(stdCode, false, POSITION_LONG_SHORT);
 
 	double target_pos = max(curPos - vailyPos, _target_pos);
 
@@ -345,7 +345,7 @@ void WtStockMinImpactExeUnit::do_calc()
 	if (decimal::lt(diffPos * undone, 0))
 	{
 		bool isBuy = decimal::gt(undone, 0);
-		OrderIDs ids = _ctx->cancel(stdCode, isBuy);
+		OrderIDs ids = _ctx->cancel(stdCode, isBuy, 0);
 		if (!ids.empty())
 		{
 			_orders_mon.push_order(ids.data(), ids.size(), _ctx->getCurTime());
@@ -462,12 +462,12 @@ void WtStockMinImpactExeUnit::do_calc()
 
 	if (isBuy)
 	{
-		OrderIDs ids = _ctx->buy(stdCode, buyPx, this_qty);
+		OrderIDs ids = _ctx->buy(stdCode, buyPx, this_qty, false);
 		_orders_mon.push_order(ids.data(), ids.size(), _ctx->getCurTime(), isCanCancel);
 	}
 	else
 	{
-		OrderIDs ids = _ctx->sell(stdCode, sellPx, this_qty);
+		OrderIDs ids = _ctx->sell(stdCode, sellPx, this_qty, false);
 		_orders_mon.push_order(ids.data(), ids.size(), _ctx->getCurTime(), isCanCancel);
 	}
 

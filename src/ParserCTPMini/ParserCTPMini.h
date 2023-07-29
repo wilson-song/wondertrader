@@ -102,11 +102,11 @@ private:
 
 	int					m_iRequestID;
 
-	IParserSpi*	m_sink;
-	IBaseDataMgr*		m_pBaseDataMgr;
+	IParserSpi*	m_sink{};
+	IBaseDataMgr*		m_pBaseDataMgr{};
 
-	DllHandle		m_hInstCTP;
+	DllHandle		m_hInstCTP{};
 	typedef CThostFtdcMdApi* (*CTPCreator)(const char *, const bool, const bool);
-	CTPCreator		m_funcCreator;
+	CTPCreator		m_funcCreator{};
 };
 

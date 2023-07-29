@@ -125,7 +125,7 @@ void WtDiffMinImpactExeUnit::on_channel_ready()
 		_ctx->writeLog(fmtutil::format("Unmanaged live orders with qty {} of {} found, cancel all", undone, _code.c_str()));
 
 		bool isBuy = (undone > 0);
-		OrderIDs ids = _ctx->cancel(_code.c_str(), isBuy);
+		OrderIDs ids = _ctx->cancel(_code.c_str(), isBuy, 0);
 		_orders_mon.push_order(ids.data(), ids.size(), _ctx->getCurTime());
 		_cancel_cnt += ids.size();
 
@@ -302,7 +302,7 @@ void WtDiffMinImpactExeUnit::do_calc()
 
 	//如果买入且有空头持仓，或者卖出且有多头持仓
 	//对单次下单做一个修正，保证平仓和开仓不会同时下单
-	double curPos = _ctx->getPosition(stdCode);
+	double curPos = _ctx->getPosition(stdCode, true, POSITION_LONG_SHORT);
 	if((isBuy && decimal::lt(curPos, 0)) || (!isBuy && decimal::gt(curPos, 0)))
 	{
 		this_qty = min(this_qty, abs(curPos));

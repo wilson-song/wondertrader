@@ -256,7 +256,7 @@ double TraderAdapter::enumPosition(const char* stdCode /* = "" */)
 	return ret;
 }
 
-double TraderAdapter::getPosition(const char* stdCode, bool bValidOnly, int32_t flag /* = 3 */)
+double TraderAdapter::getPosition(const char* stdCode, bool bValidOnly, int32_t flag)
 {
 	auto it = _positions.find(stdCode);
 	if (it == _positions.end())
@@ -264,7 +264,7 @@ double TraderAdapter::getPosition(const char* stdCode, bool bValidOnly, int32_t 
 
 	double ret = 0;
 	const PosItem& pItem = it->second;
-	if(flag & 1)
+	if(flag & POSITION_LONG)
 	{
 		if(bValidOnly)
 			ret += (pItem.l_newavail + pItem.l_preavail);
@@ -272,7 +272,7 @@ double TraderAdapter::getPosition(const char* stdCode, bool bValidOnly, int32_t 
 			ret += (pItem.l_newvol + pItem.l_prevol);
 	}
 
-	if (flag & 2)
+	if (flag & POSITION_SHORT)
 	{
 		if (bValidOnly)
 			ret -= (pItem.s_newavail + pItem.s_preavail);
@@ -428,7 +428,7 @@ OrderIDs TraderAdapter::cancelAll(const char* stdCode)
 	return ret;
 }
 
-OrderIDs TraderAdapter::buy(const char* stdCode, double price, double qty, int flag, bool bForceClose, WTSContractInfo* cInfo /* = NULL */)
+OrderIDs TraderAdapter::buy(const char* stdCode, double price, double qty, int flag, bool bForceClose, WTSContractInfo* cInfo)
 {
 	OrderIDs ret;
 	if (qty == 0)
@@ -709,7 +709,7 @@ OrderIDs TraderAdapter::buy(const char* stdCode, double price, double qty, int f
 	return ret;
 }
 
-OrderIDs TraderAdapter::sell(const char* stdCode, double price, double qty, int flag, bool bForceClose, WTSContractInfo* cInfo /* = NULL */)
+OrderIDs TraderAdapter::sell(const char* stdCode, double price, double qty, int flag, bool bForceClose, WTSContractInfo* cInfo)
 {
 	OrderIDs ret;
 	if (qty == 0)

@@ -89,7 +89,7 @@ public:
 	}
 
 public:
-	virtual void release() override
+	void release() override
 	{
 		if (m_uRefs == 0)
 			return;
