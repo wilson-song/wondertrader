@@ -44,42 +44,42 @@ const char* getModuleName()
 #endif
 
 WtBtRunner::WtBtRunner()
-	: _cta_mocker(NULL)
-	, _sel_mocker(NULL)
+	: _cta_mocker(nullptr)
+	, _sel_mocker(nullptr)
 
-	, _cb_cta_init(NULL)
-	, _cb_cta_tick(NULL)
-	, _cb_cta_calc(NULL)
-	, _cb_cta_calc_done(NULL)
-	, _cb_cta_bar(NULL)
-	, _cb_cta_sessevt(NULL)
-	, _cb_cta_cond_trigger(NULL)
+	, _cb_cta_init(nullptr)
+	, _cb_cta_tick(nullptr)
+	, _cb_cta_calc(nullptr)
+	, _cb_cta_calc_done(nullptr)
+	, _cb_cta_bar(nullptr)
+	, _cb_cta_sessevt(nullptr)
+	, _cb_cta_cond_trigger(nullptr)
 
-	, _cb_sel_init(NULL)
-	, _cb_sel_tick(NULL)
-	, _cb_sel_calc(NULL)
-	, _cb_sel_calc_done(NULL)
-	, _cb_sel_bar(NULL)
-	, _cb_sel_sessevt(NULL)
+	, _cb_sel_init(nullptr)
+	, _cb_sel_tick(nullptr)
+	, _cb_sel_calc(nullptr)
+	, _cb_sel_calc_done(nullptr)
+	, _cb_sel_bar(nullptr)
+	, _cb_sel_sessevt(nullptr)
 
-	, _cb_hft_init(NULL)
-	, _cb_hft_tick(NULL)
-	, _cb_hft_bar(NULL)
-	, _cb_hft_ord(NULL)
-	, _cb_hft_trd(NULL)
-	, _cb_hft_entrust(NULL)
-	, _cb_hft_chnl(NULL)
+	, _cb_hft_init(nullptr)
+	, _cb_hft_tick(nullptr)
+	, _cb_hft_bar(nullptr)
+	, _cb_hft_ord(nullptr)
+	, _cb_hft_trd(nullptr)
+	, _cb_hft_entrust(nullptr)
+	, _cb_hft_chnl(nullptr)
 
-	, _cb_hft_orddtl(NULL)
-	, _cb_hft_ordque(NULL)
-	, _cb_hft_trans(NULL)
+	, _cb_hft_orddtl(nullptr)
+	, _cb_hft_ordque(nullptr)
+	, _cb_hft_trans(nullptr)
 
-	, _cb_hft_sessevt(NULL)
+	, _cb_hft_sessevt(nullptr)
 
-	, _ext_fnl_bar_loader(NULL)
-	, _ext_raw_bar_loader(NULL)
-	, _ext_adj_fct_loader(NULL)
-	, _ext_tick_loader(NULL)
+	, _ext_fnl_bar_loader(nullptr)
+	, _ext_raw_bar_loader(nullptr)
+	, _ext_adj_fct_loader(nullptr)
+	, _ext_tick_loader(nullptr)
 
 	, _inited(false)
 	, _running(false)
@@ -103,7 +103,7 @@ WtBtRunner::~WtBtRunner()
 bool WtBtRunner::loadRawHisBars(void* obj, const char* stdCode, WTSKlinePeriod period, FuncReadBars cb)
 {
 	StdUniqueLock lock(_feed_mtx);
-	if (_ext_raw_bar_loader == NULL)
+	if (_ext_raw_bar_loader == nullptr)
 		return false;
 
 	_feed_obj = obj;
@@ -128,7 +128,7 @@ bool WtBtRunner::loadRawHisBars(void* obj, const char* stdCode, WTSKlinePeriod p
 bool WtBtRunner::loadFinalHisBars(void* obj, const char* stdCode, WTSKlinePeriod period, FuncReadBars cb)
 {
 	StdUniqueLock lock(_feed_mtx);
-	if (_ext_fnl_bar_loader == NULL)
+	if (_ext_fnl_bar_loader == nullptr)
 		return false;
 
 	_feed_obj = obj;
@@ -153,7 +153,7 @@ bool WtBtRunner::loadFinalHisBars(void* obj, const char* stdCode, WTSKlinePeriod
 bool WtBtRunner::loadAllAdjFactors(void* obj, FuncReadFactors cb)
 {
 	StdUniqueLock lock(_feed_mtx);
-	if (_ext_adj_fct_loader == NULL)
+	if (_ext_adj_fct_loader == nullptr)
 		return false;
 
 	_feed_obj = obj;
@@ -165,7 +165,7 @@ bool WtBtRunner::loadAllAdjFactors(void* obj, FuncReadFactors cb)
 bool WtBtRunner::loadAdjFactors(void* obj, const char* stdCode, FuncReadFactors cb)
 {
 	StdUniqueLock lock(_feed_mtx);
-	if (_ext_adj_fct_loader == NULL)
+	if (_ext_adj_fct_loader == nullptr)
 		return false;
 
 	_feed_obj = obj;
@@ -177,7 +177,7 @@ bool WtBtRunner::loadAdjFactors(void* obj, const char* stdCode, FuncReadFactors 
 bool WtBtRunner::loadRawHisTicks(void* obj, const char* stdCode, uint32_t uDate, FuncReadTicks cb)
 {
 	StdUniqueLock lock(_feed_mtx);
-	if (_ext_tick_loader == NULL)
+	if (_ext_tick_loader == nullptr)
 		return false;
 
 	_feed_obj = obj;
@@ -188,7 +188,7 @@ bool WtBtRunner::loadRawHisTicks(void* obj, const char* stdCode, uint32_t uDate,
 
 void WtBtRunner::feedRawBars(WTSBarStruct* bars, uint32_t count)
 {
-	if(_ext_fnl_bar_loader == NULL && _ext_raw_bar_loader == NULL)
+	if(_ext_fnl_bar_loader == nullptr && _ext_raw_bar_loader == nullptr)
 	{
 		WTSLogger::error("Cannot feed bars because of no extented bar loader registered.");
 		return;
@@ -199,7 +199,7 @@ void WtBtRunner::feedRawBars(WTSBarStruct* bars, uint32_t count)
 
 void WtBtRunner::feedAdjFactors(const char* stdCode, uint32_t* dates, double* factors, uint32_t count)
 {
-	if(_ext_adj_fct_loader == NULL)
+	if(_ext_adj_fct_loader == nullptr)
 	{
 		WTSLogger::error("Cannot feed adjusting factors because of no extented adjusting factor loader registered.");
 		return;
@@ -210,7 +210,7 @@ void WtBtRunner::feedAdjFactors(const char* stdCode, uint32_t* dates, double* fa
 
 void WtBtRunner::feedRawTicks(WTSTickStruct* ticks, uint32_t count)
 {
-	if (_ext_tick_loader == NULL)
+	if (_ext_tick_loader == nullptr)
 	{
 		WTSLogger::error("Cannot feed ticks because of no extented tick loader registered.");
 		return;
@@ -220,7 +220,7 @@ void WtBtRunner::feedRawTicks(WTSTickStruct* ticks, uint32_t count)
 }
 
 void WtBtRunner::registerCtaCallbacks(FuncStraInitCallback cbInit, FuncStraTickCallback cbTick, FuncStraCalcCallback cbCalc, FuncStraBarCallback cbBar, 
-	FuncSessionEvtCallback cbSessEvt, FuncStraCalcCallback cbCalcDone /* = NULL */, FuncStraCondTriggerCallback cbCondTrigger /* = NULL */)
+	FuncSessionEvtCallback cbSessEvt, FuncStraCalcCallback cbCalcDone /* = nullptr */, FuncStraCondTriggerCallback cbCondTrigger /* = nullptr */)
 {
 	_cb_cta_init = cbInit;
 	_cb_cta_tick = cbTick;
@@ -235,7 +235,7 @@ void WtBtRunner::registerCtaCallbacks(FuncStraInitCallback cbInit, FuncStraTickC
 }
 
 void WtBtRunner::registerSelCallbacks(FuncStraInitCallback cbInit, FuncStraTickCallback cbTick, FuncStraCalcCallback cbCalc, 
-	FuncStraBarCallback cbBar, FuncSessionEvtCallback cbSessEvt, FuncStraCalcCallback cbCalcDone/* = NULL*/)
+	FuncStraBarCallback cbBar, FuncSessionEvtCallback cbSessEvt, FuncStraCalcCallback cbCalcDone/* = nullptr*/)
 {
 	_cb_sel_init = cbInit;
 	_cb_sel_tick = cbTick;
@@ -275,7 +275,7 @@ uint32_t WtBtRunner::initCtaMocker(const char* name, int32_t slippage /* = 0 */,
 	if(_cta_mocker)
 	{
 		delete _cta_mocker;
-		_cta_mocker = NULL;
+		_cta_mocker = nullptr;
 	}
 
 	_cta_mocker = new ExpCtaMocker(&_replayer, name, slippage, persistData, &_notifier);
@@ -293,7 +293,7 @@ uint32_t WtBtRunner::initHftMocker(const char* name, bool hook/* = false*/)
 	if (_hft_mocker)
 	{
 		delete _hft_mocker;
-		_hft_mocker = NULL;
+		_hft_mocker = nullptr;
 	}
 
 	_hft_mocker = new ExpHftMocker(&_replayer, name);
@@ -307,7 +307,7 @@ uint32_t WtBtRunner::initSelMocker(const char* name, uint32_t date, uint32_t tim
 	if (_sel_mocker)
 	{
 		delete _sel_mocker;
-		_sel_mocker = NULL;
+		_sel_mocker = nullptr;
 	}
 
 	_sel_mocker = new ExpSelMocker(&_replayer, name, slippage);
@@ -460,7 +460,7 @@ void WtBtRunner::config(const char* cfgFile, bool isFile /* = true */)
 	}
 
 	_cfg = isFile ? WTSCfgLoader::load_from_file(cfgFile) : WTSCfgLoader::load_from_content(cfgFile, false);
-	if(_cfg == NULL)
+	if(_cfg == nullptr)
 	{
 		WTSLogger::error("Loading config failed");
 		return;
@@ -469,7 +469,7 @@ void WtBtRunner::config(const char* cfgFile, bool isFile /* = true */)
 	//初始化事件推送器
 	initEvtNotifier(_cfg->get("notifier"));
 
-	_replayer.init(_cfg->get("replayer"), &_notifier, _ext_fnl_bar_loader != NULL ? this : NULL);
+	_replayer.init(_cfg->get("replayer"), &_notifier, _ext_fnl_bar_loader != nullptr ? this : nullptr);
 
 	WTSVariant* cfgEnv = _cfg->get("env");
 	const char* mode = cfgEnv->getCString("mocker");
@@ -630,7 +630,7 @@ const char* LOG_TAGS[] = {
 
 bool WtBtRunner::initEvtNotifier(WTSVariant* cfg)
 {
-	if (cfg == NULL || cfg->type() != WTSVariant::VT_Object)
+	if (cfg == nullptr || cfg->type() != WTSVariant::VT_Object)
 		return false;
 
 	_notifier.init(cfg);

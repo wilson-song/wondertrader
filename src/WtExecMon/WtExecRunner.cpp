@@ -68,7 +68,7 @@ bool WtExecRunner::init(const char* logCfg /* = "logcfgexec.json" */, bool isFil
 bool WtExecRunner::config(const char* cfgFile, bool isFile /* = true */)
 {
 	_config = isFile ? WTSCfgLoader::load_from_file(cfgFile) : WTSCfgLoader::load_from_content(cfgFile, false);
-	if(_config == NULL)
+	if(_config == nullptr)
 	{
 		WTSLogger::log_raw(LL_ERROR, "Loading config file failed");
 		return false;

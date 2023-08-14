@@ -13,7 +13,7 @@ ExpHftMocker::ExpHftMocker(HisDataReplayer* replayer, const char* name)
 
 void ExpHftMocker::on_bar(const char* stdCode, const char* period, uint32_t times, WTSBarStruct* newBar)
 {
-	if (newBar == NULL)
+	if (newBar == nullptr)
 		return;
 
 	std::string realPeriod;
